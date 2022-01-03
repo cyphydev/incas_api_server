@@ -15,19 +15,19 @@ To run the server, please execute the following from the root directory:
 
 ```
 pip3 install -r requirements.txt
-python3 -m swagger_server
+python3 -m uiuc_incas_server
 ```
 
 and open your browser to here:
 
 ```
-http://localhost:8080/incas/incas/1.0.0/ui/
+http://localhost:8080/api/v1/ui/
 ```
 
 Your Swagger definition lives here:
 
 ```
-http://localhost:8080/incas/incas/1.0.0/swagger.json
+http://localhost:8080/api/v1/swagger.json
 ```
 
 To launch the integration tests, use tox:
@@ -42,8 +42,8 @@ To run the server on a Docker container, please execute the following from the r
 
 ```bash
 # building the image
-docker build -t swagger_server .
+docker build -t uiuc_incas_server .
 
 # starting up a container
-docker run -p 8080:8080 swagger_server
+docker run -p 8080:8080 uiuc_incas_server
 ```

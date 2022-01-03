@@ -3,7 +3,7 @@
 import sys
 from setuptools import setup, find_packages
 
-NAME = "swagger_server"
+NAME = "uiuc_incas_server"
 VERSION = "1.0.0"
 # To install the library, run the following
 #
@@ -26,7 +26,7 @@ setup(
     package_data={'': ['swagger/swagger.yaml']},
     include_package_data=True,
     entry_points={
-        'console_scripts': ['swagger_server=swagger_server.__main__:main']},
+        'console_scripts': ['uiuc_incas_server=uiuc_incas_server.__main__:main']},
     long_description="""\
     This API document is defined based on INCAS Common Datatypes version 0.0.3.
     """
