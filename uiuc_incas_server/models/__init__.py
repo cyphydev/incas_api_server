@@ -7,6 +7,7 @@ from uiuc_incas_server.models.actor import Actor
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph
 from uiuc_incas_server.models.actor_enrichment import ActorEnrichment
 from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta
+from uiuc_incas_server.models.actor_message_edge import ActorMessageEdge
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph
 from uiuc_incas_server.models.actor_to_actor_edge import ActorToActorEdge
 from uiuc_incas_server.models.actor_to_message_edge import ActorToMessageEdge
@@ -43,6 +44,7 @@ from uiuc_incas_server.models.numerical_message_enrichment_meta import Numerical
 from uiuc_incas_server.models.offset import Offset
 from uiuc_incas_server.models.one_of_actor_enrichment import OneOfActorEnrichment
 from uiuc_incas_server.models.one_of_actor_enrichment_meta import OneOfActorEnrichmentMeta
+from uiuc_incas_server.models.one_of_actor_message_edge import OneOfActorMessageEdge
 from uiuc_incas_server.models.one_of_media_type_attributes import OneOfMediaTypeAttributes
 from uiuc_incas_server.models.one_of_message_enrichment import OneOfMessageEnrichment
 from uiuc_incas_server.models.one_of_message_enrichment_meta import OneOfMessageEnrichmentMeta

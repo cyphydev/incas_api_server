@@ -1834,7 +1834,7 @@ components:
           actionType:
             type: string
     MessageToActorEdge:
-      description: Defines the actor-to-message edge.
+      description: Defines the message-to-actor edge.
       allOf:
       - $ref: '#/components/schemas/BaseEdge'
       - type: object
@@ -1845,9 +1845,17 @@ components:
             type: string
           actionType:
             type: string
+    ActorMessageEdge:
+      type: object
+      description: Defines the general edge in actor-message graph.
+      discriminator:
+        propertyName: edge_type
+      oneOf:
+      - $ref: '#/components/schemas/ActorToMessageEdge'
+      - $ref: '#/components/schemas/MessageToActorEdge'
     BaseGraph:
       required:
-      - edgeType
+      - graphType
       type: object
       properties:
         graphId:
@@ -1908,7 +1916,7 @@ components:
         properties:
           enrichmentName:
             type: string
-            description: The type of enrichment used to construct the msg2msg graph.
+            description: The type of enrichment used to construct the act2act graph.
           edges:
             type: array
             items:
@@ -1919,19 +1927,13 @@ components:
       - $ref: '#/components/schemas/BaseGraph'
       - type: object
         properties:
-          edgeTypes:
-            type: array
-            description: The set of all available edge types.
-            items:
-              type: string
+          enrichmentName:
+            type: string
+            description: The type of enrichment used to construct the act2act graph.
           edges:
             type: array
             items:
-              discriminator:
-                propertyName: edgeType
-              oneOf:
-              - $ref: '#/components/schemas/ActorToMessageEdge'
-              - $ref: '#/components/schemas/MessageToActorEdge'
+              $ref: '#/components/schemas/ActorMessageEdge'
     Response:
       description: how to define it?
     Actor:

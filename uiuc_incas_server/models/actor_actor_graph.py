@@ -285,7 +285,7 @@ class ActorActorGraph(Model):
     def enrichment_name(self) -> str:
         """Gets the enrichment_name of this ActorActorGraph.
 
-        The type of enrichment used to construct the msg2msg graph.  # noqa: E501
+        The type of enrichment used to construct the act2act graph.  # noqa: E501
 
         :return: The enrichment_name of this ActorActorGraph.
         :rtype: str
@@ -296,7 +296,7 @@ class ActorActorGraph(Model):
     def enrichment_name(self, enrichment_name: str):
         """Sets the enrichment_name of this ActorActorGraph.
 
-        The type of enrichment used to construct the msg2msg graph.  # noqa: E501
+        The type of enrichment used to construct the act2act graph.  # noqa: E501
 
         :param enrichment_name: The enrichment_name of this ActorActorGraph.
         :type enrichment_name: str

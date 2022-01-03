@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from uiuc_incas_server.models.base_model_ import Model
+from uiuc_incas_server.models.actor_message_edge import ActorMessageEdge  # noqa: F401,E501
 from uiuc_incas_server.models.base_graph import BaseGraph  # noqa: F401,E501
 from uiuc_incas_server import util
 
@@ -15,7 +16,7 @@ class ActorMessageGraph(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, graph_id: str=None, provider_name: str=None, graph_name: str=None, distance_name: str=None, version: str=None, time_stamp: str=None, platform: str=None, graph_type: str=None, edge_types: List[str]=None, edges: List[Object]=None):  # noqa: E501
+    def __init__(self, graph_id: str=None, provider_name: str=None, graph_name: str=None, distance_name: str=None, version: str=None, time_stamp: str=None, platform: str=None, graph_type: str=None, enrichment_name: str=None, edges: List[ActorMessageEdge]=None):  # noqa: E501
         """ActorMessageGraph - a model defined in Swagger
 
         :param graph_id: The graph_id of this ActorMessageGraph.  # noqa: E501
@@ -34,10 +35,10 @@ class ActorMessageGraph(Model):
         :type platform: str
         :param graph_type: The graph_type of this ActorMessageGraph.  # noqa: E501
         :type graph_type: str
-        :param edge_types: The edge_types of this ActorMessageGraph.  # noqa: E501
-        :type edge_types: List[str]
+        :param enrichment_name: The enrichment_name of this ActorMessageGraph.  # noqa: E501
+        :type enrichment_name: str
         :param edges: The edges of this ActorMessageGraph.  # noqa: E501
-        :type edges: List[Object]
+        :type edges: List[ActorMessageEdge]
         """
         self.swagger_types = {
             'graph_id': str,
@@ -48,8 +49,8 @@ class ActorMessageGraph(Model):
             'time_stamp': str,
             'platform': str,
             'graph_type': str,
-            'edge_types': List[str],
-            'edges': List[Object]
+            'enrichment_name': str,
+            'edges': List[ActorMessageEdge]
         }
 
         self.attribute_map = {
@@ -61,7 +62,7 @@ class ActorMessageGraph(Model):
             'time_stamp': 'timeStamp',
             'platform': 'platform',
             'graph_type': 'graphType',
-            'edge_types': 'edgeTypes',
+            'enrichment_name': 'enrichmentName',
             'edges': 'edges'
         }
         self._graph_id = graph_id
@@ -72,7 +73,7 @@ class ActorMessageGraph(Model):
         self._time_stamp = time_stamp
         self._platform = platform
         self._graph_type = graph_type
-        self._edge_types = edge_types
+        self._enrichment_name = enrichment_name
         self._edges = edges
 
     @classmethod
@@ -281,45 +282,45 @@ class ActorMessageGraph(Model):
         self._graph_type = graph_type
 
     @property
-    def edge_types(self) -> List[str]:
-        """Gets the edge_types of this ActorMessageGraph.
+    def enrichment_name(self) -> str:
+        """Gets the enrichment_name of this ActorMessageGraph.
 
-        The set of all available edge types.  # noqa: E501
+        The type of enrichment used to construct the act2act graph.  # noqa: E501
 
-        :return: The edge_types of this ActorMessageGraph.
-        :rtype: List[str]
+        :return: The enrichment_name of this ActorMessageGraph.
+        :rtype: str
         """
-        return self._edge_types
+        return self._enrichment_name
 
-    @edge_types.setter
-    def edge_types(self, edge_types: List[str]):
-        """Sets the edge_types of this ActorMessageGraph.
+    @enrichment_name.setter
+    def enrichment_name(self, enrichment_name: str):
+        """Sets the enrichment_name of this ActorMessageGraph.
 
-        The set of all available edge types.  # noqa: E501
+        The type of enrichment used to construct the act2act graph.  # noqa: E501
 
-        :param edge_types: The edge_types of this ActorMessageGraph.
-        :type edge_types: List[str]
+        :param enrichment_name: The enrichment_name of this ActorMessageGraph.
+        :type enrichment_name: str
         """
 
-        self._edge_types = edge_types
+        self._enrichment_name = enrichment_name
 
     @property
-    def edges(self) -> List[Object]:
+    def edges(self) -> List[ActorMessageEdge]:
         """Gets the edges of this ActorMessageGraph.
 
 
         :return: The edges of this ActorMessageGraph.
-        :rtype: List[Object]
+        :rtype: List[ActorMessageEdge]
         """
         return self._edges
 
     @edges.setter
-    def edges(self, edges: List[Object]):
+    def edges(self, edges: List[ActorMessageEdge]):
         """Sets the edges of this ActorMessageGraph.
 
 
         :param edges: The edges of this ActorMessageGraph.
-        :type edges: List[Object]
+        :type edges: List[ActorMessageEdge]
         """
 
         self._edges = edges
