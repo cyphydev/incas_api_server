@@ -7,23 +7,6 @@ from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server import util
 
 
-def actor_enrichments_delete(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
-    """actor_enrichments_delete
-
-    Delete specific message enrichment meta by providerName, enrichmentName and version # noqa: E501
-
-    :param enrichment_name: 
-    :type enrichment_name: str
-    :param provider_name: 
-    :type provider_name: str
-    :param version: 
-    :type version: str
-
-    :rtype: None
-    """
-    return 'do some magic!'
-
-
 def message_enrichments_delete(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
     """message_enrichments_delete
 

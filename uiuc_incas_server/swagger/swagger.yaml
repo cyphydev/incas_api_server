@@ -562,7 +562,7 @@ paths:
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
-      - message
+      - actor
       description: "Delete specific message enrichment meta by providerName, enrichmentName\
         \ and version"
       operationId: actor_enrichments_delete
@@ -600,7 +600,7 @@ paths:
           description: id not found
         "401":
           description: Unauthorized
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}/enrichments:
     get:
       tags:
