@@ -6,6 +6,7 @@ from uiuc_incas_server.models.actor_enrichment import ActorEnrichment  # noqa: E
 from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  # noqa: E501
 from uiuc_incas_server import util
 
+db = connexion.utils.get_function_from_name('uiuc_incas_server.util.get_db')()
 
 def actor_enrichments_delete(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
     """actor_enrichments_delete
@@ -77,7 +78,7 @@ def actor_enrichments_put(body, enrichment_name=None, provider_name=None, versio
     return 'do some magic!'
 
 
-def actor_id_enrichments_delete(id, enrichment_name, provider_name, version):  # noqa: E501
+def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version):  # noqa: E501
     """actor_id_enrichments_delete
 
     Delete the enrichments for specific actor by type, providerName and version # noqa: E501
@@ -96,7 +97,7 @@ def actor_id_enrichments_delete(id, enrichment_name, provider_name, version):  #
     return 'do some magic!'
 
 
-def actor_id_enrichments_get(id, enrichment_name=None, provider_name=None, version=None):  # noqa: E501
+def actor_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None):  # noqa: E501
     """actor_id_enrichments_get
 
     Returns all matched enrichment for the specific actor by type, providerName and version # noqa: E501
@@ -115,7 +116,7 @@ def actor_id_enrichments_get(id, enrichment_name=None, provider_name=None, versi
     return 'do some magic!'
 
 
-def actor_id_enrichments_post(body, id):  # noqa: E501
+def actor_id_enrichments_post(body, id_):  # noqa: E501
     """actor_id_enrichments_post
 
     Creates new enrichments for specific message # noqa: E501
@@ -132,7 +133,7 @@ def actor_id_enrichments_post(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_id_enrichments_put(body, enrichment_name, provider_name, version, id):  # noqa: E501
+def actor_id_enrichments_put(body, enrichment_name, provider_name, version, id_):  # noqa: E501
     """actor_id_enrichments_put
 
     Update the enrichments for specific actor by type, providerName and version # noqa: E501
@@ -155,7 +156,7 @@ def actor_id_enrichments_put(body, enrichment_name, provider_name, version, id):
     return 'do some magic!'
 
 
-def actor_id_get(id):  # noqa: E501
+def actor_id_get(id_):  # noqa: E501
     """actor_id_get
 
     Returns specific actor by id # noqa: E501

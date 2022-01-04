@@ -6,6 +6,7 @@ from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMe
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server import util
 
+db = connexion.utils.get_function_from_name('uiuc_incas_server.util.get_db')()
 
 def message_enrichments_delete(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
     """message_enrichments_delete
@@ -77,7 +78,7 @@ def message_enrichments_put(body, enrichment_name=None, provider_name=None, vers
     return 'do some magic!'
 
 
-def message_id_enrichments_delete(id, enrichment_name, provider_name, version):  # noqa: E501
+def message_id_enrichments_delete(id_, enrichment_name, provider_name, version):  # noqa: E501
     """message_id_enrichments_delete
 
     Delete the enrichments for specific message by type, providerName and version # noqa: E501
@@ -96,7 +97,7 @@ def message_id_enrichments_delete(id, enrichment_name, provider_name, version): 
     return 'do some magic!'
 
 
-def message_id_enrichments_get(id, enrichment_name=None, provider_name=None, version=None):  # noqa: E501
+def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None):  # noqa: E501
     """message_id_enrichments_get
 
     Returns all visible matched enrichment for the specific message by type, providerName and version # noqa: E501
@@ -115,7 +116,7 @@ def message_id_enrichments_get(id, enrichment_name=None, provider_name=None, ver
     return 'do some magic!'
 
 
-def message_id_enrichments_post(body, id):  # noqa: E501
+def message_id_enrichments_post(body, id_):  # noqa: E501
     """message_id_enrichments_post
 
     Creates new enrichments for specific message # noqa: E501
@@ -132,7 +133,7 @@ def message_id_enrichments_post(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_id_enrichments_put(body, enrichment_name, provider_name, version, id):  # noqa: E501
+def message_id_enrichments_put(body, enrichment_name, provider_name, version, id_):  # noqa: E501
     """message_id_enrichments_put
 
     Update the enrichments for specific message by type, providerName and version # noqa: E501
@@ -155,7 +156,7 @@ def message_id_enrichments_put(body, enrichment_name, provider_name, version, id
     return 'do some magic!'
 
 
-def message_id_get(id):  # noqa: E501
+def message_id_get(id_):  # noqa: E501
     """message_id_get
 
     Returns specific message by id # noqa: E501
@@ -165,4 +166,4 @@ def message_id_get(id):  # noqa: E501
 
     :rtype: UiucMessage
     """
-    return 'do some magic!'
+    return db.json().get(id_, '.')

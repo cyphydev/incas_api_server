@@ -4,6 +4,16 @@ import six
 import typing
 from uiuc_incas_server import type_util
 
+import redis
+from redis.commands.json.path import Path
+
+db = None
+
+def get_db(server_host='localhost', server_port=6379, db_index=0):
+    global db
+    if db is None:
+        db = redis.Redis(server_host, server_port, db_index)
+    return db
 
 def _deserialize(data, klass):
     """Deserializes dict, list, str into an object.
