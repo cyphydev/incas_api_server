@@ -14,21 +14,6 @@ from uiuc_incas_server.test import BaseTestCase
 class TestMessageController(BaseTestCase):
     """MessageController integration test stubs"""
 
-    def test_actor_enrichments_delete(self):
-        """Test case for actor_enrichments_delete
-
-        
-        """
-        query_string = [('enrichment_name', 'enrichment_name_example'),
-                        ('provider_name', 'provider_name_example'),
-                        ('version', 'version_example')]
-        response = self.client.open(
-            '/api/v1/actor/enrichments',
-            method='DELETE',
-            query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
     def test_message_enrichments_delete(self):
         """Test case for message_enrichments_delete
 
