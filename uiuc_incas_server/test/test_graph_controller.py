@@ -8,8 +8,6 @@ from six import BytesIO
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph  # noqa: E501
 from uiuc_incas_server.models.message_message_graph import MessageMessageGraph  # noqa: E501
-from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
-from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
 
@@ -85,7 +83,7 @@ class TestGraphController(BaseTestCase):
 
         
         """
-        body = [ActorActorGraph()]
+        body = ActorActorGraph()
         response = self.client.open(
             '/api/v1/actorActorGraph',
             method='POST',
@@ -164,7 +162,7 @@ class TestGraphController(BaseTestCase):
 
         
         """
-        body = [ActorMessageGraph()]
+        body = ActorMessageGraph()
         response = self.client.open(
             '/api/v1/actorMessageGraph',
             method='POST',
@@ -242,7 +240,7 @@ class TestGraphController(BaseTestCase):
 
         
         """
-        body = [MessageMessageGraph()]
+        body = MessageMessageGraph()
         response = self.client.open(
             '/api/v1/messageMessageGraph',
             method='POST',

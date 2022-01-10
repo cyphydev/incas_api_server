@@ -10,40 +10,63 @@ servers:
 - url: https://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
 paths:
-  /message/{id}:
+  /message/count:
     get:
       tags:
       - message
-      description: Returns specific message by id
-      operationId: message_id_get
-      parameters:
-      - name: id
-        in: path
-        description: Message ID
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+      description: Return the number of message IDs available.
+      operationId: message_count_get
       responses:
         "200":
-          description: Required message
+          description: Requested list
+          content:
+            text/plain:
+              schema:
+                type: integer
+                description: The number of messages available
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/list:
+    get:
+      tags:
+      - message
+      description: "Return list of message IDs available in [begin, end)."
+      operationId: message_list_get
+      parameters:
+      - name: begin
+        in: query
+        description: Begin
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: end
+        in: query
+        description: End
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Requested list
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UiucMessage'
-        "404":
-          description: Not found
-        "400":
-          description: Invalid query
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
-  /message/enrichments:
+  /message/enrichments/meta:
     get:
       tags:
       - message
-      description: "Returns current message enrichment meta by providerName, enrichmentName\
-        \ and version"
-      operationId: message_enrichments_get
+      description: "Returns current message enrichment metas by providerName, enrichmentName\
+        \ and version."
+      operationId: message_enrichments_meta_get
       parameters:
       - name: enrichmentName
         in: query
@@ -52,11 +75,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: false
@@ -77,57 +95,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnrichmentMeta'
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageEnrichmentMeta'
+                x-content-type: application/json
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     put:
       tags:
       - message
       description: "Updates message enrichment meta (after all messages have been\
-        \ added) by providerName, enrichmentName and version"
-      operationId: message_enrichments_put
-      parameters:
-      - name: enrichmentName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      - name: providerName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+        \ added) by providerName, enrichmentName and version."
+      operationId: message_enrichments_meta_put
       requestBody:
         description: The new enrichment meta to update
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/MessageEnrichmentMeta'
         required: true
       responses:
         "200":
-          description: A list of newly added message enrichment meta
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageEnrichmentMeta'
+          description: Updated
         "400":
           description: Invalid input
         "409":
@@ -136,25 +124,19 @@ paths:
     post:
       tags:
       - message
-      description: Creates message enrichment meta (post after all messages have been
-        added)
-      operationId: message_enrichments_post
+      description: Submits a message enrichment meta (post after all messages have
+        been added).
+      operationId: message_enrichments_meta_post
       requestBody:
         description: The new enrichment meta to add
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/MessageEnrichmentMeta'
         required: true
       responses:
         "201":
-          description: A list of newly added message enrichment meta
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageEnrichmentMeta'
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -164,9 +146,155 @@ paths:
       tags:
       - message
       description: "Delete specific message enrichment meta by providerName, enrichmentName\
-        \ and version"
-      operationId: message_enrichments_delete
+        \ and version."
+      operationId: message_enrichments_meta_delete
       parameters:
+      - name: enrichmentName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batchGet:
+    post:
+      tags:
+      - message
+      description: Returns a batch of enrichments given a list of IDs and specifications.
+      operationId: message_enrichments_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/enrichments_batchGet_body'
+        required: true
+      responses:
+        "200":
+          description: A batch of list of enrichments
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageEnrichment'
+                x-content-type: application/json
+        "404":
+          description: Not found
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batchDelete:
+    post:
+      tags:
+      - message
+      description: Deletes a batch of enrichments given a list of IDs and specifications.
+      operationId: message_enrichments_batch_delete
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/enrichments_batchDelete_body'
+        required: true
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: id not found
+        "401":
+          description: Unauthorized
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batch:
+    put:
+      tags:
+      - message
+      description: Updates a enrichment for each message ID.
+      operationId: message_enrichments_batch_put
+      requestBody:
+        description: Map of IDs and enrichments
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/MessageEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Updated
+        "404":
+          description: Not found
+        "400":
+          description: Invalid query
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+    post:
+      tags:
+      - message
+      description: Submits a enrichment for each message ID.
+      operationId: message_enrichments_batch_post
+      requestBody:
+        description: Map of IDs and enrichments
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/MessageEnrichment'
+        required: true
+      responses:
+        "201":
+          description: Posted
+        "400":
+          description: Invalid input
+        "409":
+          description: Input already exists
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/{id}:
+    get:
+      tags:
+      - message
+      description: Returns specific message by id.
+      operationId: message_id_get
+      parameters:
+      - name: id
+        in: path
+        description: Message ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: withEnrichment
+        in: query
+        description: Whether to retrieve enrichments
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       - name: enrichmentName
         in: query
         required: false
@@ -174,11 +302,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: false
@@ -193,20 +316,31 @@ paths:
         explode: true
         schema:
           type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       responses:
-        "204":
-          description: Deleted
+        "200":
+          description: Requested message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucMessage'
         "404":
-          description: id not found
-        "401":
-          description: Unauthorized
+          description: Not found
+        "400":
+          description: Invalid query
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/{id}/enrichments:
     get:
       tags:
       - message
       description: "Returns all visible matched enrichment for the specific message\
-        \ by type, providerName and version"
+        \ by type, providerName and version."
       operationId: message_id_enrichments_get
       parameters:
       - name: id
@@ -224,11 +358,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: false
@@ -243,6 +372,13 @@ paths:
         explode: true
         schema:
           type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       responses:
         "200":
           description: A list of message enrichments
@@ -261,8 +397,8 @@ paths:
     put:
       tags:
       - message
-      description: "Update the enrichments for specific message by type, providerName\
-        \ and version"
+      description: "Update a enrichment for specific message by type, providerName\
+        \ and version."
       operationId: message_id_enrichments_put
       parameters:
       - name: id
@@ -273,51 +409,16 @@ paths:
         explode: false
         schema:
           type: string
-      - name: enrichmentName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      - name: providerName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
       requestBody:
         description: The new enrichments to update
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "200":
-          description: A list of updated message enrichments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MessageEnrichment'
-                x-content-type: application/json
+          description: Updated
         "404":
           description: Not found
         "400":
@@ -326,7 +427,7 @@ paths:
     post:
       tags:
       - message
-      description: Creates new enrichments for specific message
+      description: Submits a new enrichment for specific message.
       operationId: message_id_enrichments_post
       parameters:
       - name: id
@@ -342,20 +443,11 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "201":
-          description: A list of new message enrichments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MessageEnrichment'
-                x-content-type: application/json
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -364,8 +456,8 @@ paths:
     delete:
       tags:
       - message
-      description: "Delete the enrichments for specific message by type, providerName\
-        \ and version"
+      description: "Delete a enrichment for specific message by type, providerName\
+        \ and version."
       operationId: message_id_enrichments_delete
       parameters:
       - name: id
@@ -383,11 +475,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: true
@@ -410,40 +497,89 @@ paths:
         "401":
           description: Unauthorized
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
-  /actor/{id}:
-    get:
+  /message/batchGet:
+    post:
       tags:
-      - actor
-      description: Returns specific actor by id
-      operationId: actor_id_get
-      parameters:
-      - name: id
-        in: path
-        description: Actor ID
+      - message
+      description: Returns a batch of messages given a list of IDs and specifications.
+      operationId: message_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message_batchGet_body'
         required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
       responses:
         "200":
-          description: A list of actor enrichments
+          description: A batch of messages
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Actor'
+                type: array
+                items:
+                  $ref: '#/components/schemas/UiucMessage'
+                x-content-type: application/json
         "404":
           description: Not found
-        "400":
-          description: Invalid query
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-  /actor/enrichments:
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /actor/count:
     get:
       tags:
       - actor
-      description: "Returns current actor enrichment meta by providerName, enrichmentName\
-        \ and version"
-      operationId: actor_enrichments_get
+      description: Return the number of actor IDs available.
+      operationId: actor_count_get
+      responses:
+        "200":
+          description: Requested list
+          content:
+            text/plain:
+              schema:
+                type: integer
+                description: The number of actors available
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/list:
+    get:
+      tags:
+      - actor
+      description: "Return list of actor IDs available in [begin, end)."
+      operationId: actor_list_get
+      parameters:
+      - name: begin
+        in: query
+        description: Begin
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: end
+        in: query
+        description: End
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Requested list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/meta:
+    get:
+      tags:
+      - actor
+      description: "Returns current actor enrichment metas by providerName, enrichmentName\
+        \ and version."
+      operationId: actor_enrichments_meta_get
       parameters:
       - name: enrichmentName
         in: query
@@ -452,11 +588,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: false
@@ -477,57 +608,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorEnrichmentMeta'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActorEnrichmentMeta'
+                x-content-type: application/json
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     put:
       tags:
       - actor
-      description: "Updates actor enrichment meta (after all actors have been added)\
-        \ by providerName, enrichmentName and version"
-      operationId: actor_enrichments_put
-      parameters:
-      - name: enrichmentName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      - name: providerName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+      description: "Updates an actor enrichment meta (after all actors have been added)\
+        \ by providerName, enrichmentName and version."
+      operationId: actor_enrichments_meta_put
       requestBody:
         description: The new enrichment meta to update
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/ActorEnrichmentMeta'
         required: true
       responses:
         "200":
-          description: A list of newly added actor enrichment meta
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActorEnrichmentMeta'
+          description: Updated
         "400":
           description: Invalid input
         "409":
@@ -536,25 +637,19 @@ paths:
     post:
       tags:
       - actor
-      description: Creates actor enrichment meta (post after all actors have been
-        added)
-      operationId: actor_enrichments_post
+      description: Submits an actor enrichment meta (post after all actors have been
+        added).
+      operationId: actor_enrichments_meta_post
       requestBody:
         description: The new enrichment meta to add
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/ActorEnrichmentMeta'
         required: true
       responses:
         "201":
-          description: A list of newly added Actor enrichment meta
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActorEnrichmentMeta'
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -563,32 +658,27 @@ paths:
     delete:
       tags:
       - actor
-      description: "Delete specific message enrichment meta by providerName, enrichmentName\
-        \ and version"
-      operationId: actor_enrichments_delete
+      description: "Delete a specific message enrichment meta by providerName, enrichmentName\
+        \ and version."
+      operationId: actor_enrichments_meta_delete
       parameters:
       - name: enrichmentName
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
@@ -601,12 +691,169 @@ paths:
         "401":
           description: Unauthorized
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batchGet:
+    post:
+      tags:
+      - actor
+      description: Returns a batch of enrichments given a list of IDs and specifications.
+      operationId: actor_enrichments_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/enrichments_batchGet_body_1'
+        required: true
+      responses:
+        "200":
+          description: A batch of list of enrichments
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ActorEnrichment'
+                x-content-type: application/json
+        "404":
+          description: Not found
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batchDelete:
+    post:
+      tags:
+      - actor
+      description: Deletes a batch of enrichments given a list of IDs and specifications.
+      operationId: actor_enrichments_batch_delete
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/enrichments_batchDelete_body_1'
+        required: true
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: id not found
+        "401":
+          description: Unauthorized
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batch:
+    put:
+      tags:
+      - actor
+      description: Updates a enrichment for each actor ID.
+      operationId: actor_enrichments_batch_put
+      requestBody:
+        description: Map of IDs and enrichments
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Updated
+        "404":
+          description: Not found
+        "400":
+          description: Invalid query
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Submits a enrichment for each actor ID.
+      operationId: actor_enrichments_batch_post
+      requestBody:
+        description: Map of IDs and enrichments
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorEnrichment'
+        required: true
+      responses:
+        "201":
+          description: Posted
+        "400":
+          description: Invalid input
+        "409":
+          description: Input already exists
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/{id}:
+    get:
+      tags:
+      - actor
+      description: Returns specific actor by id.
+      operationId: actor_id_get
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: withEnrichment
+        in: query
+        description: Whether to retrieve enrichments
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - name: enrichmentName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: Requested actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucActor'
+        "404":
+          description: Not found
+        "400":
+          description: Invalid query
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}/enrichments:
     get:
       tags:
       - actor
       description: "Returns all matched enrichment for the specific actor by type,\
-        \ providerName and version"
+        \ providerName and version."
       operationId: actor_id_enrichments_get
       parameters:
       - name: id
@@ -624,11 +871,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: false
@@ -643,6 +885,13 @@ paths:
         explode: true
         schema:
           type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       responses:
         "200":
           description: A list of actor enrichments
@@ -662,41 +911,15 @@ paths:
       tags:
       - actor
       description: "Update the enrichments for specific actor by type, providerName\
-        \ and version"
+        \ and version."
       operationId: actor_id_enrichments_put
       parameters:
       - name: id
         in: path
-        description: Message ID
+        description: Actor ID
         required: true
         style: simple
         explode: false
-        schema:
-          type: string
-      - name: enrichmentName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      - name: providerName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: true
-        style: form
-        explode: true
         schema:
           type: string
       requestBody:
@@ -704,20 +927,11 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "200":
-          description: A list of updated actor enrichments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorEnrichment'
-                x-content-type: application/json
+          description: Updated
         "404":
           description: Not found
         "400":
@@ -726,7 +940,7 @@ paths:
     post:
       tags:
       - actor
-      description: Creates new enrichments for specific message
+      description: Submits a new enrichment for specific message.
       operationId: actor_id_enrichments_post
       parameters:
       - name: id
@@ -742,20 +956,11 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "201":
-          description: A list of new actor enrichments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorEnrichment'
-                x-content-type: application/json
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -783,11 +988,6 @@ paths:
         explode: true
         schema:
           type: string
-          enum:
-          - category
-          - numerical
-          - array
-          - text
       - name: providerName
         in: query
         required: true
@@ -810,11 +1010,37 @@ paths:
         "401":
           description: Unauthorized
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/batchGet:
+    post:
+      tags:
+      - actor
+      description: Returns a batch of actors given a list of IDs and specifications.
+      operationId: actor_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/actor_batchGet_body'
+        required: true
+      responses:
+        "200":
+          description: A batch of actors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UiucActor'
+                x-content-type: application/json
+        "404":
+          description: Not found
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /messageMessageGraph/{id}:
     get:
       tags:
       - graph
-      description: Gets specific message-message graph information by id
+      description: Gets specific message-message graph information by id.
       operationId: message_message_graph_id_get
       parameters:
       - name: id
@@ -827,14 +1053,11 @@ paths:
           type: string
       responses:
         "200":
-          description: Required graph
+          description: Requested graph
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MessageMessageGraph'
-                x-content-type: application/json
+                $ref: '#/components/schemas/MessageMessageGraph'
         "404":
           description: Not found
         "400":
@@ -843,7 +1066,7 @@ paths:
     put:
       tags:
       - graph
-      description: Update the specific message-message graph by id
+      description: Update the specific message-message graph by id.
       operationId: message_message_graph_id_put
       parameters:
       - name: id
@@ -863,11 +1086,7 @@ paths:
         required: true
       responses:
         "200":
-          description: Updated graph
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageMessageGraph'
+          description: Updated
         "404":
           description: Not found
         "400":
@@ -876,7 +1095,7 @@ paths:
     delete:
       tags:
       - graph
-      description: Delete the specific graph by id
+      description: Delete the specific graph by id.
       operationId: message_message_graph_id_delete
       parameters:
       - name: id
@@ -899,7 +1118,7 @@ paths:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version"
+      description: "Gets graph id by providerName, timestamp and version."
       operationId: message_message_graph_get
       parameters:
       - name: providerName
@@ -918,7 +1137,7 @@ paths:
           type: string
       - name: version
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
@@ -927,10 +1146,10 @@ paths:
         "200":
           description: Required graph id
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
-                x-content-type: application/json
+                x-content-type: text/plain
         "404":
           description: Not found
         "400":
@@ -939,27 +1158,18 @@ paths:
     post:
       tags:
       - graph
-      description: Creates new graphs
+      description: Submits a new graph.
       operationId: message_message_graph_post
       requestBody:
-        description: The new graphs to add
+        description: The new graph to add
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MessageMessageGraph'
+              $ref: '#/components/schemas/MessageMessageGraph'
         required: true
       responses:
         "201":
-          description: A list of new graphs
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MessageMessageGraph'
-                x-content-type: application/json
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -970,7 +1180,7 @@ paths:
       tags:
       - graph
       description: Gets the neighbors for specific node from specific graph by graph
-        id and message's id
+        id and message's id.
       operationId: message_message_graph_id_neighbor_get
       parameters:
       - name: id
@@ -990,15 +1200,13 @@ paths:
           type: string
       responses:
         "200":
-          description: Required neigbours
+          description: Requested neighbors
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/UiucMessage'
+                  type: string
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1009,7 +1217,7 @@ paths:
     get:
       tags:
       - graph
-      description: Gets specific actor-message graph information by id
+      description: Gets specific actor-message graph information by id.
       operationId: actor_message_graph_id_get
       parameters:
       - name: id
@@ -1022,14 +1230,11 @@ paths:
           type: string
       responses:
         "200":
-          description: Required graph
+          description: Requested graph
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorMessageGraph'
-                x-content-type: application/json
+                $ref: '#/components/schemas/ActorMessageGraph'
         "404":
           description: Not found
         "400":
@@ -1038,7 +1243,7 @@ paths:
     put:
       tags:
       - graph
-      description: Update the specific actor-message graph by id
+      description: Update the specific actor-message graph by id.
       operationId: actor_message_graph_id_put
       parameters:
       - name: id
@@ -1058,11 +1263,7 @@ paths:
         required: true
       responses:
         "200":
-          description: Updated graph
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActorMessageGraph'
+          description: Updated
         "404":
           description: Not found
         "400":
@@ -1071,7 +1272,7 @@ paths:
     delete:
       tags:
       - graph
-      description: Delete the specific graph by id
+      description: Delete the specific graph by id.
       operationId: actor_message_graph_id_delete
       parameters:
       - name: id
@@ -1094,7 +1295,7 @@ paths:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version"
+      description: "Gets graph id by providerName, timestamp and version."
       operationId: actor_message_graph_get
       parameters:
       - name: providerName
@@ -1113,19 +1314,19 @@ paths:
           type: string
       - name: version
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Required graph id
+          description: Requested graph id
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
-                x-content-type: application/json
+                x-content-type: text/plain
         "404":
           description: Not found
         "400":
@@ -1134,27 +1335,18 @@ paths:
     post:
       tags:
       - graph
-      description: Creates new graphs
+      description: Submits a new graph.
       operationId: actor_message_graph_post
       requestBody:
         description: The new graphs to add
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorMessageGraph'
+              $ref: '#/components/schemas/ActorMessageGraph'
         required: true
       responses:
         "201":
-          description: A list of new graphs
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorMessageGraph'
-                x-content-type: application/json
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -1165,7 +1357,7 @@ paths:
       tags:
       - graph
       description: Gets the neighbors for specific node from specific graph by graph
-        id and message or actor id
+        id and message or actor id.
       operationId: actor_message_graph_id_neighbor_get
       parameters:
       - name: id
@@ -1192,17 +1384,13 @@ paths:
           type: string
       responses:
         "200":
-          description: Required neigbours
+          description: Requested neighbors
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    oneOf:
-                    - $ref: '#/components/schemas/UiucMessage'
-                    - $ref: '#/components/schemas/UiucActor'
+                  type: string
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1213,7 +1401,7 @@ paths:
     get:
       tags:
       - graph
-      description: Gets specific actor-actor graph information by id
+      description: Gets specific actor-actor graph information by id.
       operationId: actor_actor_graph_id_get
       parameters:
       - name: id
@@ -1226,14 +1414,11 @@ paths:
           type: string
       responses:
         "200":
-          description: Required graph
+          description: Requested graph
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorActorGraph'
-                x-content-type: application/json
+                $ref: '#/components/schemas/ActorActorGraph'
         "404":
           description: Not found
         "400":
@@ -1242,7 +1427,7 @@ paths:
     put:
       tags:
       - graph
-      description: Update the specific actor-actor graph by id
+      description: Update the specific actor-actor graph by id.
       operationId: actor_actor_graph_id_put
       parameters:
       - name: id
@@ -1262,11 +1447,7 @@ paths:
         required: true
       responses:
         "200":
-          description: Updated graph
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActorActorGraph'
+          description: Updated
         "404":
           description: Not found
         "400":
@@ -1275,7 +1456,7 @@ paths:
     delete:
       tags:
       - graph
-      description: Delete the specific graph by id
+      description: Delete the specific graph by id.
       operationId: actor_actor_graph_id_delete
       parameters:
       - name: id
@@ -1298,7 +1479,7 @@ paths:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version"
+      description: "Gets graph id by providerName, timestamp and version."
       operationId: actor_actor_graph_get
       parameters:
       - name: providerName
@@ -1317,19 +1498,19 @@ paths:
           type: string
       - name: version
         in: query
-        required: false
+        required: true
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Required graph id
+          description: Requested graph id
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
-                x-content-type: application/json
+                x-content-type: text/plain
         "404":
           description: Not found
         "400":
@@ -1338,27 +1519,18 @@ paths:
     post:
       tags:
       - graph
-      description: Creates new graphs
+      description: Submits a new graph.
       operationId: actor_actor_graph_post
       requestBody:
         description: The new graphs to add
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ActorActorGraph'
+              $ref: '#/components/schemas/ActorActorGraph'
         required: true
       responses:
         "201":
-          description: A list of new graphs
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorActorGraph'
-                x-content-type: application/json
+          description: Posted
         "400":
           description: Invalid input
         "409":
@@ -1369,7 +1541,7 @@ paths:
       tags:
       - graph
       description: Gets the neighbors for specific node from specific graph by graph
-        id and actor id
+        id and actor id.
       operationId: actor_actor_graph_id_neighbor_get
       parameters:
       - name: id
@@ -1389,15 +1561,13 @@ paths:
           type: string
       responses:
         "200":
-          description: Required neigbours
+          description: Requested neighbors
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/UiucActor'
+                  type: string
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1412,18 +1582,45 @@ components:
       - $ref: '#/components/schemas/Message'
       - type: object
         properties:
+          uiucAuthorId:
+            type: string
           enrichments:
             type: array
             items:
+              $ref: '#/components/schemas/MessageEnrichment'
+    UiucMessageDB:
+      description: "a post of social media, news, etc."
+      allOf:
+      - $ref: '#/components/schemas/Message'
+      - type: object
+        properties:
+          uiucAuthorId:
+            type: string
+          enrichments:
+            type: object
+            additionalProperties:
               $ref: '#/components/schemas/MessageEnrichment'
     UiucActor:
       allOf:
       - $ref: '#/components/schemas/Actor'
       - type: object
         properties:
+          uiucAuthorId:
+            type: string
           enrichments:
             type: array
             items:
+              $ref: '#/components/schemas/ActorEnrichment'
+    UiucActorDB:
+      allOf:
+      - $ref: '#/components/schemas/Actor'
+      - type: object
+        properties:
+          uiucAuthorId:
+            type: string
+          enrichments:
+            type: object
+            additionalProperties:
               $ref: '#/components/schemas/ActorEnrichment'
     UiucSegment:
       required:
@@ -1908,6 +2105,19 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/MessageToMessageEdge'
+    MessageMessageGraphDB:
+      description: Defines the message-to-message graph.
+      allOf:
+      - $ref: '#/components/schemas/BaseGraph'
+      - type: object
+        properties:
+          enrichmentName:
+            type: string
+            description: The type of enrichment used to construct the msg2msg graph.
+          edges:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/MessageToMessageEdge'
     ActorActorGraph:
       description: Defines the actor-to-actor graph.
       allOf:
@@ -1921,8 +2131,8 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ActorToActorEdge'
-    ActorMessageGraph:
-      description: Defines the actor-to-message graph.
+    ActorActorGraphDB:
+      description: Defines the actor-to-actor graph.
       allOf:
       - $ref: '#/components/schemas/BaseGraph'
       - type: object
@@ -1931,237 +2141,37 @@ components:
             type: string
             description: The type of enrichment used to construct the act2act graph.
           edges:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActorToActorEdge'
+    ActorMessageGraph:
+      description: Defines the actor-message graph.
+      allOf:
+      - $ref: '#/components/schemas/BaseGraph'
+      - type: object
+        properties:
+          enrichmentName:
+            type: string
+            description: The type of enrichment used to construct the act-msg graph.
+          edges:
             type: array
             items:
               $ref: '#/components/schemas/ActorMessageEdge'
+    ActorMessageGraphDB:
+      description: Defines the actor-message graph.
+      allOf:
+      - $ref: '#/components/schemas/BaseGraph'
+      - type: object
+        properties:
+          enrichmentName:
+            type: string
+            description: The type of enrichment used to construct the act-msg graph.
+          edges:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActorMessageEdge'
     Response:
       description: how to define it?
-    Actor:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        actorName:
-          type: string
-        links:
-          $ref: '#/components/schemas/Links'
-        entityType:
-          type: string
-          enum:
-          - ENTITY_UNSPECIFIED
-          - Person
-          - Media
-          - Organization
-          - Government
-        mediaResources:
-          type: array
-          items:
-            $ref: '#/components/schemas/MediaResource'
-        knowledgeBaseUrl:
-          type: string
-        language:
-          type: string
-        description:
-          type: string
-        annotations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Annotation'
-        extraAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExtraAttribute'
-      example:
-        knowledgeBaseUrl: knowledgeBaseUrl
-        mediaResources:
-        - accountStatus: accountStatus
-          accountId: accountId
-          hashedUserNames:
-          - hashedUserNames
-          - hashedUserNames
-          accountType: MEDIA_UNSPECIFIED
-          displayNames:
-          - displayNames
-          - displayNames
-          verified: true
-          userNames:
-          - userNames
-          - userNames
-          url: url
-        - accountStatus: accountStatus
-          accountId: accountId
-          hashedUserNames:
-          - hashedUserNames
-          - hashedUserNames
-          accountType: MEDIA_UNSPECIFIED
-          displayNames:
-          - displayNames
-          - displayNames
-          verified: true
-          userNames:
-          - userNames
-          - userNames
-          url: url
-        entityType: ENTITY_UNSPECIFIED
-        name: name
-        description: description
-        annotations:
-        - offsets:
-          - end: 6
-            begin: 0
-          - end: 6
-            begin: 0
-          confidence: 1.4658129805029452
-          name: name
-          id: id
-          text: text
-          type: type
-          providerName: providerName
-        - offsets:
-          - end: 6
-            begin: 0
-          - end: 6
-            begin: 0
-          confidence: 1.4658129805029452
-          name: name
-          id: id
-          text: text
-          type: type
-          providerName: providerName
-        actorName: actorName
-        links:
-          self: self
-        language: language
-        id: id
-        extraAttributes:
-        - attributeValue: attributeValue
-          name: name
-          id: id
-          attributeKey: attributeKey
-          providerName: providerName
-        - attributeValue: attributeValue
-          name: name
-          id: id
-          attributeKey: attributeKey
-          providerName: providerName
-    Links:
-      type: object
-      properties:
-        self:
-          type: string
-      example:
-        self: self
-    MediaResource:
-      type: object
-      properties:
-        accountType:
-          type: string
-          enum:
-          - MEDIA_UNSPECIFIED
-          - News
-          - Reddit
-          - Twitter
-          - Webpage
-        accountId:
-          type: string
-        userNames:
-          type: array
-          items:
-            type: string
-        hashedUserNames:
-          type: array
-          items:
-            type: string
-        accountStatus:
-          type: string
-        displayNames:
-          type: array
-          items:
-            type: string
-        verified:
-          type: boolean
-        url:
-          type: string
-      example:
-        accountStatus: accountStatus
-        accountId: accountId
-        hashedUserNames:
-        - hashedUserNames
-        - hashedUserNames
-        accountType: MEDIA_UNSPECIFIED
-        displayNames:
-        - displayNames
-        - displayNames
-        verified: true
-        userNames:
-        - userNames
-        - userNames
-        url: url
-    Annotation:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        providerName:
-          type: string
-        type:
-          type: string
-        offsets:
-          type: array
-          items:
-            $ref: '#/components/schemas/Offset'
-        text:
-          type: string
-        confidence:
-          type: number
-          format: double
-      example:
-        offsets:
-        - end: 6
-          begin: 0
-        - end: 6
-          begin: 0
-        confidence: 1.4658129805029452
-        name: name
-        id: id
-        text: text
-        type: type
-        providerName: providerName
-    Offset:
-      type: object
-      properties:
-        begin:
-          type: integer
-          format: int64
-        end:
-          type: integer
-          format: int64
-      example:
-        end: 6
-        begin: 0
-    ExtraAttribute:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        providerName:
-          type: string
-        attributeKey:
-          type: string
-        attributeValue:
-          type: string
-      example:
-        attributeValue: attributeValue
-        name: name
-        id: id
-        attributeKey: attributeKey
-        providerName: providerName
     Message:
       type: object
       properties:
@@ -2212,6 +2222,121 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ExtraAttribute'
+    Actor:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        actorName:
+          type: string
+        links:
+          $ref: '#/components/schemas/Links'
+        entityType:
+          type: string
+          enum:
+          - ENTITY_UNSPECIFIED
+          - Person
+          - Media
+          - Organization
+          - Government
+        mediaResources:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaResource'
+        knowledgeBaseUrl:
+          type: string
+        language:
+          type: string
+        description:
+          type: string
+        annotations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        extraAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtraAttribute'
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+    MediaResource:
+      type: object
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
+        accountId:
+          type: string
+        userNames:
+          type: array
+          items:
+            type: string
+        hashedUserNames:
+          type: array
+          items:
+            type: string
+        accountStatus:
+          type: string
+        displayNames:
+          type: array
+          items:
+            type: string
+        verified:
+          type: boolean
+        url:
+          type: string
+    Annotation:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        providerName:
+          type: string
+        type:
+          type: string
+        offsets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Offset'
+        text:
+          type: string
+        confidence:
+          type: number
+          format: double
+    Offset:
+      type: object
+      properties:
+        begin:
+          type: integer
+          format: int64
+        end:
+          type: integer
+          format: int64
+    ExtraAttribute:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        providerName:
+          type: string
+        attributeKey:
+          type: string
+        attributeValue:
+          type: string
     OneOfMediaTypeAttributes:
       type: object
       properties:
@@ -2273,4 +2398,108 @@ components:
         type: string
       description: "This is a hash map (or dictionary) with strings as keys and strings\
         \ as values, that is used to put custom user data on an object"
+    enrichments_batchGet_body:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    enrichments_batchDelete_body:
+      required:
+      - enrichmentName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    message_batchGet_body:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        withEnrichment:
+          type: boolean
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
+    enrichments_batchGet_body_1:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    enrichments_batchDelete_body_1:
+      required:
+      - enrichmentName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    actor_batchGet_body:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        withEnrichment:
+          type: boolean
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
 

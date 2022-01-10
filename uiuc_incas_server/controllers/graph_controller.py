@@ -4,15 +4,13 @@ import six
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph  # noqa: E501
 from uiuc_incas_server.models.message_message_graph import MessageMessageGraph  # noqa: E501
-from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
-from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server import util
 
 
-def actor_actor_graph_get(provider_name, time_stamp, version=None):  # noqa: E501
+def actor_actor_graph_get(provider_name, time_stamp, version):  # noqa: E501
     """actor_actor_graph_get
 
-    Gets graph id by providerName, timestamp and version # noqa: E501
+    Gets graph id by providerName, timestamp and version. # noqa: E501
 
     :param provider_name: 
     :type provider_name: str
@@ -26,10 +24,10 @@ def actor_actor_graph_get(provider_name, time_stamp, version=None):  # noqa: E50
     return 'do some magic!'
 
 
-def actor_actor_graph_id_delete(id_):  # noqa: E501
+def actor_actor_graph_id_delete(id):  # noqa: E501
     """actor_actor_graph_id_delete
 
-    Delete the specific graph by id # noqa: E501
+    Delete the specific graph by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
@@ -39,45 +37,45 @@ def actor_actor_graph_id_delete(id_):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_actor_graph_id_get(id_):  # noqa: E501
+def actor_actor_graph_id_get(id):  # noqa: E501
     """actor_actor_graph_id_get
 
-    Gets specific actor-actor graph information by id # noqa: E501
+    Gets specific actor-actor graph information by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
 
-    :rtype: List[ActorActorGraph]
+    :rtype: ActorActorGraph
     """
     return 'do some magic!'
 
 
-def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
+def actor_actor_graph_id_neighbor_get(id, actor_id):  # noqa: E501
     """actor_actor_graph_id_neighbor_get
 
-    Gets the neighbors for specific node from specific graph by graph id and actor id # noqa: E501
+    Gets the neighbors for specific node from specific graph by graph id and actor id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
     :param actor_id: 
     :type actor_id: str
 
-    :rtype: List[List[UiucActor]]
+    :rtype: List[str]
     """
     return 'do some magic!'
 
 
-def actor_actor_graph_id_put(body, id_):  # noqa: E501
+def actor_actor_graph_id_put(body, id):  # noqa: E501
     """actor_actor_graph_id_put
 
-    Update the specific actor-actor graph by id # noqa: E501
+    Update the specific actor-actor graph by id. # noqa: E501
 
     :param body: The new graph to update
     :type body: dict | bytes
     :param id: Graph ID
     :type id: str
 
-    :rtype: ActorActorGraph
+    :rtype: None
     """
     if connexion.request.is_json:
         body = ActorActorGraph.from_dict(connexion.request.get_json())  # noqa: E501
@@ -87,22 +85,22 @@ def actor_actor_graph_id_put(body, id_):  # noqa: E501
 def actor_actor_graph_post(body):  # noqa: E501
     """actor_actor_graph_post
 
-    Creates new graphs # noqa: E501
+    Submits a new graph. # noqa: E501
 
     :param body: The new graphs to add
-    :type body: list | bytes
+    :type body: dict | bytes
 
-    :rtype: List[ActorActorGraph]
+    :rtype: None
     """
     if connexion.request.is_json:
-        body = [ActorActorGraph.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
+        body = ActorActorGraph.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
-def actor_message_graph_get(provider_name, time_stamp, version=None):  # noqa: E501
+def actor_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
     """actor_message_graph_get
 
-    Gets graph id by providerName, timestamp and version # noqa: E501
+    Gets graph id by providerName, timestamp and version. # noqa: E501
 
     :param provider_name: 
     :type provider_name: str
@@ -116,10 +114,10 @@ def actor_message_graph_get(provider_name, time_stamp, version=None):  # noqa: E
     return 'do some magic!'
 
 
-def actor_message_graph_id_delete(id_):  # noqa: E501
+def actor_message_graph_id_delete(id):  # noqa: E501
     """actor_message_graph_id_delete
 
-    Delete the specific graph by id # noqa: E501
+    Delete the specific graph by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
@@ -129,23 +127,23 @@ def actor_message_graph_id_delete(id_):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_message_graph_id_get(id_):  # noqa: E501
+def actor_message_graph_id_get(id):  # noqa: E501
     """actor_message_graph_id_get
 
-    Gets specific actor-message graph information by id # noqa: E501
+    Gets specific actor-message graph information by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
 
-    :rtype: List[ActorMessageGraph]
+    :rtype: ActorMessageGraph
     """
     return 'do some magic!'
 
 
-def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  # noqa: E501
+def actor_message_graph_id_neighbor_get(id, message_id=None, actor_id=None):  # noqa: E501
     """actor_message_graph_id_neighbor_get
 
-    Gets the neighbors for specific node from specific graph by graph id and message or actor id # noqa: E501
+    Gets the neighbors for specific node from specific graph by graph id and message or actor id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
@@ -154,22 +152,22 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  #
     :param actor_id: 
     :type actor_id: str
 
-    :rtype: List[List[Object]]
+    :rtype: List[str]
     """
     return 'do some magic!'
 
 
-def actor_message_graph_id_put(body, id_):  # noqa: E501
+def actor_message_graph_id_put(body, id):  # noqa: E501
     """actor_message_graph_id_put
 
-    Update the specific actor-message graph by id # noqa: E501
+    Update the specific actor-message graph by id. # noqa: E501
 
     :param body: The new graph to update
     :type body: dict | bytes
     :param id: Graph ID
     :type id: str
 
-    :rtype: ActorMessageGraph
+    :rtype: None
     """
     if connexion.request.is_json:
         body = ActorMessageGraph.from_dict(connexion.request.get_json())  # noqa: E501
@@ -179,22 +177,22 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
 def actor_message_graph_post(body):  # noqa: E501
     """actor_message_graph_post
 
-    Creates new graphs # noqa: E501
+    Submits a new graph. # noqa: E501
 
     :param body: The new graphs to add
-    :type body: list | bytes
+    :type body: dict | bytes
 
-    :rtype: List[ActorMessageGraph]
+    :rtype: None
     """
     if connexion.request.is_json:
-        body = [ActorMessageGraph.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
+        body = ActorMessageGraph.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_get(provider_name, time_stamp, version=None):  # noqa: E501
+def message_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
     """message_message_graph_get
 
-    Gets graph id by providerName, timestamp and version # noqa: E501
+    Gets graph id by providerName, timestamp and version. # noqa: E501
 
     :param provider_name: 
     :type provider_name: str
@@ -208,10 +206,10 @@ def message_message_graph_get(provider_name, time_stamp, version=None):  # noqa:
     return 'do some magic!'
 
 
-def message_message_graph_id_delete(id_):  # noqa: E501
+def message_message_graph_id_delete(id):  # noqa: E501
     """message_message_graph_id_delete
 
-    Delete the specific graph by id # noqa: E501
+    Delete the specific graph by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
@@ -221,45 +219,45 @@ def message_message_graph_id_delete(id_):  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_id_get(id_):  # noqa: E501
+def message_message_graph_id_get(id):  # noqa: E501
     """message_message_graph_id_get
 
-    Gets specific message-message graph information by id # noqa: E501
+    Gets specific message-message graph information by id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
 
-    :rtype: List[MessageMessageGraph]
+    :rtype: MessageMessageGraph
     """
     return 'do some magic!'
 
 
-def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
+def message_message_graph_id_neighbor_get(id, message_id):  # noqa: E501
     """message_message_graph_id_neighbor_get
 
-    Gets the neighbors for specific node from specific graph by graph id and message&#x27;s id # noqa: E501
+    Gets the neighbors for specific node from specific graph by graph id and message&#x27;s id. # noqa: E501
 
     :param id: Graph ID
     :type id: str
     :param message_id: 
     :type message_id: str
 
-    :rtype: List[List[UiucMessage]]
+    :rtype: List[str]
     """
     return 'do some magic!'
 
 
-def message_message_graph_id_put(body, id_):  # noqa: E501
+def message_message_graph_id_put(body, id):  # noqa: E501
     """message_message_graph_id_put
 
-    Update the specific message-message graph by id # noqa: E501
+    Update the specific message-message graph by id. # noqa: E501
 
     :param body: The new graph to update
     :type body: dict | bytes
     :param id: Graph ID
     :type id: str
 
-    :rtype: MessageMessageGraph
+    :rtype: None
     """
     if connexion.request.is_json:
         body = MessageMessageGraph.from_dict(connexion.request.get_json())  # noqa: E501
@@ -269,13 +267,13 @@ def message_message_graph_id_put(body, id_):  # noqa: E501
 def message_message_graph_post(body):  # noqa: E501
     """message_message_graph_post
 
-    Creates new graphs # noqa: E501
+    Submits a new graph. # noqa: E501
 
-    :param body: The new graphs to add
-    :type body: list | bytes
+    :param body: The new graph to add
+    :type body: dict | bytes
 
-    :rtype: List[MessageMessageGraph]
+    :rtype: None
     """
     if connexion.request.is_json:
-        body = [MessageMessageGraph.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
+        body = MessageMessageGraph.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
