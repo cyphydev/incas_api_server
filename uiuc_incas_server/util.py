@@ -15,6 +15,8 @@ from six.moves.urllib.parse import quote
 from uiuc_incas_server import type_util
 import uiuc_incas_server.models
 
+import redis
+
 PRIMITIVE_TYPES = (float, bool, bytes, six.text_type) + six.integer_types
 NATIVE_TYPES_MAPPING = {
     'int': int,
@@ -26,6 +28,28 @@ NATIVE_TYPES_MAPPING = {
     'datetime': datetime.datetime,
     'object': object,
 }
+
+DB_IDX = {
+    'index': 0,
+    'message_data': 1,
+    'actor_data': 2,
+    'meta': 3,
+    'graph': 4
+}
+
+DB_MAP = {
+    'index': None,
+    'message_data': None,
+    'actor_data', None,
+    'meta': None,
+    'graph': None
+}
+
+def get_db(server_host='localhost', server_port=6379, db_name):
+    global DB_MAP
+    if DB_MAP[db_name] is None:
+        DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name])
+    return DB_MAP[db_name]
 
 def serialize(obj):
     return sanitize_for_serialization(obj)

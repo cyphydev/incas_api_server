@@ -1,10 +1,16 @@
 import connexion
 import six
 
+import redis
+from jsonpath_ng import jsonpath, parse
+from redis.commands.json.path import Path
+
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph  # noqa: E501
 from uiuc_incas_server.models.message_message_graph import MessageMessageGraph  # noqa: E501
 from uiuc_incas_server import util
+
+get_db = connexion.utils.get_function_from_name('uiuc_incas_server.util.get_db')
 
 
 def actor_actor_graph_get(provider_name, time_stamp, version):  # noqa: E501
@@ -24,7 +30,7 @@ def actor_actor_graph_get(provider_name, time_stamp, version):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_actor_graph_id_delete(id):  # noqa: E501
+def actor_actor_graph_id_delete(id_):  # noqa: E501
     """actor_actor_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -37,7 +43,7 @@ def actor_actor_graph_id_delete(id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_actor_graph_id_get(id):  # noqa: E501
+def actor_actor_graph_id_get(id_):  # noqa: E501
     """actor_actor_graph_id_get
 
     Gets specific actor-actor graph information by id. # noqa: E501
@@ -50,7 +56,7 @@ def actor_actor_graph_id_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_actor_graph_id_neighbor_get(id, actor_id):  # noqa: E501
+def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
     """actor_actor_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and actor id. # noqa: E501
@@ -65,7 +71,7 @@ def actor_actor_graph_id_neighbor_get(id, actor_id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_actor_graph_id_put(body, id):  # noqa: E501
+def actor_actor_graph_id_put(body, id_):  # noqa: E501
     """actor_actor_graph_id_put
 
     Update the specific actor-actor graph by id. # noqa: E501
@@ -114,7 +120,7 @@ def actor_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_message_graph_id_delete(id):  # noqa: E501
+def actor_message_graph_id_delete(id_):  # noqa: E501
     """actor_message_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -127,7 +133,7 @@ def actor_message_graph_id_delete(id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_message_graph_id_get(id):  # noqa: E501
+def actor_message_graph_id_get(id_):  # noqa: E501
     """actor_message_graph_id_get
 
     Gets specific actor-message graph information by id. # noqa: E501
@@ -140,7 +146,7 @@ def actor_message_graph_id_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def actor_message_graph_id_neighbor_get(id, message_id=None, actor_id=None):  # noqa: E501
+def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  # noqa: E501
     """actor_message_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and message or actor id. # noqa: E501
@@ -157,7 +163,7 @@ def actor_message_graph_id_neighbor_get(id, message_id=None, actor_id=None):  # 
     return 'do some magic!'
 
 
-def actor_message_graph_id_put(body, id):  # noqa: E501
+def actor_message_graph_id_put(body, id_):  # noqa: E501
     """actor_message_graph_id_put
 
     Update the specific actor-message graph by id. # noqa: E501
@@ -206,7 +212,7 @@ def message_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_id_delete(id):  # noqa: E501
+def message_message_graph_id_delete(id_):  # noqa: E501
     """message_message_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -219,7 +225,7 @@ def message_message_graph_id_delete(id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_id_get(id):  # noqa: E501
+def message_message_graph_id_get(id_):  # noqa: E501
     """message_message_graph_id_get
 
     Gets specific message-message graph information by id. # noqa: E501
@@ -232,7 +238,7 @@ def message_message_graph_id_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_id_neighbor_get(id, message_id):  # noqa: E501
+def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
     """message_message_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and message&#x27;s id. # noqa: E501
@@ -247,7 +253,7 @@ def message_message_graph_id_neighbor_get(id, message_id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_message_graph_id_put(body, id):  # noqa: E501
+def message_message_graph_id_put(body, id_):  # noqa: E501
     """message_message_graph_id_put
 
     Update the specific message-message graph by id. # noqa: E501

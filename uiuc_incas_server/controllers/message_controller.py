@@ -1,14 +1,20 @@
 import connexion
 import six
 
+import redis
+from jsonpath_ng import jsonpath, parse
+from redis.commands.json.path import Path
+
 from uiuc_incas_server.models.enrichments_batch_delete_body import EnrichmentsBatchDeleteBody  # noqa: E501
 from uiuc_incas_server.models.enrichments_batch_get_body import EnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_batch_get_body import MessageBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_enrichment import MessageEnrichment  # noqa: E501
 from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMeta  # noqa: E501
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
+from uiuc_incas_server.models.uiuc_message_db import UiucMessageDB  # noqa: E501
 from uiuc_incas_server import util
 
+get_db = connexion.utils.get_function_from_name('uiuc_incas_server.util.get_db')
 
 def message_batch_get(body):  # noqa: E501
     """message_batch_get
@@ -33,7 +39,13 @@ def message_count_get():  # noqa: E501
 
     :rtype: int
     """
-    return 'do some magic!'
+    db_data = get_db(db_name='message_data')
+    try:
+        with db_data.lock('incas', blocking_timeout=5) as lock:
+            ret = db_data.dbsize()
+    except LockError:
+        return 'Lock not acquired', 500
+    return ret, 200
 
 
 def message_enrichments_batch_delete(body):  # noqa: E501
@@ -160,7 +172,7 @@ def message_enrichments_meta_put(body):  # noqa: E501
     return 'do some magic!'
 
 
-def message_id_enrichments_delete(id, enrichment_name, provider_name, version):  # noqa: E501
+def message_id_enrichments_delete(id_, enrichment_name, provider_name, version):  # noqa: E501
     """message_id_enrichments_delete
 
     Delete a enrichment for specific message by type, providerName and version. # noqa: E501
@@ -179,7 +191,7 @@ def message_id_enrichments_delete(id, enrichment_name, provider_name, version): 
     return 'do some magic!'
 
 
-def message_id_enrichments_get(id, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
+def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
     """message_id_enrichments_get
 
     Returns all visible matched enrichment for the specific message by type, providerName and version. # noqa: E501
@@ -200,7 +212,7 @@ def message_id_enrichments_get(id, enrichment_name=None, provider_name=None, ver
     return 'do some magic!'
 
 
-def message_id_enrichments_post(body, id):  # noqa: E501
+def message_id_enrichments_post(body, id_):  # noqa: E501
     """message_id_enrichments_post
 
     Submits a new enrichment for specific message. # noqa: E501
@@ -217,7 +229,7 @@ def message_id_enrichments_post(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_id_enrichments_put(body, id):  # noqa: E501
+def message_id_enrichments_put(body, id_):  # noqa: E501
     """message_id_enrichments_put
 
     Update a enrichment for specific message by type, providerName and version. # noqa: E501
@@ -234,7 +246,7 @@ def message_id_enrichments_put(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def message_id_get(id, with_enrichment=None, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
+def message_id_get(id_, with_enrichment=None, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
     """message_id_get
 
     Returns specific message by id. # noqa: E501
@@ -254,7 +266,16 @@ def message_id_get(id, with_enrichment=None, enrichment_name=None, provider_name
 
     :rtype: UiucMessage
     """
-    return 'do some magic!'
+    db_data = get_db(db_name='message_data')
+    try:
+        with db_data.lock('incas', blocking_timeout=5) as lock:
+            if not db_data.execute_command('EXISTS', id_):
+                return 'Key does not exist', 404
+            record = db_data.json().get(id_, Path.rootPath())
+    except LockError:
+        return 'Lock not acquired', 500
+    ret = util.deserialize(record, UiucMessageDB)
+    return ret, 200
 
 
 def message_list_get(begin, end):  # noqa: E501
