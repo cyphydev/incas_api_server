@@ -40,12 +40,12 @@ DB_IDX = {
 DB_MAP = {
     'index': None,
     'message_data': None,
-    'actor_data', None,
+    'actor_data': None,
     'meta': None,
     'graph': None
 }
 
-def get_db(server_host='localhost', server_port=6379, db_name):
+def get_db(db_name, server_host='localhost', server_port=6379):
     global DB_MAP
     if DB_MAP[db_name] is None:
         DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name])
