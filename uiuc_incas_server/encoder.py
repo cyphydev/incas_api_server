@@ -5,7 +5,7 @@ from uiuc_incas_server.util import serialize
 
 
 class JSONEncoder(FlaskJSONEncoder):
-    include_nulls = False
+    include_nulls = True
 
     def default(self, o):
         return serialize(o)

@@ -41,7 +41,8 @@ DB_MAP = {
     'index': None,
     'message_data': None,
     'actor_data': None,
-    'meta': None,
+    'meta': None, # [message|actor]:name:provider:version -> EnrichmentMeta
+                  # graph:provider:timestamp:version -> graph ID
     'graph': None
 }
 

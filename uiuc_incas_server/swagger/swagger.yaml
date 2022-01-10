@@ -16,6 +16,21 @@ paths:
       - message
       description: Return the number of message IDs available.
       operationId: message_count_get
+      parameters:
+      - name: mediaType
+        in: query
+        description: Type of entity to retrieve
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
       responses:
         "200":
           description: Requested list
@@ -49,6 +64,20 @@ paths:
         explode: true
         schema:
           type: integer
+      - name: mediaType
+        in: query
+        description: Type of entity to retrieve
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
       responses:
         "200":
           description: Requested list
@@ -529,6 +558,21 @@ paths:
       - actor
       description: Return the number of actor IDs available.
       operationId: actor_count_get
+      parameters:
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ENTITY_UNSPECIFIED
+          - Person
+          - Media
+          - Organization
+          - Government
       responses:
         "200":
           description: Requested list
@@ -562,6 +606,20 @@ paths:
         explode: true
         schema:
           type: integer
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ENTITY_UNSPECIFIED
+          - Person
+          - Media
+          - Organization
+          - Government
       responses:
         "200":
           description: Requested list

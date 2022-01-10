@@ -2,6 +2,7 @@ import connexion
 import six
 
 import redis
+from redis.exceptions import LockError
 from jsonpath_ng import jsonpath, parse
 from redis.commands.json.path import Path
 
@@ -31,21 +32,30 @@ def message_batch_get(body):  # noqa: E501
     return 'do some magic!'
 
 
-def message_count_get():  # noqa: E501
+def message_count_get(media_type):  # noqa: E501
     """message_count_get
 
     Return the number of message IDs available. # noqa: E501
 
+    :param media_type: Type of entity to retrieve
+    :type media_type: str
 
     :rtype: int
     """
-    db_data = get_db(db_name='message_data')
+    db_idx = get_db(db_name='index')
     try:
-        with db_data.lock('incas', blocking_timeout=5) as lock:
-            ret = db_data.dbsize()
+        with db_idx.lock('incas', blocking_timeout=5) as lock:
+            cnt, cur = 0, 0
+            cur, ks = db_idx.execute_command(f'SCAN {cur} MATCH message:{media_type.lower()}:* COUNT 10000')
+            cur = int(cur)
+            cnt += len(ks)
+            while cur != 0:
+                cur, ks = db_idx.execute_command(f'SCAN {cur} MATCH message:{media_type.lower()}:* COUNT 10000')
+                cur = int(cur)
+                cnt += len(ks)
     except LockError:
         return 'Lock not acquired', 500
-    return ret, 200
+    return cnt, 200
 
 
 def message_enrichments_batch_delete(body):  # noqa: E501
@@ -242,7 +252,7 @@ def message_id_enrichments_put(body, id_):  # noqa: E501
     :rtype: None
     """
     if connexion.request.is_json:
-        body = MessageEnrichment.from_dict(connexion.request.get_json())  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), MessageEnrichment)  # noqa: E501
     return 'do some magic!'
 
 
@@ -274,11 +284,12 @@ def message_id_get(id_, with_enrichment=None, enrichment_name=None, provider_nam
             record = db_data.json().get(id_, Path.rootPath())
     except LockError:
         return 'Lock not acquired', 500
-    ret = util.deserialize(record, UiucMessageDB)
+    record['enrichments'] = list(record['enrichments'].values())
+    ret = util.deserialize(record, UiucMessage)
     return ret, 200
 
 
-def message_list_get(begin, end):  # noqa: E501
+def message_list_get(begin, end, media_type):  # noqa: E501
     """message_list_get
 
     Return list of message IDs available in [begin, end). # noqa: E501
@@ -287,7 +298,16 @@ def message_list_get(begin, end):  # noqa: E501
     :type begin: int
     :param end: End
     :type end: int
+    :param media_type: Type of entity to retrieve
+    :type media_type: str
 
     :rtype: List[str]
     """
-    return 'do some magic!'
+    db_idx = get_db(db_name='index')
+    try:
+        with db_idx.lock('incas', blocking_timeout=5) as lock:
+            keys = ['message:{}:{}'.format(media_type.lower(), i) for i in range(begin, end)]
+            ret = db_idx.json().mget(keys, Path.rootPath())
+    except LockError:
+        return 'Lock not acquired', 500
+    return ret, 200
