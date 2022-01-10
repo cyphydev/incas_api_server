@@ -34,15 +34,15 @@ class MessageEnrichment(object):
     }
 
     discriminator_value_class_map = {
-            'category'.lower(): '#/components/schemas/CategoryMessageEnrichment',
-            'numerical'.lower(): '#/components/schemas/NumericalMessageEnrichment',
-            'array'.lower(): '#/components/schemas/ArrayMessageEnrichment',
-            'text'.lower(): '#/components/schemas/TextMessageEnrichment',
+            'category'.lower(): 'CategoryMessageEnrichment',
+            'numerical'.lower(): 'NumericalMessageEnrichment',
+            'array'.lower(): 'ArrayMessageEnrichment',
+            'text'.lower(): 'TextMessageEnrichment',
     }
 
     def __init__(self):  # noqa: E501
         """MessageEnrichment - a model defined in Swagger"""  # noqa: E501
-        self.discriminator = 'enrichment_type'
+        self.discriminator = 'enrichmentType'
 
     def get_real_child_model(self, data):
         """Returns the real base class specified by the discriminator"""

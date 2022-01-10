@@ -34,11 +34,13 @@ class ActorMessageEdge(object):
     }
 
     discriminator_value_class_map = {
-              }
+            'actor_message'.lower(): 'ActorToMessageEdge',
+            'message_actor'.lower(): 'MessageToActorEdge',
+    }
 
     def __init__(self):  # noqa: E501
         """ActorMessageEdge - a model defined in Swagger"""  # noqa: E501
-        self.discriminator = 'edge_type'
+        self.discriminator = 'edgeType'
 
     def get_real_child_model(self, data):
         """Returns the real base class specified by the discriminator"""

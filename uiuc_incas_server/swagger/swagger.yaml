@@ -1662,13 +1662,6 @@ components:
           - array
           - text
       description: Stores the meta data related to enrichment algorithm.
-      discriminator:
-        propertyName: enrichmentType
-        mapping:
-          category: '#/components/schemas/CategoryMessageEnrichmentMeta'
-          numerical: '#/components/schemas/NumericalMessageEnrichmentMeta'
-          array: '#/components/schemas/ArrayMessageEnrichmentMeta'
-          text: '#/components/schemas/TextMessageEnrichmentMeta'
     BaseActorEnrichmentMeta:
       required:
       - enrichmentType
@@ -1692,13 +1685,6 @@ components:
           - array
           - text
       description: Stores the meta data related to enrichment algorithm.
-      discriminator:
-        propertyName: enrichmentType
-        mapping:
-          category: '#/components/schemas/CategoryActorEnrichmentMeta'
-          numerical: '#/components/schemas/NumericalActorEnrichmentMeta'
-          array: '#/components/schemas/ArrayActorEnrichmentMeta'
-          text: '#/components/schemas/TextActorEnrichmentMeta'
     CategoryMessageEnrichmentMeta:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
@@ -1750,10 +1736,10 @@ components:
       discriminator:
         propertyName: enrichment_type
         mapping:
-          category: '#/components/schemas/CategoryMessageEnrichmentMeta'
-          numerical: '#/components/schemas/NumericalMessageEnrichmentMeta'
-          array: '#/components/schemas/ArrayMessageEnrichmentMeta'
-          text: '#/components/schemas/TextMessageEnrichmentMeta'
+          category: CategoryMessageEnrichmentMeta
+          numerical: NumericalMessageEnrichmentMeta
+          array: ArrayMessageEnrichmentMeta
+          text: TextMessageEnrichmentMeta
       oneOf:
       - $ref: '#/components/schemas/CategoryMessageEnrichmentMeta'
       - $ref: '#/components/schemas/NumericalMessageEnrichmentMeta'
@@ -1766,10 +1752,10 @@ components:
       discriminator:
         propertyName: enrichment_type
         mapping:
-          category: '#/components/schemas/CategoryActorEnrichmentMeta'
-          numerical: '#/components/schemas/NumericalActorEnrichmentMeta'
-          array: '#/components/schemas/ArrayActorEnrichmentMeta'
-          text: '#/components/schemas/TextActorEnrichmentMeta'
+          category: CategoryActorEnrichmentMeta
+          numerical: NumericalActorEnrichmentMeta
+          array: ArrayActorEnrichmentMeta
+          text: TextActorEnrichmentMeta
       oneOf:
       - $ref: '#/components/schemas/CategoryActorEnrichmentMeta'
       - $ref: '#/components/schemas/NumericalActorEnrichmentMeta'
@@ -1807,13 +1793,6 @@ components:
           - array
           - text
       description: Stores data fields common to all types of message enrichment.
-      discriminator:
-        propertyName: enrichmentType
-        mapping:
-          category: '#/components/schemas/CategoryMessageEnrichment'
-          numerical: '#/components/schemas/NumericalMessageEnrichment'
-          array: '#/components/schemas/ArrayMessageEnrichment'
-          text: '#/components/schemas/TextMessageEnrichment'
     CategoryMessageEnrichment:
       description: This defines a enumeration/category enrichment.
       allOf:
@@ -1856,10 +1835,10 @@ components:
       discriminator:
         propertyName: enrichment_type
         mapping:
-          category: '#/components/schemas/CategoryMessageEnrichment'
-          numerical: '#/components/schemas/NumericalMessageEnrichment'
-          array: '#/components/schemas/ArrayMessageEnrichment'
-          text: '#/components/schemas/TextMessageEnrichment'
+          category: CategoryMessageEnrichment
+          numerical: NumericalMessageEnrichment
+          array: ArrayMessageEnrichment
+          text: TextMessageEnrichment
       oneOf:
       - $ref: '#/components/schemas/CategoryMessageEnrichment'
       - $ref: '#/components/schemas/NumericalMessageEnrichment'
@@ -1897,13 +1876,6 @@ components:
           - array
           - text
       description: Stores data fields common to all types of actor enrichment.
-      discriminator:
-        propertyName: enrichmentType
-        mapping:
-          category: '#/components/schemas/CategoryActorEnrichment'
-          numerical: '#/components/schemas/NumericalActorEnrichment'
-          array: '#/components/schemas/ArrayActorEnrichment'
-          text: '#/components/schemas/TextActorEnrichment'
     CategoryActorEnrichment:
       description: Defines a enumeration/category enrichment for actor.
       allOf:
@@ -1945,10 +1917,10 @@ components:
       discriminator:
         propertyName: enrichment_type
         mapping:
-          enumeration: '#/components/schemas/CategoryActorEnrichment'
-          numerical: '#/components/schemas/NumericalActorEnrichment'
-          array: '#/components/schemas/ArrayActorEnrichment'
-          text: '#/components/schemas/TextActorEnrichment'
+          enumeration: CategoryActorEnrichment
+          numerical: NumericalActorEnrichment
+          array: ArrayActorEnrichment
+          text: TextActorEnrichment
       oneOf:
       - $ref: '#/components/schemas/CategoryActorEnrichment'
       - $ref: '#/components/schemas/NumericalActorEnrichment'
@@ -1985,13 +1957,11 @@ components:
           type: string
           description: For discriminator
           enum:
-          - MessageToMessageEdge
-          - ActorToActorEdge
-          - ActorToMessageEdge
-          - MessageToActorEdge
+          - message_message
+          - actor_actor
+          - actor_message
+          - message_actor
       description: Defines the base edge in the graph.
-      discriminator:
-        propertyName: edgeType
     MessageToMessageEdge:
       description: Defines the message-to-message edge.
       allOf:
@@ -2047,6 +2017,9 @@ components:
       description: Defines the general edge in actor-message graph.
       discriminator:
         propertyName: edge_type
+        mapping:
+          actor_message: ActorToMessageEdge
+          message_actor: MessageToActorEdge
       oneOf:
       - $ref: '#/components/schemas/ActorToMessageEdge'
       - $ref: '#/components/schemas/MessageToActorEdge'
@@ -2086,12 +2059,10 @@ components:
           type: string
           description: For discriminator
           enum:
-          - MessageMessageGraph
-          - ActorActorGraph
-          - ActorMessageGraph
+          - message_message
+          - actor_actor
+          - actor_message
       description: Defines the base graph version.
-      discriminator:
-        propertyName: graphType
     MessageMessageGraph:
       description: Defines the message-to-message graph.
       allOf:

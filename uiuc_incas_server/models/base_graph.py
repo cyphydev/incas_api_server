@@ -49,14 +49,6 @@ class BaseGraph(object):
         'graph_type': 'graphType'
     }
 
-    discriminator_value_class_map = {
-          'MessageMessageGraph': 'MessageMessageGraph',
-'MessageMessageGraphDB': 'MessageMessageGraphDB',
-'ActorActorGraphDB': 'ActorActorGraphDB',
-'ActorMessageGraph': 'ActorMessageGraph',
-'ActorMessageGraphDB': 'ActorMessageGraphDB',
-'ActorActorGraph': 'ActorActorGraph'    }
-
     def __init__(self, graph_id=None, provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None, platform=None, graph_type=None):  # noqa: E501
         """BaseGraph - a model defined in Swagger"""  # noqa: E501
         self._graph_id = None
@@ -67,7 +59,7 @@ class BaseGraph(object):
         self._time_stamp = None
         self._platform = None
         self._graph_type = None
-        self.discriminator = 'graphType'
+        self.discriminator = None
         if graph_id is not None:
             self.graph_id = graph_id
         if provider_name is not None:
@@ -271,7 +263,7 @@ class BaseGraph(object):
         """
         if graph_type is None:
             raise ValueError("Invalid value for `graph_type`, must not be `None`")  # noqa: E501
-        allowed_values = ["MessageMessageGraph", "ActorActorGraph", "ActorMessageGraph"]  # noqa: E501
+        allowed_values = ["message_message", "actor_actor", "actor_message"]  # noqa: E501
         if graph_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `graph_type` ({0}), must be one of {1}"  # noqa: E501
@@ -279,11 +271,6 @@ class BaseGraph(object):
             )
 
         self._graph_type = graph_type
-
-    def get_real_child_model(self, data):
-        """Returns the real base class specified by the discriminator"""
-        discriminator_value = data[self.discriminator].lower()
-        return self.discriminator_value_class_map.get(discriminator_value)
 
     def to_dict(self):
         """Returns the model properties as a dict"""

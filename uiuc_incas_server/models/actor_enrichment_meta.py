@@ -34,15 +34,15 @@ class ActorEnrichmentMeta(object):
     }
 
     discriminator_value_class_map = {
-            'category'.lower(): '#/components/schemas/CategoryActorEnrichmentMeta',
-            'numerical'.lower(): '#/components/schemas/NumericalActorEnrichmentMeta',
-            'array'.lower(): '#/components/schemas/ArrayActorEnrichmentMeta',
-            'text'.lower(): '#/components/schemas/TextActorEnrichmentMeta',
+            'category'.lower(): 'CategoryActorEnrichmentMeta',
+            'numerical'.lower(): 'NumericalActorEnrichmentMeta',
+            'array'.lower(): 'ArrayActorEnrichmentMeta',
+            'text'.lower(): 'TextActorEnrichmentMeta',
     }
 
     def __init__(self):  # noqa: E501
         """ActorEnrichmentMeta - a model defined in Swagger"""  # noqa: E501
-        self.discriminator = 'enrichment_type'
+        self.discriminator = 'enrichmentType'
 
     def get_real_child_model(self, data):
         """Returns the real base class specified by the discriminator"""
