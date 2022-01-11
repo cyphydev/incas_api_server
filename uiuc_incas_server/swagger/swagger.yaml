@@ -218,7 +218,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/enrichments_batchGet_body'
+              $ref: '#/components/schemas/MessageEnrichmentsBatchGetBody'
         required: true
       responses:
         "200":
@@ -246,7 +246,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/enrichments_batchDelete_body'
+              $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteBody'
         required: true
       responses:
         "204":
@@ -537,7 +537,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/message_batchGet_body'
+              $ref: '#/components/schemas/MessageBatchGetBody'
         required: true
       responses:
         "200":
@@ -760,7 +760,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/enrichments_batchGet_body_1'
+              $ref: '#/components/schemas/ActorEnrichmentsBatchGetBody'
         required: true
       responses:
         "200":
@@ -788,7 +788,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/enrichments_batchDelete_body_1'
+              $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteBody'
         required: true
       responses:
         "204":
@@ -1079,7 +1079,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/actor_batchGet_body'
+              $ref: '#/components/schemas/ActorBatchGetBody'
         required: true
       responses:
         "200":
@@ -1634,6 +1634,114 @@ paths:
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
 components:
   schemas:
+    MessageEnrichmentsBatchGetBody:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
+    MessageEnrichmentsBatchDeleteBody:
+      required:
+      - enrichmentName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    MessageBatchGetBody:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        withEnrichment:
+          type: boolean
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
+    ActorEnrichmentsBatchGetBody:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
+    ActorEnrichmentsBatchDeleteBody:
+      required:
+      - enrichmentName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    ActorBatchGetBody:
+      required:
+      - IDs
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        withEnrichment:
+          type: boolean
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
     UiucMessage:
       description: "a post of social media, news, etc."
       allOf:
@@ -2427,108 +2535,4 @@ components:
         type: string
       description: "This is a hash map (or dictionary) with strings as keys and strings\
         \ as values, that is used to put custom user data on an object"
-    enrichments_batchGet_body:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-    enrichments_batchDelete_body:
-      required:
-      - enrichmentName
-      - ids
-      - providerName
-      - version
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-    message_batchGet_body:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        withEnrichment:
-          type: boolean
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-        dev:
-          type: boolean
-    enrichments_batchGet_body_1:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-    enrichments_batchDelete_body_1:
-      required:
-      - enrichmentName
-      - ids
-      - providerName
-      - version
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-    actor_batchGet_body:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        withEnrichment:
-          type: boolean
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-        dev:
-          type: boolean
 

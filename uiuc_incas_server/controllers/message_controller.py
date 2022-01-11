@@ -7,8 +7,8 @@ from redis.exceptions import LockError
 from jsonpath_ng import jsonpath, parse
 from redis.commands.json.path import Path
 
-from uiuc_incas_server.models.enrichments_batch_delete_body import EnrichmentsBatchDeleteBody  # noqa: E501
-from uiuc_incas_server.models.enrichments_batch_get_body import EnrichmentsBatchGetBody  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_delete_body import MessageEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_get_body import MessageEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_batch_get_body import MessageBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_enrichment import MessageEnrichment  # noqa: E501
 from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMeta  # noqa: E501
