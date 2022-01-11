@@ -1,5 +1,6 @@
 import connexion
 import six
+import dpath.util
 
 import redis
 from redis.exceptions import LockError
@@ -154,7 +155,17 @@ def message_enrichments_meta_delete(enrichment_name, provider_name, version):  #
 
     :rtype: None
     """
-    return 'do some magic!'
+    db_meta = get_db(db_name='meta')
+    try:
+        with db_meta.lock('incas', blocking_timeout=5) as lock:
+            k = f'message:{enrichment_name}:{provider_name}:{version}'
+            if not db_meta.exists(k):
+                return 'Key not found', 404
+            db_meta.json().delete(k, Path.rootPath())
+        return 'Deleted', 204
+    except LockError:
+        return 'Lock not acquired', 500
+    return 'Bad request', 400
 
 
 def message_enrichments_meta_get(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
@@ -211,7 +222,7 @@ def message_enrichments_meta_post(body):  # noqa: E501
                 if db_meta.exists(k):
                     return 'Key already exists', 409
                 db_meta.json().set(k, Path.rootPath(), util.serialize(body))
-                return "OK", 200
+                return "Posted", 201
         except LockError:
             return 'Lock not acquired', 500
     return 'Bad request', 400
@@ -229,6 +240,16 @@ def message_enrichments_meta_put(body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageEnrichmentMeta)  # noqa: E501
+        db_meta = get_db(db_name='meta')
+        try:
+            with db_meta.lock('incas', blocking_timeout=5) as lock:
+                k = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
+                if not db_meta.exists(k):
+                    return 'Key not found', 404
+                db_meta.json().set(k, Path.rootPath(), util.serialize(body))
+                return "Updated", 200
+        except LockError:
+            return 'Lock not acquired', 500
     return 'Bad request', 400
 
 
@@ -248,7 +269,7 @@ def message_id_enrichments_delete(id_, enrichment_name, provider_name, version):
 
     :rtype: None
     """
-    return 'do some magic!'
+    return 'Bad request', 400
 
 
 def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
@@ -269,7 +290,24 @@ def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, ve
 
     :rtype: List[MessageEnrichment]
     """
-    return 'do some magic!'
+    if enrichment_name is None:
+        enrichment_name = '*'
+    if provider_name is None:
+        provider_name = '*'
+    if version is None:
+        version = '*'
+    db_data = get_db(db_name='message_data')
+    try:
+        with db_data.lock('incas', blocking_timeout=5) as lock:
+            if not db_data.exists(id_):
+                return 'ID does not exist', 404
+            pattern = f'message:{enrichment_name}:{provider_name}:{version}'
+            record = db_data.json().get(id_, Path.rootPath())
+            ret = [util.deserialize(v, MessageEnrichment) for v in dpath.util.values(record['enrichments'], pattern)]
+            return ret, 200
+    except LockError:
+        return 'Lock not acquired', 500
+    return 'Bad request', 400
 
 
 def message_id_enrichments_post(body, id_):  # noqa: E501
