@@ -4,4 +4,4 @@ replace uiuc_api_client
 replace enrichment_type, edge_type, graph_type
 update util
 write encoder
-replace swagger path
+replace swagger path oneOf as parameter -> Base

@@ -22,11 +22,11 @@ def get_all_keys(db, pattern):
     cur, kks = 0, []
     cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
     cur = int(cur)
-    kks.extend(ks)
+    kks.extend(map(lambda x: x.decode('utf-8'), ks))
     while cur != 0:
         cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
         cur = int(cur)
-        kks.extend(ks)
+        kks.extend(map(lambda x: x.decode('utf-8'), ks))
     return kks
 
 def message_batch_get(body):  # noqa: E501
@@ -41,13 +41,13 @@ def message_batch_get(body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageBatchGetBody)  # noqa: E501
-        
+        pattern = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
         db_data = get_db(db_name='message_data')
         try:
-            with db_data.lock('incas', blocking_timeout=5) as lock:
+            with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
                 records = db_data.json().mget(body.ids, Path.rootPath())
                 for i in range(len(records)):
-                    records[i]['enrichments'] = list(records[i]['enrichments'].values())
+                    records[i]['enrichments'] = dpath.util.values(records[i]['enrichments'], pattern)
                     records[i] = util.deserialize(records[i], UiucMessage)
                 return records, 200
         except LockError:
@@ -67,7 +67,7 @@ def message_count_get(media_type):  # noqa: E501
     """
     db_idx = get_db(db_name='index')
     try:
-        with db_idx.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_index_lock', blocking_timeout=5) as lock:
             cnt, cur = 0, 0
             cur, ks = db_idx.execute_command(f'SCAN {cur} MATCH message:{media_type.lower()}:* COUNT 10000')
             cur = int(cur)
@@ -157,7 +157,7 @@ def message_enrichments_meta_delete(enrichment_name, provider_name, version):  #
     """
     db_meta = get_db(db_name='meta')
     try:
-        with db_meta.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
             k = f'message:{enrichment_name}:{provider_name}:{version}'
             if not db_meta.exists(k):
                 return 'Key not found', 404
@@ -190,8 +190,9 @@ def message_enrichments_meta_get(enrichment_name=None, provider_name=None, versi
         version = '*'
     db_meta = get_db(db_name='meta')
     try:
-        with db_meta.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
             ks = get_all_keys(db_meta, f'message:{enrichment_name}:{provider_name}:{version}')
+            print(ks)
             if len(ks) == 0:
                 return 'No keys found', 404
             records = db_meta.json().mget(ks, Path.rootPath())
@@ -217,12 +218,12 @@ def message_enrichments_meta_post(body):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), MessageEnrichmentMeta)  # noqa: E501
         db_meta = get_db(db_name='meta')
         try:
-            with db_meta.lock('incas', blocking_timeout=5) as lock:
+            with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
                 k = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
                 if db_meta.exists(k):
                     return 'Key already exists', 409
                 db_meta.json().set(k, Path.rootPath(), util.serialize(body))
-                return "Posted", 201
+                return "Created", 201
         except LockError:
             return 'Lock not acquired', 500
     return 'Bad request', 400
@@ -242,7 +243,7 @@ def message_enrichments_meta_put(body):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), MessageEnrichmentMeta)  # noqa: E501
         db_meta = get_db(db_name='meta')
         try:
-            with db_meta.lock('incas', blocking_timeout=5) as lock:
+            with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
                 k = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
                 if not db_meta.exists(k):
                     return 'Key not found', 404
@@ -269,6 +270,27 @@ def message_id_enrichments_delete(id_, enrichment_name, provider_name, version):
 
     :rtype: None
     """
+    pattern = f'message:{enrichment_name}:{provider_name}:{version}'
+    db_meta = get_db(db_name='meta')
+    try:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            if db_meta.exists(pattern):
+                return 'Enrichment meta must be deleted first', 400
+    except LockError:
+        return 'Lock not acquired', 500
+    db_data = get_db(db_name='message')
+    try:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            if not db_data.exists(id_):
+                return 'ID not found', 404
+            record = db_data.json().get(id_, Path.rootPath())
+            if not pattern in record['enrichments']:
+                return 'Enrichment not found', 404
+            del(record['enrichments'][pattern])
+            db_data.json().set(id_, Path.rootPath(), record)
+            return 'Deleted', 204
+    except LockError:
+        return 'Lock not acquired', 500
     return 'Bad request', 400
 
 
@@ -296,15 +318,29 @@ def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, ve
         provider_name = '*'
     if version is None:
         version = '*'
+    pattern = f'message:{enrichment_name}:{provider_name}:{version}'
+    db_meta = get_db(db_name='meta')
+    try:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            available_metas = get_all_keys(db_meta, pattern)
+    except LockError:
+        return 'Lock not acquired', 500
     db_data = get_db(db_name='message_data')
     try:
-        with db_data.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             if not db_data.exists(id_):
                 return 'ID does not exist', 404
-            pattern = f'message:{enrichment_name}:{provider_name}:{version}'
             record = db_data.json().get(id_, Path.rootPath())
-            ret = [util.deserialize(v, MessageEnrichment) for v in dpath.util.values(record['enrichments'], pattern)]
-            return ret, 200
+        if dev:
+            enrichments = record['enrichments']
+        else:
+            enrichments = {k: v for k, v in record['enrichments'].items() if k in available_metas}
+        ret = [util.deserialize(v, MessageEnrichment) 
+            for v in dpath.util.values(
+                enrichments, 
+                pattern
+            )]
+        return ret, 200
     except LockError:
         return 'Lock not acquired', 500
     return 'Bad request', 400
@@ -324,8 +360,21 @@ def message_id_enrichments_post(body, id_):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageEnrichment)  # noqa: E501
-        print(body)
-    return 'do some magic!'
+        pattern = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
+        db_data = get_db(db_name='message_data')
+        try:
+            with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
+                if not db_data.exists(id_):
+                    return 'ID does not exist', 404
+                record = db_data.json().get(id_, Path.rootPath())
+            if pattern in record['enrichments']:
+                return 'Enrichment already exists', 409
+            record['enrichments'][pattern] = util.serialize(body)
+            db_data.json().set(id_, Path.rootPath(), record)
+            return 'Created', 201
+        except LockError:
+            return 'Lock not acquired', 500
+    return 'Bad request', 400
 
 
 def message_id_enrichments_put(body, id_):  # noqa: E501
@@ -342,6 +391,20 @@ def message_id_enrichments_put(body, id_):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageEnrichment)  # noqa: E501
+        pattern = f'message:{body.enrichment_name}:{body.provider_name}:{body.version}'
+        db_data = get_db(db_name='message_data')
+        try:
+            with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
+                if not db_data.exists(id_):
+                    return 'ID does not exist', 404
+                record = db_data.json().get(id_, Path.rootPath())
+            if pattern not in record['enrichments']:
+                return 'Enrichment does not exist', 404
+            record['enrichments'][pattern] = util.serialize(body)
+            db_data.json().set(id_, Path.rootPath(), record)
+            return 'Updated', 200
+        except LockError:
+            return 'Lock not acquired', 500
     return 'do some magic!'
 
 
@@ -365,13 +428,30 @@ def message_id_get(id_, with_enrichment=None, enrichment_name=None, provider_nam
 
     :rtype: UiucMessage
     """
+    if enrichment_name is None:
+        enrichment_name = '*'
+    if provider_name is None:
+        provider_name = '*'
+    if version is None:
+        version = '*'
+    pattern = f'message:{enrichment_name}:{provider_name}:{version}'
+    db_meta = get_db(db_name='meta')
+    try:
+        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            available_metas = get_all_keys(db_meta, pattern)
+    except LockError:
+        return 'Lock not acquired', 500
     db_data = get_db(db_name='message_data')
     try:
-        with db_data.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             if not db_data.exists(id_):
                 return 'Key does not exist', 404
             record = db_data.json().get(id_, Path.rootPath())
-        record['enrichments'] = list(record['enrichments'].values())
+        if dev:
+            enrichments = record['enrichments']
+        else:
+            enrichments = {k: v for k, v in record['enrichments'].items() if k in available_metas}
+        record['enrichments'] = dpath.util.values(enrichments, pattern)
         ret = util.deserialize(record, UiucMessage)
         return ret, 200
     except LockError:
@@ -395,7 +475,7 @@ def message_list_get(begin, end, media_type):  # noqa: E501
     """
     db_idx = get_db(db_name='index')
     try:
-        with db_idx.lock('incas', blocking_timeout=5) as lock:
+        with db_data.lock('db_index_lock', blocking_timeout=5) as lock:
             keys = ['message:{}:{}'.format(media_type.lower(), i) for i in range(begin, end)]
             ret = db_idx.json().mget(keys, Path.rootPath())
         return ret, 200
