@@ -1725,7 +1725,7 @@ components:
           type: string
     ActorBatchGetBody:
       required:
-      - IDs
+      - ids
       type: object
       properties:
         ids:

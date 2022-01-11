@@ -54,8 +54,7 @@ class ActorBatchGetBody(object):
         self._version = None
         self._dev = None
         self.discriminator = None
-        if ids is not None:
-            self.ids = ids
+        self.ids = ids
         if with_enrichment is not None:
             self.with_enrichment = with_enrichment
         if enrichment_name is not None:
@@ -85,6 +84,8 @@ class ActorBatchGetBody(object):
         :param ids: The ids of this ActorBatchGetBody.  # noqa: E501
         :type: list[str]
         """
+        if ids is None:
+            raise ValueError("Invalid value for `ids`, must not be `None`")  # noqa: E501
 
         self._ids = ids
 
