@@ -1,0 +1,7 @@
+rm models
+cp models from client
+replace uiuc_api_client
+replace enrichment_type, edge_type, graph_type
+update util
+write encoder
+replace swagger path

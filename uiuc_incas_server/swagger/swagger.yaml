@@ -140,7 +140,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -161,7 +161,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -269,7 +269,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -291,7 +291,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "201":
@@ -443,7 +443,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -472,7 +472,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "201":
@@ -682,7 +682,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -703,7 +703,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -811,7 +811,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -833,7 +833,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "201":
@@ -985,7 +985,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -1014,7 +1014,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "201":
