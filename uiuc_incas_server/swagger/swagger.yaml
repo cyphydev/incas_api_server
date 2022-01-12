@@ -1264,7 +1264,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/MessageToMessageEdge'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1448,7 +1448,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/ActorMessageEdge'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1625,7 +1625,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/ActorToActorEdge'
                 x-content-type: application/json
         "404":
           description: Not found
