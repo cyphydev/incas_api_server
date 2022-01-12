@@ -531,12 +531,12 @@ def message_id_enrichments_put(body, id_):  # noqa: E501
                     return 'ID does not exist', 404
                 if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
                     return 'Enrichment not found', 404
-                    
+
                 db_data.json().set(id_, Path(f'enrichments["{pattern}"]'), util.serialize(body))
                 return 'Updated', 200
         except LockError:
             return 'Lock not acquired', 500
-    return 'do some magic!'
+    return 'Bad request', 400
 
 
 def message_id_get(id_, with_enrichment=None, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
