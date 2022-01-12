@@ -279,10 +279,12 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  #
             edges = db_graph.json().get(id_, Path(f'edges'))
         # check if current node is actor or message
         res = None 
-        if actor_id != None:
+        if actor_id is not None:
             ret = dpath.util.values(edges, f'{actor_id}-*-*')
-        else:
+        elif message_id is not None:
             ret = dpath.util.values(edges, f'{message_id}-*-*')
+        else:
+            return 'Bad request', 400
         ret = util.serialize(ret)
         return ret, 200
     except LockError:
@@ -311,7 +313,15 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
                     return 'Key does not exist', 404
 
                 content = util.serialize(body)
-                content['edges'] = {f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}': edge for edge in content['edges']}
+                edges = {}
+                for edge in body.edges:
+                    if isinstance(edge, ActorToMessageEdge):
+                        edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                    elif isinstance(edge, MessageToActorEdge):
+                        edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                    else:
+                        return 'Bad request', 400
+                content['edges'] = edges
                 content = util.deserialize(content, ActorMessageGraphDB)
 
                 db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
@@ -343,7 +353,15 @@ def actor_message_graph_post(body):  # noqa: E501
                         return 'Graph already exists', 409
                     
                     content = util.serialize(body)
-                    content['edges'] = {f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}': edge for edge in content['edges']}
+                    edges = {}
+                    for edge in body.edges:
+                        if isinstance(edge, ActorToMessageEdge):
+                            edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                        elif isinstance(edge, MessageToActorEdge):
+                            edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                        else:
+                            return 'Bad request', 400
+                    content['edges'] = edges
                     content = util.deserialize(content, ActorMessageGraphDB)
 
                     graph_id = pattern
@@ -447,9 +465,7 @@ def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
                 return 'Key does not exist', 404
             edges = db_graph.json().get(id_, Path(f'edges'))
         ret = dpath.util.values(edges, f'{message_id}-*-*')
-        print(ret)
         ret = util.serialize(ret)
-        print(ret)
         return ret, 200
     except LockError:
         return 'Lock not acquired', 500
