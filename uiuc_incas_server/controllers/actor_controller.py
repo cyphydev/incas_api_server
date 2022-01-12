@@ -2,6 +2,7 @@ import connexion
 import six
 
 import redis
+from redis.exceptions import LockError
 from jsonpath_ng import jsonpath, parse
 from redis.commands.json.path import Path
 
@@ -57,19 +58,20 @@ def actor_batch_get(body):  # noqa: E501
         try:
             with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
                 records = db_data.json().mget(body.ids, Path.rootPath())
-                for i in range(len(records)):
-                    if records[i] is None:
-                        continue
-                    if body.with_enrichment:
-                        if body.dev:
-                            enrichments = records[i]['enrichments']
-                        else:
-                            enrichments = {k: v for k, v in records[i]['enrichments'].items() if k in available_metas}
-                        records[i]['enrichments'] = dpath.util.values(enrichments, pattern)
+            for i in range(len(records)):
+                if records[i] is None:
+                    continue
+                if body.with_enrichment:
+                    if body.dev:
+                        enrichments = records[i]['enrichments']
                     else:
-                        records[i]['enrichments'] = []
-                    records[i] = util.deserialize(records[i], UiucActor)
-                return records, 200
+                        enrichments = {k: v for k, v in records[i]['enrichments'].items() if k in available_metas}
+                    records[i]['enrichments'] = dpath.util.values(enrichments, pattern)
+                else:
+                    records[i]['enrichments'] = []
+                records[i] = util.deserialize(records[i], UiucActor)
+
+            return records, 200
         except LockError:
             return 'Lock not acquired', 500
             
@@ -111,18 +113,19 @@ def actor_enrichments_batch_delete(body):  # noqa: E501
     :rtype: None
     """
     if connexion.request.is_json:
-        body = ActorEnrichmentsBatchDeleteBody.from_dict(connexion.request.get_json())  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), ActorEnrichmentsBatchDeleteBody)  # noqa: E501
+        
         pattern = f'actor:{body.enrichment_name}:{body.provider_name}:{body.version}'
-
         if pattern.find('*') != -1:
             return 'Bad request', 400
         db_meta = get_db(db_name='meta')
         try:
-            with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
                 if db_meta.exists(pattern):
                     return 'Enrichment meta must be deleted first', 400
         except LockError:
             return 'Lock not acquired', 500
+
         db_data = get_db(db_name='actor_data')
         try:
             with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
@@ -150,15 +153,25 @@ def actor_enrichments_batch_get(body):  # noqa: E501
     :rtype: Dict[str, List[ActorEnrichment]]
     """
     if connexion.request.is_json:
-        body = ActorEnrichmentsBatchGetBody.from_dict(connexion.request.get_json())  # noqa: E501
-        enrichment_name = '*' if body.enrichment_name is None else body.enrichment_name
-        provider_name = '*' if body.provider_name is None else body.provider_name
-        version = '*' if body.version is None else body.version
-
-        pattern = f'actor:{enrichment_name}:{provider_name}:{version}'
+        body = util.deserialize(connexion.request.get_json(), ActorEnrichmentsBatchGetBody)  # noqa: E501
+        if body.enrichment_name is None:
+            body.enrichment_name = '*'
+        if body.provider_name is None:
+            body.provider_name = '*'
+        if body.version is None:
+            body.version = '*'
+        pattern = f'actor:{body.enrichment_name}:{body.provider_name}:{body.version}'
         if pattern.find('*') != -1:
             return 'Bad request', 400
+
         db_meta = get_db(db_name='meta')
+        try:
+            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+                available_metas = get_all_keys(db_meta, pattern)
+        except LockError:
+            return 'Lock not acquired', 500
+
+        db_data = get_db(db_name='actor_data')
         try:
             with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
                 all_enrichments = db_data.json().mget(body.ids, Path('enrichments'))
@@ -351,7 +364,7 @@ def actor_enrichments_meta_put(body):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), ActorEnrichmentMeta)  # noqa: E501
         db_meta = get_db(db_name='meta')
         try:
-            with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
                 pattern = f'actor:{body.enrichment_name}:{body.provider_name}:{body.version}'
                 if pattern.find('*') != -1:
                     return 'Bad request', 400
@@ -386,7 +399,7 @@ def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version):  
 
     db_meta = get_db(db_name='meta')
     try:
-        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             if db_meta.exists(pattern):
                 return 'Enrichment meta must be deleted first', 400
     except LockError:
@@ -432,7 +445,7 @@ def actor_id_enrichments_get(id_, enrichment_name=None, provider_name=None, vers
     pattern = f'actor:{enrichment_name}:{provider_name}:{version}'
     db_meta = get_db(db_name='meta')
     try:
-        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             available_metas = get_all_keys(db_meta, pattern)
     except LockError:
         return 'Lock not acquired', 500
@@ -470,7 +483,7 @@ def actor_id_enrichments_post(body, id_):  # noqa: E501
             return 'Bad request', 400
         db_data = get_db(db_name='actor_data')
         try:
-            with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
+            with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
                 if not db_data.exists(id_):
                     return 'ID does not exist', 404
                 if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
@@ -563,7 +576,7 @@ def actor_id_get(id_, with_enrichment=None, enrichment_name=None, provider_name=
             record['enrichments'] = dpath.util.values(enrichments, pattern)
         else:
             record['enrichments'] = []
-        ret = util.deserialize(record, ActorMessage)
+        ret = util.deserialize(record, UiucActor)
         return ret, 200
     except LockError:
         return 'Lock not acquired', 500
