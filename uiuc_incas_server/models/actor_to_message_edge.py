@@ -31,7 +31,8 @@ class ActorToMessageEdge(BaseEdge):
     swagger_types = {
         'message_id': 'str',
         'actor_id': 'str',
-        'action_type': 'str'
+        'action_type': 'str',
+        'weight': 'float'
     }
     if hasattr(BaseEdge, "swagger_types"):
         swagger_types.update(BaseEdge.swagger_types)
@@ -39,16 +40,18 @@ class ActorToMessageEdge(BaseEdge):
     attribute_map = {
         'message_id': 'messageId',
         'actor_id': 'actorId',
-        'action_type': 'actionType'
+        'action_type': 'actionType',
+        'weight': 'weight'
     }
     if hasattr(BaseEdge, "attribute_map"):
         attribute_map.update(BaseEdge.attribute_map)
 
-    def __init__(self, message_id=None, actor_id=None, action_type=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, message_id=None, actor_id=None, action_type=None, weight=None, *args, **kwargs):  # noqa: E501
         """ActorToMessageEdge - a model defined in Swagger"""  # noqa: E501
         self._message_id = None
         self._actor_id = None
         self._action_type = None
+        self._weight = None
         self.discriminator = None
         if message_id is not None:
             self.message_id = message_id
@@ -56,6 +59,8 @@ class ActorToMessageEdge(BaseEdge):
             self.actor_id = actor_id
         if action_type is not None:
             self.action_type = action_type
+        if weight is not None:
+            self.weight = weight
         BaseEdge.__init__(self, *args, **kwargs)
 
     @property
@@ -120,6 +125,27 @@ class ActorToMessageEdge(BaseEdge):
         """
 
         self._action_type = action_type
+
+    @property
+    def weight(self):
+        """Gets the weight of this ActorToMessageEdge.  # noqa: E501
+
+
+        :return: The weight of this ActorToMessageEdge.  # noqa: E501
+        :rtype: float
+        """
+        return self._weight
+
+    @weight.setter
+    def weight(self, weight):
+        """Sets the weight of this ActorToMessageEdge.
+
+
+        :param weight: The weight of this ActorToMessageEdge.  # noqa: E501
+        :type: float
+        """
+
+        self._weight = weight
 
     def to_dict(self):
         """Returns the model properties as a dict"""

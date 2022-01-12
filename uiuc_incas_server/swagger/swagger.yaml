@@ -2166,6 +2166,9 @@ components:
             type: string
           actionType:
             type: string
+          weight:
+            type: number
+            format: float
     MessageToActorEdge:
       description: Defines the message-to-actor edge.
       allOf:
@@ -2178,6 +2181,9 @@ components:
             type: string
           actionType:
             type: string
+          weight:
+            type: number
+            format: float
     ActorMessageEdge:
       type: object
       description: Defines the general edge in actor-message graph.
