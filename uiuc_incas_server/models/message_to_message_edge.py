@@ -29,76 +29,76 @@ class MessageToMessageEdge(BaseEdge):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'message_id1': 'str',
-        'message_id2': 'str',
+        'src_message_id': 'str',
+        'dst_message_id': 'str',
         'weight': 'float'
     }
     if hasattr(BaseEdge, "swagger_types"):
         swagger_types.update(BaseEdge.swagger_types)
 
     attribute_map = {
-        'message_id1': 'messageId1',
-        'message_id2': 'messageId2',
+        'src_message_id': 'srcMessageId',
+        'dst_message_id': 'dstMessageId',
         'weight': 'weight'
     }
     if hasattr(BaseEdge, "attribute_map"):
         attribute_map.update(BaseEdge.attribute_map)
 
-    def __init__(self, message_id1=None, message_id2=None, weight=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, src_message_id=None, dst_message_id=None, weight=None, *args, **kwargs):  # noqa: E501
         """MessageToMessageEdge - a model defined in Swagger"""  # noqa: E501
-        self._message_id1 = None
-        self._message_id2 = None
+        self._src_message_id = None
+        self._dst_message_id = None
         self._weight = None
         self.discriminator = None
-        if message_id1 is not None:
-            self.message_id1 = message_id1
-        if message_id2 is not None:
-            self.message_id2 = message_id2
+        if src_message_id is not None:
+            self.src_message_id = src_message_id
+        if dst_message_id is not None:
+            self.dst_message_id = dst_message_id
         if weight is not None:
             self.weight = weight
         BaseEdge.__init__(self, *args, **kwargs)
 
     @property
-    def message_id1(self):
-        """Gets the message_id1 of this MessageToMessageEdge.  # noqa: E501
+    def src_message_id(self):
+        """Gets the src_message_id of this MessageToMessageEdge.  # noqa: E501
 
 
-        :return: The message_id1 of this MessageToMessageEdge.  # noqa: E501
+        :return: The src_message_id of this MessageToMessageEdge.  # noqa: E501
         :rtype: str
         """
-        return self._message_id1
+        return self._src_message_id
 
-    @message_id1.setter
-    def message_id1(self, message_id1):
-        """Sets the message_id1 of this MessageToMessageEdge.
+    @src_message_id.setter
+    def src_message_id(self, src_message_id):
+        """Sets the src_message_id of this MessageToMessageEdge.
 
 
-        :param message_id1: The message_id1 of this MessageToMessageEdge.  # noqa: E501
+        :param src_message_id: The src_message_id of this MessageToMessageEdge.  # noqa: E501
         :type: str
         """
 
-        self._message_id1 = message_id1
+        self._src_message_id = src_message_id
 
     @property
-    def message_id2(self):
-        """Gets the message_id2 of this MessageToMessageEdge.  # noqa: E501
+    def dst_message_id(self):
+        """Gets the dst_message_id of this MessageToMessageEdge.  # noqa: E501
 
 
-        :return: The message_id2 of this MessageToMessageEdge.  # noqa: E501
+        :return: The dst_message_id of this MessageToMessageEdge.  # noqa: E501
         :rtype: str
         """
-        return self._message_id2
+        return self._dst_message_id
 
-    @message_id2.setter
-    def message_id2(self, message_id2):
-        """Sets the message_id2 of this MessageToMessageEdge.
+    @dst_message_id.setter
+    def dst_message_id(self, dst_message_id):
+        """Sets the dst_message_id of this MessageToMessageEdge.
 
 
-        :param message_id2: The message_id2 of this MessageToMessageEdge.  # noqa: E501
+        :param dst_message_id: The dst_message_id of this MessageToMessageEdge.  # noqa: E501
         :type: str
         """
 
-        self._message_id2 = message_id2
+        self._dst_message_id = dst_message_id
 
     @property
     def weight(self):

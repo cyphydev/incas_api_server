@@ -8,8 +8,8 @@ from six import BytesIO
 from uiuc_incas_server.models.actor_batch_get_body import ActorBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_enrichment import ActorEnrichment  # noqa: E501
 from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  # noqa: E501
-from uiuc_incas_server.models.enrichments_batch_delete_body1 import EnrichmentsBatchDeleteBody1  # noqa: E501
-from uiuc_incas_server.models.enrichments_batch_get_body1 import EnrichmentsBatchGetBody1  # noqa: E501
+from uiuc_incas_server.models.actor_enrichments_batch_delete_body import ActorEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.actor_enrichments_batch_get_body import ActorEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
@@ -36,9 +36,11 @@ class TestActorController(BaseTestCase):
 
         
         """
+        query_string = [('entity_type', 'entity_type_example')]
         response = self.client.open(
             '/api/v1/actor/count',
-            method='GET')
+            method='GET',
+            query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -47,7 +49,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = EnrichmentsBatchDeleteBody1()
+        body = ActorEnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/actor/enrichments/batchDelete',
             method='POST',
@@ -61,7 +63,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = EnrichmentsBatchGetBody1()
+        body = ActorEnrichmentsBatchGetBody()
         response = self.client.open(
             '/api/v1/actor/enrichments/batchGet',
             method='POST',
@@ -238,7 +240,8 @@ class TestActorController(BaseTestCase):
         
         """
         query_string = [('begin', 56),
-                        ('end', 56)]
+                        ('end', 56),
+                        ('entity_type', 'entity_type_example')]
         response = self.client.open(
             '/api/v1/actor/list',
             method='GET',

@@ -29,76 +29,76 @@ class ActorToActorEdge(BaseEdge):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'actor_id1': 'str',
-        'actor_id2': 'str',
+        'src_actor_id': 'str',
+        'dst_actor_id': 'str',
         'weight': 'float'
     }
     if hasattr(BaseEdge, "swagger_types"):
         swagger_types.update(BaseEdge.swagger_types)
 
     attribute_map = {
-        'actor_id1': 'actorId1',
-        'actor_id2': 'actorId2',
+        'src_actor_id': 'srcActorId',
+        'dst_actor_id': 'dstActorId',
         'weight': 'weight'
     }
     if hasattr(BaseEdge, "attribute_map"):
         attribute_map.update(BaseEdge.attribute_map)
 
-    def __init__(self, actor_id1=None, actor_id2=None, weight=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, src_actor_id=None, dst_actor_id=None, weight=None, *args, **kwargs):  # noqa: E501
         """ActorToActorEdge - a model defined in Swagger"""  # noqa: E501
-        self._actor_id1 = None
-        self._actor_id2 = None
+        self._src_actor_id = None
+        self._dst_actor_id = None
         self._weight = None
         self.discriminator = None
-        if actor_id1 is not None:
-            self.actor_id1 = actor_id1
-        if actor_id2 is not None:
-            self.actor_id2 = actor_id2
+        if src_actor_id is not None:
+            self.src_actor_id = src_actor_id
+        if dst_actor_id is not None:
+            self.dst_actor_id = dst_actor_id
         if weight is not None:
             self.weight = weight
         BaseEdge.__init__(self, *args, **kwargs)
 
     @property
-    def actor_id1(self):
-        """Gets the actor_id1 of this ActorToActorEdge.  # noqa: E501
+    def src_actor_id(self):
+        """Gets the src_actor_id of this ActorToActorEdge.  # noqa: E501
 
 
-        :return: The actor_id1 of this ActorToActorEdge.  # noqa: E501
+        :return: The src_actor_id of this ActorToActorEdge.  # noqa: E501
         :rtype: str
         """
-        return self._actor_id1
+        return self._src_actor_id
 
-    @actor_id1.setter
-    def actor_id1(self, actor_id1):
-        """Sets the actor_id1 of this ActorToActorEdge.
+    @src_actor_id.setter
+    def src_actor_id(self, src_actor_id):
+        """Sets the src_actor_id of this ActorToActorEdge.
 
 
-        :param actor_id1: The actor_id1 of this ActorToActorEdge.  # noqa: E501
+        :param src_actor_id: The src_actor_id of this ActorToActorEdge.  # noqa: E501
         :type: str
         """
 
-        self._actor_id1 = actor_id1
+        self._src_actor_id = src_actor_id
 
     @property
-    def actor_id2(self):
-        """Gets the actor_id2 of this ActorToActorEdge.  # noqa: E501
+    def dst_actor_id(self):
+        """Gets the dst_actor_id of this ActorToActorEdge.  # noqa: E501
 
 
-        :return: The actor_id2 of this ActorToActorEdge.  # noqa: E501
+        :return: The dst_actor_id of this ActorToActorEdge.  # noqa: E501
         :rtype: str
         """
-        return self._actor_id2
+        return self._dst_actor_id
 
-    @actor_id2.setter
-    def actor_id2(self, actor_id2):
-        """Sets the actor_id2 of this ActorToActorEdge.
+    @dst_actor_id.setter
+    def dst_actor_id(self, dst_actor_id):
+        """Sets the dst_actor_id of this ActorToActorEdge.
 
 
-        :param actor_id2: The actor_id2 of this ActorToActorEdge.  # noqa: E501
+        :param dst_actor_id: The dst_actor_id of this ActorToActorEdge.  # noqa: E501
         :type: str
         """
 
-        self._actor_id2 = actor_id2
+        self._dst_actor_id = dst_actor_id
 
     @property
     def weight(self):

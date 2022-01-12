@@ -2134,9 +2134,9 @@ components:
       - $ref: '#/components/schemas/BaseEdge'
       - type: object
         properties:
-          messageId1:
+          srcMessageId:
             type: string
-          messageId2:
+          dstMessageId:
             type: string
           weight:
             type: number
@@ -2147,54 +2147,28 @@ components:
       - $ref: '#/components/schemas/BaseEdge'
       - type: object
         properties:
-          actorId1:
+          srcActorId:
             type: string
-          actorId2:
-            type: string
-          weight:
-            type: number
-            format: float
-    ActorToMessageEdge:
-      description: Defines the actor-to-message edge.
-      allOf:
-      - $ref: '#/components/schemas/BaseEdge'
-      - type: object
-        properties:
-          messageId:
-            type: string
-          actorId:
-            type: string
-          actionType:
-            type: string
-          weight:
-            type: number
-            format: float
-    MessageToActorEdge:
-      description: Defines the message-to-actor edge.
-      allOf:
-      - $ref: '#/components/schemas/BaseEdge'
-      - type: object
-        properties:
-          messageId:
-            type: string
-          actorId:
-            type: string
-          actionType:
+          dstActorId:
             type: string
           weight:
             type: number
             format: float
     ActorMessageEdge:
-      type: object
       description: Defines the general edge in actor-message graph.
-      discriminator:
-        propertyName: edge_type
-        mapping:
-          actor_message: ActorToMessageEdge
-          message_actor: MessageToActorEdge
-      oneOf:
-      - $ref: '#/components/schemas/ActorToMessageEdge'
-      - $ref: '#/components/schemas/MessageToActorEdge'
+      allOf:
+      - $ref: '#/components/schemas/BaseEdge'
+      - type: object
+        properties:
+          messageId:
+            type: string
+          actorId:
+            type: string
+          actionType:
+            type: string
+          weight:
+            type: number
+            format: float
     BaseGraph:
       required:
       - graphType

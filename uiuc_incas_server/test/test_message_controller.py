@@ -5,11 +5,11 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from uiuc_incas_server.models.enrichments_batch_delete_body import EnrichmentsBatchDeleteBody  # noqa: E501
-from uiuc_incas_server.models.enrichments_batch_get_body import EnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_batch_get_body import MessageBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_enrichment import MessageEnrichment  # noqa: E501
 from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMeta  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_delete_body import MessageEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_get_body import MessageEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
@@ -36,9 +36,11 @@ class TestMessageController(BaseTestCase):
 
         
         """
+        query_string = [('media_type', 'media_type_example')]
         response = self.client.open(
             '/api/v1/message/count',
-            method='GET')
+            method='GET',
+            query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -47,7 +49,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = EnrichmentsBatchDeleteBody()
+        body = MessageEnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/message/enrichments/batchDelete',
             method='POST',
@@ -61,7 +63,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = EnrichmentsBatchGetBody()
+        body = MessageEnrichmentsBatchGetBody()
         response = self.client.open(
             '/api/v1/message/enrichments/batchGet',
             method='POST',
@@ -238,7 +240,8 @@ class TestMessageController(BaseTestCase):
         
         """
         query_string = [('begin', 56),
-                        ('end', 56)]
+                        ('end', 56),
+                        ('media_type', 'media_type_example')]
         response = self.client.open(
             '/api/v1/message/list',
             method='GET',
