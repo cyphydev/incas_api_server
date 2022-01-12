@@ -314,11 +314,11 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
 
                 content = util.serialize(body)
                 edges = {}
-                for edge in body.edges:
-                    if isinstance(edge, ActorToMessageEdge):
-                        edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = util.serialize(edge)
-                    elif isinstance(edge, MessageToActorEdge):
-                        edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                for i in range(len(content['edges'])):
+                    if content['edges'][i]['edgeType'] == 'actor_message':
+                        edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = content['edges'][i]
+                    elif content['edges'][i]['edgeType'] == 'message_actor':
+                        edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = content['edges'][i]
                     else:
                         return 'Bad request', 400
                 content['edges'] = edges
@@ -354,11 +354,11 @@ def actor_message_graph_post(body):  # noqa: E501
                     
                     content = util.serialize(body)
                     edges = {}
-                    for edge in body.edges:
-                        if isinstance(edge, ActorToMessageEdge):
-                            edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = util.serialize(edge)
-                        elif isinstance(edge, MessageToActorEdge):
-                            edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = util.serialize(edge)
+                    for i in range(len(content['edges'])):
+                        if content['edges'][i]['edgeType'] == 'actor_message':
+                            edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = content['edges'][i]
+                        elif content['edges'][i]['edgeType'] == 'message_actor':
+                            edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = content['edges'][i]
                         else:
                             return 'Bad request', 400
                     content['edges'] = edges
