@@ -387,7 +387,7 @@ def message_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
 
     :rtype: str
     """
-    pattern = f'actor_actor:{provider_name}:{time_stamp}:{version}'
+    pattern = f'message_message:{provider_name}:{time_stamp}:{version}'
     db_meta = get_db(db_name='meta')
     try:
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
