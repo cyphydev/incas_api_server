@@ -7,7 +7,7 @@ info:
     name: Shengzhong Liu (sl29@illinois.edu)
   version: 1.0.0
 servers:
-- url: https://incas.cs.illinois.edu:8443/api/v1
+- url: http://incas.cs.illinois.edu:8445/api/v1
   description: UIUC INCAS API Server
 paths:
   /message/count:
@@ -1264,7 +1264,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MessageToMessageEdge'
+                  $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1448,7 +1448,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ActorMessageEdge'
+                  $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1625,7 +1625,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ActorToActorEdge'
+                  $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -2092,83 +2092,28 @@ components:
       - $ref: '#/components/schemas/NumericalActorEnrichment'
       - $ref: '#/components/schemas/ArrayActorEnrichment'
       - $ref: '#/components/schemas/TextActorEnrichment'
-    BaseEdge:
+    GraphEdge:
       required:
       - edgeType
       type: object
       properties:
-        edgeId:
+        edgeType:
           type: string
-        timeStamp:
+          description: For discriminator
+        srcId:
           type: string
-        providerName:
+        dstId:
           type: string
-          description: The team who builds this graph.
-        enrichmentName:
-          type: string
-          description: The type of enrichment used to construct the graph.
-        distanceName:
-          type: string
-          description: The type of distance used to contruct the graph edges.
-        version:
-          type: string
-          description: "The version ID within the same (providerName, enrichmentName,\
-            \ distanceName)"
         distance:
           maximum: 1.0
           minimum: 0.0
           type: number
           format: float
-        edgeType:
+        weight:
+          type: number
+          format: float
+        actionType:
           type: string
-          description: For discriminator
-          enum:
-          - message_message
-          - actor_actor
-          - actor_message
-          - message_actor
-      description: Defines the base edge in the graph.
-    MessageToMessageEdge:
-      description: Defines the message-to-message edge.
-      allOf:
-      - $ref: '#/components/schemas/BaseEdge'
-      - type: object
-        properties:
-          srcMessageId:
-            type: string
-          dstMessageId:
-            type: string
-          weight:
-            type: number
-            format: float
-    ActorToActorEdge:
-      description: Defines the actor-to-actor edge.
-      allOf:
-      - $ref: '#/components/schemas/BaseEdge'
-      - type: object
-        properties:
-          srcActorId:
-            type: string
-          dstActorId:
-            type: string
-          weight:
-            type: number
-            format: float
-    ActorMessageEdge:
-      description: Defines the general edge in actor-message graph.
-      allOf:
-      - $ref: '#/components/schemas/BaseEdge'
-      - type: object
-        properties:
-          messageId:
-            type: string
-          actorId:
-            type: string
-          actionType:
-            type: string
-          weight:
-            type: number
-            format: float
     BaseGraph:
       required:
       - graphType
@@ -2221,7 +2166,7 @@ components:
           edges:
             type: array
             items:
-              $ref: '#/components/schemas/MessageToMessageEdge'
+              $ref: '#/components/schemas/GraphEdge'
     MessageMessageGraphDB:
       description: Defines the message-to-message graph.
       allOf:
@@ -2234,7 +2179,7 @@ components:
           edges:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/MessageToMessageEdge'
+              $ref: '#/components/schemas/GraphEdge'
     ActorActorGraph:
       description: Defines the actor-to-actor graph.
       allOf:
@@ -2247,7 +2192,7 @@ components:
           edges:
             type: array
             items:
-              $ref: '#/components/schemas/ActorToActorEdge'
+              $ref: '#/components/schemas/GraphEdge'
     ActorActorGraphDB:
       description: Defines the actor-to-actor graph.
       allOf:
@@ -2260,7 +2205,7 @@ components:
           edges:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/ActorToActorEdge'
+              $ref: '#/components/schemas/GraphEdge'
     ActorMessageGraph:
       description: Defines the actor-message graph.
       allOf:
@@ -2273,7 +2218,7 @@ components:
           edges:
             type: array
             items:
-              $ref: '#/components/schemas/ActorMessageEdge'
+              $ref: '#/components/schemas/GraphEdge'
     ActorMessageGraphDB:
       description: Defines the actor-message graph.
       allOf:
@@ -2286,7 +2231,7 @@ components:
           edges:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/ActorMessageEdge'
+              $ref: '#/components/schemas/GraphEdge'
     Response:
       description: how to define it?
     Message:
