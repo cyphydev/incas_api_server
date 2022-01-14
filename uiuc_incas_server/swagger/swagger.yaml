@@ -1932,8 +1932,6 @@ components:
       - enrichmentType
       type: object
       properties:
-        messageUuid:
-          type: string
         providerName:
           type: string
           description: "The team (e.g., UIUC-DMG) who provides the enrichment."
@@ -2015,8 +2013,6 @@ components:
       - enrichmentType
       type: object
       properties:
-        actorUuid:
-          type: string
         providerName:
           type: string
           description: "The team (e.g., USC) who provides the enrichment."
