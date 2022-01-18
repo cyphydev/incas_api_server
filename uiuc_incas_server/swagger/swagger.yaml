@@ -86,7 +86,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/MessageIdResponse'
                 x-content-type: application/json
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/meta:
@@ -911,7 +911,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/ActorIdResponse'
                 x-content-type: application/json
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/segments/meta:
@@ -2387,56 +2387,58 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /messageMessageGraph:
+  /messageMessageGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: message_message_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: message_message_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: graphName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: distanceName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Required graph id
+          description: Requested graph IDs
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                x-content-type: text/plain
-        "404":
-          description: Not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
         "400":
           description: Invalid query
           content:
@@ -2445,6 +2447,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /messageMessageGraph:
     post:
       tags:
       - graph
@@ -2646,56 +2649,58 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /actorMessageGraph:
+  /actorMessageGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: actor_message_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: actor_message_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: graphName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: distanceName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Requested graph id
+          description: Requested graph IDs
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                x-content-type: text/plain
-        "404":
-          description: Not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
         "400":
           description: Invalid query
           content:
@@ -2704,6 +2709,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /actorMessageGraph:
     post:
       tags:
       - graph
@@ -2912,56 +2918,58 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /actorActorGraph:
+  /actorActorGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: actor_actor_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: actor_actor_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: graphName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: distanceName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Requested graph id
+          description: Requested graph IDs
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                x-content-type: text/plain
-        "404":
-          description: Not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
         "400":
           description: Invalid query
           content:
@@ -2970,6 +2978,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /actorActorGraph:
     post:
       tags:
       - graph
@@ -3055,6 +3064,16 @@ paths:
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
 components:
   schemas:
+    MessageIdResponse:
+      type: object
+      properties:
+        globalId:
+          type: string
+        mediaId:
+          type: string
+      example:
+        globalId: globalId
+        mediaId: mediaId
     MessageEnrichmentsBatchGetBody:
       required:
       - ids
@@ -3137,6 +3156,16 @@ components:
           key: ""
         valueInvalid:
           key: null
+    ActorIdResponse:
+      type: object
+      properties:
+        globalId:
+          type: string
+        actorId:
+          type: string
+      example:
+        actorId: actorId
+        globalId: globalId
     ActorEnrichmentsBatchGetBody:
       required:
       - ids

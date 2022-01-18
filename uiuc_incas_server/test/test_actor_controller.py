@@ -11,6 +11,7 @@ from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  
 from uiuc_incas_server.models.actor_enrichments_batch_delete_body import ActorEnrichmentsBatchDeleteBody  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_get_body import ActorEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_validation_response import ActorEnrichmentsBatchValidationResponse  # noqa: E501
+from uiuc_incas_server.models.actor_id_response import ActorIdResponse  # noqa: E501
 from uiuc_incas_server.models.actor_segment_collections import ActorSegmentCollections  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_delete_body import ActorSegmentsBatchDeleteBody  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_get_body import ActorSegmentsBatchGetBody  # noqa: E501

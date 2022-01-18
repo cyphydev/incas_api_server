@@ -11,6 +11,7 @@ from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMe
 from uiuc_incas_server.models.message_enrichments_batch_delete_body import MessageEnrichmentsBatchDeleteBody  # noqa: E501
 from uiuc_incas_server.models.message_enrichments_batch_get_body import MessageEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.message_enrichments_batch_validation_response import MessageEnrichmentsBatchValidationResponse  # noqa: E501
+from uiuc_incas_server.models.message_id_response import MessageIdResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 

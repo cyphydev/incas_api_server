@@ -15,22 +15,6 @@ from uiuc_incas_server.test import BaseTestCase
 class TestGraphController(BaseTestCase):
     """GraphController integration test stubs"""
 
-    def test_actor_actor_graph_get(self):
-        """Test case for actor_actor_graph_get
-
-        
-        """
-        query_string = [('provider_name', 'provider_name_example'),
-                        ('graph_name', 'graph_name_example'),
-                        ('distance_name', 'distance_name_example'),
-                        ('version', 'version_example')]
-        response = self.client.open(
-            '/api/v1/actorActorGraph',
-            method='GET',
-            query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
     def test_actor_actor_graph_id_delete(self):
         """Test case for actor_actor_graph_id_delete
 
@@ -80,6 +64,23 @@ class TestGraphController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_actor_actor_graph_list_get(self):
+        """Test case for actor_actor_graph_list_get
+
+        
+        """
+        query_string = [('provider_name', 'provider_name_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
+                        ('version', 'version_example'),
+                        ('time_stamp', 'time_stamp_example')]
+        response = self.client.open(
+            '/api/v1/actorActorGraph/list',
+            method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_actor_actor_graph_post(self):
         """Test case for actor_actor_graph_post
 
@@ -91,22 +92,6 @@ class TestGraphController(BaseTestCase):
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
-    def test_actor_message_graph_get(self):
-        """Test case for actor_message_graph_get
-
-        
-        """
-        query_string = [('provider_name', 'provider_name_example'),
-                        ('graph_name', 'graph_name_example'),
-                        ('distance_name', 'distance_name_example'),
-                        ('version', 'version_example')]
-        response = self.client.open(
-            '/api/v1/actorMessageGraph',
-            method='GET',
-            query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -160,6 +145,23 @@ class TestGraphController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_actor_message_graph_list_get(self):
+        """Test case for actor_message_graph_list_get
+
+        
+        """
+        query_string = [('provider_name', 'provider_name_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
+                        ('version', 'version_example'),
+                        ('time_stamp', 'time_stamp_example')]
+        response = self.client.open(
+            '/api/v1/actorMessageGraph/list',
+            method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_actor_message_graph_post(self):
         """Test case for actor_message_graph_post
 
@@ -171,22 +173,6 @@ class TestGraphController(BaseTestCase):
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
-    def test_message_message_graph_get(self):
-        """Test case for message_message_graph_get
-
-        
-        """
-        query_string = [('provider_name', 'provider_name_example'),
-                        ('graph_name', 'graph_name_example'),
-                        ('distance_name', 'distance_name_example'),
-                        ('version', 'version_example')]
-        response = self.client.open(
-            '/api/v1/messageMessageGraph',
-            method='GET',
-            query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -236,6 +222,23 @@ class TestGraphController(BaseTestCase):
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_message_message_graph_list_get(self):
+        """Test case for message_message_graph_list_get
+
+        
+        """
+        query_string = [('provider_name', 'provider_name_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
+                        ('version', 'version_example'),
+                        ('time_stamp', 'time_stamp_example')]
+        response = self.client.open(
+            '/api/v1/messageMessageGraph/list',
+            method='GET',
+            query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
