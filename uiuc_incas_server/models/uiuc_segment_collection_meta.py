@@ -32,7 +32,7 @@ class UiucSegmentCollectionMeta(object):
         'collection_name': 'str',
         'provider_name': 'str',
         'version': 'str',
-        'segments': 'list[str]'
+        'segment_descriptions': 'dict(str, str)'
     }
 
     attribute_map = {
@@ -40,16 +40,16 @@ class UiucSegmentCollectionMeta(object):
         'collection_name': 'collectionName',
         'provider_name': 'providerName',
         'version': 'version',
-        'segments': 'segments'
+        'segment_descriptions': 'segmentDescriptions'
     }
 
-    def __init__(self, description=None, collection_name=None, provider_name=None, version=None, segments=None):  # noqa: E501
+    def __init__(self, description=None, collection_name=None, provider_name=None, version=None, segment_descriptions=None):  # noqa: E501
         """UiucSegmentCollectionMeta - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._collection_name = None
         self._provider_name = None
         self._version = None
-        self._segments = None
+        self._segment_descriptions = None
         self.discriminator = None
         if description is not None:
             self.description = description
@@ -59,8 +59,8 @@ class UiucSegmentCollectionMeta(object):
             self.provider_name = provider_name
         if version is not None:
             self.version = version
-        if segments is not None:
-            self.segments = segments
+        if segment_descriptions is not None:
+            self.segment_descriptions = segment_descriptions
 
     @property
     def description(self):
@@ -155,25 +155,25 @@ class UiucSegmentCollectionMeta(object):
         self._version = version
 
     @property
-    def segments(self):
-        """Gets the segments of this UiucSegmentCollectionMeta.  # noqa: E501
+    def segment_descriptions(self):
+        """Gets the segment_descriptions of this UiucSegmentCollectionMeta.  # noqa: E501
 
 
-        :return: The segments of this UiucSegmentCollectionMeta.  # noqa: E501
-        :rtype: list[str]
+        :return: The segment_descriptions of this UiucSegmentCollectionMeta.  # noqa: E501
+        :rtype: dict(str, str)
         """
-        return self._segments
+        return self._segment_descriptions
 
-    @segments.setter
-    def segments(self, segments):
-        """Sets the segments of this UiucSegmentCollectionMeta.
+    @segment_descriptions.setter
+    def segment_descriptions(self, segment_descriptions):
+        """Sets the segment_descriptions of this UiucSegmentCollectionMeta.
 
 
-        :param segments: The segments of this UiucSegmentCollectionMeta.  # noqa: E501
-        :type: list[str]
+        :param segment_descriptions: The segment_descriptions of this UiucSegmentCollectionMeta.  # noqa: E501
+        :type: dict(str, str)
         """
 
-        self._segments = segments
+        self._segment_descriptions = segment_descriptions
 
     def to_dict(self):
         """Returns the model properties as a dict"""

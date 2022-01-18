@@ -30,6 +30,7 @@ class UiucActorDB(Actor):
     """
     swagger_types = {
         'uiuc_author_id': 'str',
+        'uiuc_media_type': 'str',
         'enrichments': 'dict(str, ActorEnrichment)',
         'segments': 'ActorSegmentCollections'
     }
@@ -38,20 +39,24 @@ class UiucActorDB(Actor):
 
     attribute_map = {
         'uiuc_author_id': 'uiucAuthorId',
+        'uiuc_media_type': 'uiucMediaType',
         'enrichments': 'enrichments',
         'segments': 'segments'
     }
     if hasattr(Actor, "attribute_map"):
         attribute_map.update(Actor.attribute_map)
 
-    def __init__(self, uiuc_author_id=None, enrichments=None, segments=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, uiuc_author_id=None, uiuc_media_type=None, enrichments=None, segments=None, *args, **kwargs):  # noqa: E501
         """UiucActorDB - a model defined in Swagger"""  # noqa: E501
         self._uiuc_author_id = None
+        self._uiuc_media_type = None
         self._enrichments = None
         self._segments = None
         self.discriminator = None
         if uiuc_author_id is not None:
             self.uiuc_author_id = uiuc_author_id
+        if uiuc_media_type is not None:
+            self.uiuc_media_type = uiuc_media_type
         if enrichments is not None:
             self.enrichments = enrichments
         if segments is not None:
@@ -78,6 +83,27 @@ class UiucActorDB(Actor):
         """
 
         self._uiuc_author_id = uiuc_author_id
+
+    @property
+    def uiuc_media_type(self):
+        """Gets the uiuc_media_type of this UiucActorDB.  # noqa: E501
+
+
+        :return: The uiuc_media_type of this UiucActorDB.  # noqa: E501
+        :rtype: str
+        """
+        return self._uiuc_media_type
+
+    @uiuc_media_type.setter
+    def uiuc_media_type(self, uiuc_media_type):
+        """Sets the uiuc_media_type of this UiucActorDB.
+
+
+        :param uiuc_media_type: The uiuc_media_type of this UiucActorDB.  # noqa: E501
+        :type: str
+        """
+
+        self._uiuc_media_type = uiuc_media_type
 
     @property
     def enrichments(self):

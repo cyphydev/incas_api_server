@@ -3327,7 +3327,7 @@ components:
       - $ref: '#/components/schemas/Message'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucMessageId:
             type: string
           enrichments:
             type: array
@@ -3339,7 +3339,7 @@ components:
       - $ref: '#/components/schemas/Message'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucMessageId:
             type: string
           enrichments:
             type: object
@@ -3351,6 +3351,8 @@ components:
       - type: object
         properties:
           uiucAuthorId:
+            type: string
+          uiucMediaType:
             type: string
           enrichments:
             type: array
@@ -3364,6 +3366,8 @@ components:
       - type: object
         properties:
           uiucAuthorId:
+            type: string
+          uiucMediaType:
             type: string
           enrichments:
             type: object
@@ -3394,19 +3398,18 @@ components:
         version:
           type: string
           description: "The version within the same (provider, name)."
-        segments:
-          type: array
-          items:
+        segmentDescriptions:
+          type: object
+          additionalProperties:
             type: string
       description: Stores the meta data related to segments
       example:
+        segmentDescriptions:
+          key: segmentDescriptions
         description: description
         version: version
         providerName: providerName
         collectionName: collectionName
-        segments:
-        - segments
-        - segments
     UiucSegmentCollection:
       required:
       - uuid

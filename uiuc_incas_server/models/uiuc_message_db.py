@@ -29,50 +29,50 @@ class UiucMessageDB(Message):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'uiuc_author_id': 'str',
+        'uiuc_message_id': 'str',
         'enrichments': 'dict(str, MessageEnrichment)'
     }
     if hasattr(Message, "swagger_types"):
         swagger_types.update(Message.swagger_types)
 
     attribute_map = {
-        'uiuc_author_id': 'uiucAuthorId',
+        'uiuc_message_id': 'uiucMessageId',
         'enrichments': 'enrichments'
     }
     if hasattr(Message, "attribute_map"):
         attribute_map.update(Message.attribute_map)
 
-    def __init__(self, uiuc_author_id=None, enrichments=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, uiuc_message_id=None, enrichments=None, *args, **kwargs):  # noqa: E501
         """UiucMessageDB - a model defined in Swagger"""  # noqa: E501
-        self._uiuc_author_id = None
+        self._uiuc_message_id = None
         self._enrichments = None
         self.discriminator = None
-        if uiuc_author_id is not None:
-            self.uiuc_author_id = uiuc_author_id
+        if uiuc_message_id is not None:
+            self.uiuc_message_id = uiuc_message_id
         if enrichments is not None:
             self.enrichments = enrichments
         Message.__init__(self, *args, **kwargs)
 
     @property
-    def uiuc_author_id(self):
-        """Gets the uiuc_author_id of this UiucMessageDB.  # noqa: E501
+    def uiuc_message_id(self):
+        """Gets the uiuc_message_id of this UiucMessageDB.  # noqa: E501
 
 
-        :return: The uiuc_author_id of this UiucMessageDB.  # noqa: E501
+        :return: The uiuc_message_id of this UiucMessageDB.  # noqa: E501
         :rtype: str
         """
-        return self._uiuc_author_id
+        return self._uiuc_message_id
 
-    @uiuc_author_id.setter
-    def uiuc_author_id(self, uiuc_author_id):
-        """Sets the uiuc_author_id of this UiucMessageDB.
+    @uiuc_message_id.setter
+    def uiuc_message_id(self, uiuc_message_id):
+        """Sets the uiuc_message_id of this UiucMessageDB.
 
 
-        :param uiuc_author_id: The uiuc_author_id of this UiucMessageDB.  # noqa: E501
+        :param uiuc_message_id: The uiuc_message_id of this UiucMessageDB.  # noqa: E501
         :type: str
         """
 
-        self._uiuc_author_id = uiuc_author_id
+        self._uiuc_message_id = uiuc_message_id
 
     @property
     def enrichments(self):
