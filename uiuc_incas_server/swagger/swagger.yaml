@@ -2,12 +2,12 @@ openapi: 3.0.0
 info:
   title: INCAS TA2-UIUC Datatypes
   description: This API document is defined based on INCAS Common Datatypes version
-    0.0.3.
+    0.0.6.
   contact:
     name: Shengzhong Liu (sl29@illinois.edu)
-  version: 1.0.0
+  version: 1.1.0
 servers:
-- url: https://incas.cs.illinois.edu:8443/api/v1
+- url: http://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
 paths:
   /message/count:

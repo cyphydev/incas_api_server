@@ -28,6 +28,6 @@ setup(
     entry_points={
         'console_scripts': ['uiuc_incas_server=uiuc_incas_server.__main__:main']},
     long_description="""\
-    This API document is defined based on INCAS Common Datatypes version 0.0.3.
+    This API document is defined based on INCAS Common Datatypes version 0.0.6.
     """
 )
