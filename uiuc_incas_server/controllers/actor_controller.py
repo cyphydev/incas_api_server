@@ -1,5 +1,6 @@
 import connexion
 import six
+import dpath.util
 
 import redis
 from redis.exceptions import LockError
@@ -558,7 +559,7 @@ def actor_id_get(id_, with_enrichment=None, enrichment_name=None, provider_name=
     pattern = f'actor:{enrichment_name}:{provider_name}:{version}'
     db_meta = get_db(db_name='meta')
     try:
-        with db_data.lock('db_meta_lock', blocking_timeout=5) as lock:
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             available_metas = get_all_keys(db_meta, pattern)
     except LockError:
         return 'Lock not acquired', 500
