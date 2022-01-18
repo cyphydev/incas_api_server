@@ -7,7 +7,7 @@ info:
     name: Shengzhong Liu (sl29@illinois.edu)
   version: 1.0.0
 servers:
-- url: http://incas.cs.illinois.edu:8445/api/v1
+- url: https://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
 paths:
   /message/count:
@@ -145,10 +145,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -166,10 +181,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     delete:
       tags:
@@ -202,10 +232,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batchGet:
     post:
@@ -234,6 +279,40 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batchDelete/validate:
+    post:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment deletion, successful\
+        \ attempt will return a token."
+      operationId: message_enrichments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batchDelete:
     post:
@@ -251,10 +330,86 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batch/validate:
+    put:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment update, successful attempt\
+        \ will return a token."
+      operationId: message_enrichments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseMessageEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+    post:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment creation, successful\
+        \ attempt will return a token."
+      operationId: message_enrichments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseMessageEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batch:
     put:
@@ -274,10 +429,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -296,10 +466,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/{id}:
     get:
@@ -361,8 +546,18 @@ paths:
                 $ref: '#/components/schemas/UiucMessage'
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/{id}/enrichments:
     get:
@@ -420,8 +615,18 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     put:
       tags:
@@ -448,10 +653,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -477,10 +697,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     delete:
       tags:
@@ -521,10 +756,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/batchGet:
     post:
@@ -551,6 +801,11 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /actor/count:
     get:
@@ -559,10 +814,24 @@ paths:
       description: Return the number of actor IDs available.
       operationId: actor_count_get
       parameters:
-      - name: entityType
+      - name: mediaType
         in: query
         description: Type of entity to retrieve
         required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: false
         style: form
         explode: true
         schema:
@@ -606,10 +875,24 @@ paths:
         explode: true
         schema:
           type: integer
-      - name: entityType
+      - name: mediaType
         in: query
         description: Type of entity to retrieve
         required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: false
         style: form
         explode: true
         schema:
@@ -630,6 +913,168 @@ paths:
                 items:
                   type: string
                 x-content-type: application/json
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/meta:
+    get:
+      tags:
+      - actor
+      description: "Returns current actor segment collection metas by collectionName,\
+        \ providerName, and version."
+      operationId: actor_segments_meta_get
+      parameters:
+      - name: collectionName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of actor segment collection meta
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+                x-content-type: application/json
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    put:
+      tags:
+      - actor
+      description: "Updates an actor segment collection meta (after all actors have\
+        \ been added) by providerName, segmentCollectionName and version."
+      operationId: actor_segments_meta_put
+      requestBody:
+        description: The new segment collection meta to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Add a new segment collection meta
+      operationId: actor_segments_meta_post
+      requestBody:
+        description: The new segment collection meta to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    delete:
+      tags:
+      - actor
+      description: "Deletes the segment collection metas by segmentCollectionName,\
+        \ providerName and version."
+      operationId: actor_segments_meta_delete
+      parameters:
+      - name: collectionName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/meta:
     get:
@@ -687,10 +1132,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -708,10 +1168,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
@@ -744,10 +1219,259 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchGet:
+    post:
+      tags:
+      - actor
+      description: Returns a batch of segment collections given a list of IDs and
+        specifications.
+      operationId: actor_segments_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchGetBody'
+        required: true
+      responses:
+        "200":
+          description: A batch of list of segment collections
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ActorSegmentCollections'
+                x-content-type: application/json
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchDelete/validate:
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment deletion, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchDelete:
+    post:
+      tags:
+      - actor
+      description: Deletes a batch of segment collections given a list of IDs and
+        specifications.
+      operationId: actor_segment_batch_delete
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchDeleteBody'
+        required: true
+      responses:
+        "204":
+          description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batch/validate:
+    put:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment update, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment creation, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batch:
+    put:
+      tags:
+      - actor
+      description: Updates a segment collection for each actor ID.
+      operationId: actor_segments_batch_put
+      requestBody:
+        description: Map of IDs and segment collections
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Submits a segment collection for each actor ID.
+      operationId: actor_segments_batch_post
+      requestBody:
+        description: Map of IDs and segment collections
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchGet:
     post:
@@ -776,6 +1500,40 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batchDelete/validate:
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment deletion, successful\
+        \ attempt will return a token."
+      operationId: actor_enrichments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchDelete:
     post:
@@ -793,10 +1551,86 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batch/validate:
+    put:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment update, successful attempt\
+        \ will return a token."
+      operationId: actor_enrichments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseActorEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment creation, successful\
+        \ attempt will return a token."
+      operationId: actor_enrichments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseActorEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batch:
     put:
@@ -816,10 +1650,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -838,10 +1687,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}:
     get:
@@ -866,7 +1730,102 @@ paths:
         explode: true
         schema:
           type: boolean
+      - name: withSegment
+        in: query
+        description: Whether to retrieve segments
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       - name: enrichmentName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: enrichmentProviderName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: enrichmentVersion
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionProviderName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionVersion
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: Requested actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucActor'
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/{id}/segments:
+    get:
+      tags:
+      - actor
+      description: Returns all matched segment collections the actor belonged to by
+        collectionName.
+      operationId: actor_id_segments_get
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: collectionName
         in: query
         required: false
         style: form
@@ -896,15 +1855,171 @@ paths:
           type: boolean
       responses:
         "200":
-          description: Requested actor
+          description: Requested segment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UiucActor'
+                $ref: '#/components/schemas/ActorSegmentCollections'
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    put:
+      tags:
+      - actor
+      description: Update a segment collection for the specific actor by segment name
+      operationId: actor_id_segments_put
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The segment collections to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Add a new segment collection for the specific actor
+      operationId: actor_id_segments_post
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The new segment collections to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentCollections'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    delete:
+      tags:
+      - actor
+      description: Deletes all matched segments for specific actor by segmentCollectionName
+      operationId: actor_id_segments_delete
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: collectionName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}/enrichments:
     get:
@@ -962,8 +2077,18 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     put:
       tags:
@@ -990,10 +2115,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -1019,10 +2159,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
@@ -1063,10 +2218,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/batchGet:
     post:
@@ -1093,6 +2263,11 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /messageMessageGraph/{id}:
     get:
@@ -1118,8 +2293,18 @@ paths:
                 $ref: '#/components/schemas/MessageMessageGraph'
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1145,10 +2330,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1167,10 +2367,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /messageMessageGraph:
     get:
@@ -1186,7 +2401,14 @@ paths:
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
         in: query
         required: true
         style: form
@@ -1210,8 +2432,18 @@ paths:
                 x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     post:
       tags:
@@ -1228,10 +2460,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /messageMessageGraph/{id}/neighbor:
     get:
@@ -1249,7 +2496,7 @@ paths:
         explode: false
         schema:
           type: string
-      - name: messageID
+      - name: messageId
         in: query
         required: true
         style: form
@@ -1268,8 +2515,18 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph/{id}:
     get:
@@ -1295,8 +2552,18 @@ paths:
                 $ref: '#/components/schemas/ActorMessageGraph'
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1322,10 +2589,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1344,10 +2626,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph:
     get:
@@ -1363,7 +2660,14 @@ paths:
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
         in: query
         required: true
         style: form
@@ -1387,8 +2691,18 @@ paths:
                 x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     post:
       tags:
@@ -1405,10 +2719,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph/{id}/neighbor:
     get:
@@ -1426,14 +2755,14 @@ paths:
         explode: false
         schema:
           type: string
-      - name: messageID
+      - name: messageId
         in: query
         required: false
         style: form
         explode: true
         schema:
           type: string
-      - name: actorID
+      - name: actorId
         in: query
         required: false
         style: form
@@ -1452,8 +2781,18 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph/{id}:
     get:
@@ -1479,8 +2818,18 @@ paths:
                 $ref: '#/components/schemas/ActorActorGraph'
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1506,10 +2855,25 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1528,10 +2892,25 @@ paths:
       responses:
         "204":
           description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph:
     get:
@@ -1547,7 +2926,14 @@ paths:
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
         in: query
         required: true
         style: form
@@ -1571,8 +2957,18 @@ paths:
                 x-content-type: text/plain
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     post:
       tags:
@@ -1589,10 +2985,25 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph/{id}/neighbor:
     get:
@@ -1610,7 +3021,7 @@ paths:
         explode: false
         schema:
           type: string
-      - name: actorID
+      - name: actorId
         in: query
         required: true
         style: form
@@ -1629,8 +3040,18 @@ paths:
                 x-content-type: application/json
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
 components:
   schemas:
@@ -1688,6 +3109,34 @@ components:
           type: string
         dev:
           type: boolean
+    MessageEnrichmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key: ""
+        valueInvalid:
+          key: null
     ActorEnrichmentsBatchGetBody:
       required:
       - ids
@@ -1734,7 +3183,60 @@ components:
             type: string
         withEnrichment:
           type: boolean
+        withSegment:
+          type: boolean
         enrichmentName:
+          type: string
+        enrichmentProviderName:
+          type: string
+        enrichmentVersion:
+          type: string
+        collectionName:
+          type: string
+        collectionProviderName:
+          type: string
+        collectionVersion:
+          type: string
+        dev:
+          type: boolean
+    ActorEnrichmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key: ""
+        valueInvalid:
+          key: null
+    ActorSegmentsBatchGetBody:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        collectionName:
           type: string
         providerName:
           type: string
@@ -1742,6 +3244,54 @@ components:
           type: string
         dev:
           type: boolean
+    ActorSegmentsBatchDeleteBody:
+      required:
+      - collectionName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        collectionName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    ActorSegmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollections'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollections'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollections'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollections'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key:
+            key:
+              key: 0.8008282
+        valueInvalid:
+          key: null
     UiucMessage:
       description: "a post of social media, news, etc."
       allOf:
@@ -1777,6 +3327,8 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ActorEnrichment'
+          segments:
+            $ref: '#/components/schemas/ActorSegmentCollections'
     UiucActorDB:
       allOf:
       - $ref: '#/components/schemas/Actor'
@@ -1788,28 +3340,77 @@ components:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/ActorEnrichment'
-    UiucSegment:
+          segments:
+            $ref: '#/components/schemas/ActorSegmentCollections'
+    ActorSegmentCollections:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: number
+          format: float
+      description: Different segment collections the actor belonged to.
+    UiucSegmentCollectionMeta:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the segment.
+        collectionName:
+          type: string
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segments:
+          type: array
+          items:
+            type: string
+      description: Stores the meta data related to segments
+      example:
+        description: description
+        version: version
+        providerName: providerName
+        collectionName: collectionName
+        segments:
+        - segments
+        - segments
+    UiucSegmentCollection:
       required:
       - uuid
       type: object
       properties:
-        uuid:
+        collectionName:
           type: string
-          description: The unique segment identifier
-          format: uuid
-        referencedActorUuid:
-          type: array
-          items:
-            type: string
-            format: uuid
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segments:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+              format: float
+          description: Different segment sets with user probability.
         extraAttributes:
           $ref: '#/components/schemas/ExtraAttributes'
-      description: A set of Actors
+      description: A segment to group actors
     BaseMessageEnrichmentMeta:
       required:
       - enrichmentType
       type: object
       properties:
+        description:
+          type: string
+          description: Description of the enrichment algorithm.
         providerName:
           type: string
           description: "The team (e.g., UIUC-DMG) who provides the enrichment."
@@ -1833,6 +3434,9 @@ components:
       - enrichmentType
       type: object
       properties:
+        description:
+          type: string
+          description: Description of the enrichment algorithm.
         providerName:
           type: string
           description: "The team (e.g., UIUC-DMG) who provides the enrichment."
@@ -1855,8 +3459,11 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
         description: Defines all available categories in category message enrichment.
     NumericalMessageEnrichmentMeta:
       allOf:
@@ -1866,9 +3473,12 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
-        description: "Defines the hash map (posID, class) for multi-label regression/classification."
+        properties:
+          labelMap:
+            type: object
+            additionalProperties:
+              type: integer
+        description: "Defines the hash map (class, posID) for multi-label regression/classification."
     TextMessageEnrichmentMeta:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
@@ -1877,8 +3487,11 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
         description: Defines all available categories in category actor enrichment.
     NumericalActorEnrichmentMeta:
       allOf:
@@ -1888,9 +3501,12 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
-        description: "Defines the hash map of (posID, class) for multi-class regression/classification."
+        properties:
+          labelMap:
+            type: object
+            additionalProperties:
+              type: integer
+        description: "Defines the hash map of (class, posID) for multi-class regression/classification."
     TextActorEnrichmentMeta:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
@@ -1898,7 +3514,7 @@ components:
     MessageEnrichmentMeta:
       type: object
       description: This is the unified interface for message enrichment algorithm
-        meta informaiton.
+        meta information.
       discriminator:
         propertyName: enrichment_type
         mapping:
@@ -1914,7 +3530,7 @@ components:
     ActorEnrichmentMeta:
       type: object
       description: This is the unified interface for actor enrichment algorithm meta
-        informaiton.
+        information.
       discriminator:
         propertyName: enrichment_type
         mapping:
@@ -1941,13 +3557,6 @@ components:
         version:
           type: string
           description: "The version within the same (provider, name)."
-        confidence:
-          maximum: 1.0
-          minimum: 0.0
-          type: number
-          description: "The confidence that this enrichment is correct, expressed\
-            \ as a percentage between 0.0 and 1.0"
-          format: double
         enrichmentType:
           type: string
           description: For discriminator
@@ -1965,6 +3574,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     NumericalMessageEnrichment:
       description: Defines a numeric enrichment.
       allOf:
@@ -1974,6 +3590,13 @@ components:
           attributeValue:
             type: number
             format: float
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ArrayMessageEnrichment:
       description: Defines a vector/matrix/tensor or multi-label enrichment.
       allOf:
@@ -1985,6 +3608,10 @@ components:
             items:
               type: number
               format: float
+          confidence:
+            type: array
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
     TextMessageEnrichment:
       description: This defines a text enrichment.
       allOf:
@@ -1993,6 +3620,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     MessageEnrichment:
       type: object
       description: This is the unified interface for message enrichment output.
@@ -2022,13 +3656,6 @@ components:
         version:
           type: string
           description: "The version within the same (provider, enrichmentName)."
-        confidence:
-          maximum: 1.0
-          minimum: 0.0
-          type: number
-          description: "The confidence that this enrichment is correct, expressed\
-            \ as a percentage between 0.0 and 1.0"
-          format: double
         enrichmentType:
           type: string
           description: For discriminator
@@ -2046,6 +3673,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     NumericalActorEnrichment:
       description: Defines a numerical enrichment for actor.
       allOf:
@@ -2054,6 +3688,13 @@ components:
         properties:
           attributeValue:
             type: number
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ArrayActorEnrichment:
       description: Defines a vector/matrix/tensor or multi-label enrichment for actor.
       allOf:
@@ -2065,6 +3706,15 @@ components:
             items:
               type: number
               format: float
+          confidence:
+            type: array
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            items:
+              maximum: 1.0
+              minimum: 0.0
+              type: number
+              format: double
     TextActorEnrichment:
       description: This defines a text enrichment for actor.
       allOf:
@@ -2073,6 +3723,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ActorEnrichment:
       type: object
       description: This is the unified interface for actor enrichment output.
@@ -2096,6 +3753,8 @@ components:
         edgeType:
           type: string
           description: For discriminator
+        actionType:
+          type: string
         srcId:
           type: string
         dstId:
@@ -2108,8 +3767,13 @@ components:
         weight:
           type: number
           format: float
-        actionType:
-          type: string
+      example:
+        actionType: actionType
+        distance: 0.08008282
+        srcId: srcId
+        edgeType: edgeType
+        dstId: dstId
+        weight: 6.0274563
     BaseGraph:
       required:
       - graphType
@@ -2228,8 +3892,6 @@ components:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/GraphEdge'
-    Response:
-      description: how to define it?
     Message:
       type: object
       properties:

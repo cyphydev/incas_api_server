@@ -30,7 +30,7 @@ class MessageMessageGraph(BaseGraph):
     """
     swagger_types = {
         'enrichment_name': 'str',
-        'edges': 'list[MessageToMessageEdge]'
+        'edges': 'list[GraphEdge]'
     }
     if hasattr(BaseGraph, "swagger_types"):
         swagger_types.update(BaseGraph.swagger_types)
@@ -82,7 +82,7 @@ class MessageMessageGraph(BaseGraph):
 
 
         :return: The edges of this MessageMessageGraph.  # noqa: E501
-        :rtype: list[MessageToMessageEdge]
+        :rtype: list[GraphEdge]
         """
         return self._edges
 
@@ -92,7 +92,7 @@ class MessageMessageGraph(BaseGraph):
 
 
         :param edges: The edges of this MessageMessageGraph.  # noqa: E501
-        :type: list[MessageToMessageEdge]
+        :type: list[GraphEdge]
         """
 
         self._edges = edges

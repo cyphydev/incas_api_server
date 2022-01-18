@@ -28,6 +28,7 @@ class BaseActorEnrichmentMeta(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'description': 'str',
         'provider_name': 'str',
         'enrichment_name': 'str',
         'version': 'str',
@@ -35,19 +36,23 @@ class BaseActorEnrichmentMeta(object):
     }
 
     attribute_map = {
+        'description': 'description',
         'provider_name': 'providerName',
         'enrichment_name': 'enrichmentName',
         'version': 'version',
         'enrichment_type': 'enrichmentType'
     }
 
-    def __init__(self, provider_name=None, enrichment_name=None, version=None, enrichment_type=None):  # noqa: E501
+    def __init__(self, description=None, provider_name=None, enrichment_name=None, version=None, enrichment_type=None):  # noqa: E501
         """BaseActorEnrichmentMeta - a model defined in Swagger"""  # noqa: E501
+        self._description = None
         self._provider_name = None
         self._enrichment_name = None
         self._version = None
         self._enrichment_type = None
         self.discriminator = None
+        if description is not None:
+            self.description = description
         if provider_name is not None:
             self.provider_name = provider_name
         if enrichment_name is not None:
@@ -55,6 +60,29 @@ class BaseActorEnrichmentMeta(object):
         if version is not None:
             self.version = version
         self.enrichment_type = enrichment_type
+
+    @property
+    def description(self):
+        """Gets the description of this BaseActorEnrichmentMeta.  # noqa: E501
+
+        Description of the enrichment algorithm.  # noqa: E501
+
+        :return: The description of this BaseActorEnrichmentMeta.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description):
+        """Sets the description of this BaseActorEnrichmentMeta.
+
+        Description of the enrichment algorithm.  # noqa: E501
+
+        :param description: The description of this BaseActorEnrichmentMeta.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def provider_name(self):

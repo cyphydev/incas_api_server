@@ -28,64 +28,33 @@ class BaseMessageEnrichment(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'message_uuid': 'str',
         'provider_name': 'str',
         'enrichment_name': 'str',
         'version': 'str',
-        'confidence': 'float',
         'enrichment_type': 'str'
     }
 
     attribute_map = {
-        'message_uuid': 'messageUuid',
         'provider_name': 'providerName',
         'enrichment_name': 'enrichmentName',
         'version': 'version',
-        'confidence': 'confidence',
         'enrichment_type': 'enrichmentType'
     }
 
-    def __init__(self, message_uuid=None, provider_name=None, enrichment_name=None, version=None, confidence=None, enrichment_type=None):  # noqa: E501
+    def __init__(self, provider_name=None, enrichment_name=None, version=None, enrichment_type=None):  # noqa: E501
         """BaseMessageEnrichment - a model defined in Swagger"""  # noqa: E501
-        self._message_uuid = None
         self._provider_name = None
         self._enrichment_name = None
         self._version = None
-        self._confidence = None
         self._enrichment_type = None
         self.discriminator = None
-        if message_uuid is not None:
-            self.message_uuid = message_uuid
         if provider_name is not None:
             self.provider_name = provider_name
         if enrichment_name is not None:
             self.enrichment_name = enrichment_name
         if version is not None:
             self.version = version
-        if confidence is not None:
-            self.confidence = confidence
         self.enrichment_type = enrichment_type
-
-    @property
-    def message_uuid(self):
-        """Gets the message_uuid of this BaseMessageEnrichment.  # noqa: E501
-
-
-        :return: The message_uuid of this BaseMessageEnrichment.  # noqa: E501
-        :rtype: str
-        """
-        return self._message_uuid
-
-    @message_uuid.setter
-    def message_uuid(self, message_uuid):
-        """Sets the message_uuid of this BaseMessageEnrichment.
-
-
-        :param message_uuid: The message_uuid of this BaseMessageEnrichment.  # noqa: E501
-        :type: str
-        """
-
-        self._message_uuid = message_uuid
 
     @property
     def provider_name(self):
@@ -155,29 +124,6 @@ class BaseMessageEnrichment(object):
         """
 
         self._version = version
-
-    @property
-    def confidence(self):
-        """Gets the confidence of this BaseMessageEnrichment.  # noqa: E501
-
-        The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
-
-        :return: The confidence of this BaseMessageEnrichment.  # noqa: E501
-        :rtype: float
-        """
-        return self._confidence
-
-    @confidence.setter
-    def confidence(self, confidence):
-        """Sets the confidence of this BaseMessageEnrichment.
-
-        The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
-
-        :param confidence: The confidence of this BaseMessageEnrichment.  # noqa: E501
-        :type: float
-        """
-
-        self._confidence = confidence
 
     @property
     def enrichment_type(self):

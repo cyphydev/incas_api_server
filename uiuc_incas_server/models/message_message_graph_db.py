@@ -30,7 +30,7 @@ class MessageMessageGraphDB(BaseGraph):
     """
     swagger_types = {
         'enrichment_name': 'str',
-        'edges': 'dict(str, MessageToMessageEdge)'
+        'edges': 'dict(str, GraphEdge)'
     }
     if hasattr(BaseGraph, "swagger_types"):
         swagger_types.update(BaseGraph.swagger_types)
@@ -82,7 +82,7 @@ class MessageMessageGraphDB(BaseGraph):
 
 
         :return: The edges of this MessageMessageGraphDB.  # noqa: E501
-        :rtype: dict(str, MessageToMessageEdge)
+        :rtype: dict(str, GraphEdge)
         """
         return self._edges
 
@@ -92,7 +92,7 @@ class MessageMessageGraphDB(BaseGraph):
 
 
         :param edges: The edges of this MessageMessageGraphDB.  # noqa: E501
-        :type: dict(str, MessageToMessageEdge)
+        :type: dict(str, GraphEdge)
         """
 
         self._edges = edges

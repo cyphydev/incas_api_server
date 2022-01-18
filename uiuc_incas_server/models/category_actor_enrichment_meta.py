@@ -29,19 +29,45 @@ class CategoryActorEnrichmentMeta(BaseActorEnrichmentMeta):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'categories': 'list[str]'
     }
     if hasattr(BaseActorEnrichmentMeta, "swagger_types"):
         swagger_types.update(BaseActorEnrichmentMeta.swagger_types)
 
     attribute_map = {
+        'categories': 'categories'
     }
     if hasattr(BaseActorEnrichmentMeta, "attribute_map"):
         attribute_map.update(BaseActorEnrichmentMeta.attribute_map)
 
-    def __init__(self, *args, **kwargs):  # noqa: E501
+    def __init__(self, categories=None, *args, **kwargs):  # noqa: E501
         """CategoryActorEnrichmentMeta - a model defined in Swagger"""  # noqa: E501
+        self._categories = None
         self.discriminator = None
+        if categories is not None:
+            self.categories = categories
         BaseActorEnrichmentMeta.__init__(self, *args, **kwargs)
+
+    @property
+    def categories(self):
+        """Gets the categories of this CategoryActorEnrichmentMeta.  # noqa: E501
+
+
+        :return: The categories of this CategoryActorEnrichmentMeta.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._categories
+
+    @categories.setter
+    def categories(self, categories):
+        """Sets the categories of this CategoryActorEnrichmentMeta.
+
+
+        :param categories: The categories of this CategoryActorEnrichmentMeta.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._categories = categories
 
     def to_dict(self):
         """Returns the model properties as a dict"""

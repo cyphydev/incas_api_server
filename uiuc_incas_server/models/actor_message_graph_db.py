@@ -30,7 +30,7 @@ class ActorMessageGraphDB(BaseGraph):
     """
     swagger_types = {
         'enrichment_name': 'str',
-        'edges': 'dict(str, ActorMessageEdge)'
+        'edges': 'dict(str, GraphEdge)'
     }
     if hasattr(BaseGraph, "swagger_types"):
         swagger_types.update(BaseGraph.swagger_types)
@@ -82,7 +82,7 @@ class ActorMessageGraphDB(BaseGraph):
 
 
         :return: The edges of this ActorMessageGraphDB.  # noqa: E501
-        :rtype: dict(str, ActorMessageEdge)
+        :rtype: dict(str, GraphEdge)
         """
         return self._edges
 
@@ -92,7 +92,7 @@ class ActorMessageGraphDB(BaseGraph):
 
 
         :param edges: The edges of this ActorMessageGraphDB.  # noqa: E501
-        :type: dict(str, ActorMessageEdge)
+        :type: dict(str, GraphEdge)
         """
 
         self._edges = edges

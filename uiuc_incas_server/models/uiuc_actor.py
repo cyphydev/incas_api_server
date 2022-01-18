@@ -30,27 +30,32 @@ class UiucActor(Actor):
     """
     swagger_types = {
         'uiuc_author_id': 'str',
-        'enrichments': 'list[ActorEnrichment]'
+        'enrichments': 'list[ActorEnrichment]',
+        'segments': 'ActorSegmentCollections'
     }
     if hasattr(Actor, "swagger_types"):
         swagger_types.update(Actor.swagger_types)
 
     attribute_map = {
         'uiuc_author_id': 'uiucAuthorId',
-        'enrichments': 'enrichments'
+        'enrichments': 'enrichments',
+        'segments': 'segments'
     }
     if hasattr(Actor, "attribute_map"):
         attribute_map.update(Actor.attribute_map)
 
-    def __init__(self, uiuc_author_id=None, enrichments=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, uiuc_author_id=None, enrichments=None, segments=None, *args, **kwargs):  # noqa: E501
         """UiucActor - a model defined in Swagger"""  # noqa: E501
         self._uiuc_author_id = None
         self._enrichments = None
+        self._segments = None
         self.discriminator = None
         if uiuc_author_id is not None:
             self.uiuc_author_id = uiuc_author_id
         if enrichments is not None:
             self.enrichments = enrichments
+        if segments is not None:
+            self.segments = segments
         Actor.__init__(self, *args, **kwargs)
 
     @property
@@ -94,6 +99,27 @@ class UiucActor(Actor):
         """
 
         self._enrichments = enrichments
+
+    @property
+    def segments(self):
+        """Gets the segments of this UiucActor.  # noqa: E501
+
+
+        :return: The segments of this UiucActor.  # noqa: E501
+        :rtype: ActorSegmentCollections
+        """
+        return self._segments
+
+    @segments.setter
+    def segments(self, segments):
+        """Sets the segments of this UiucActor.
+
+
+        :param segments: The segments of this UiucActor.  # noqa: E501
+        :type: ActorSegmentCollections
+        """
+
+        self._segments = segments
 
     def to_dict(self):
         """Returns the model properties as a dict"""

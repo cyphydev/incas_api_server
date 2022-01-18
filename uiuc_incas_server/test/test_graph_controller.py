@@ -6,11 +6,9 @@ from flask import json
 from six import BytesIO
 
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph  # noqa: E501
-from uiuc_incas_server.models.actor_message_edge import ActorMessageEdge  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph  # noqa: E501
-from uiuc_incas_server.models.actor_to_actor_edge import ActorToActorEdge  # noqa: E501
+from uiuc_incas_server.models.graph_edge import GraphEdge  # noqa: E501
 from uiuc_incas_server.models.message_message_graph import MessageMessageGraph  # noqa: E501
-from uiuc_incas_server.models.message_to_message_edge import MessageToMessageEdge  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
 
@@ -23,7 +21,8 @@ class TestGraphController(BaseTestCase):
         
         """
         query_string = [('provider_name', 'provider_name_example'),
-                        ('time_stamp', 'time_stamp_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
             '/api/v1/actorActorGraph',
@@ -101,7 +100,8 @@ class TestGraphController(BaseTestCase):
         
         """
         query_string = [('provider_name', 'provider_name_example'),
-                        ('time_stamp', 'time_stamp_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
             '/api/v1/actorMessageGraph',
@@ -180,7 +180,8 @@ class TestGraphController(BaseTestCase):
         
         """
         query_string = [('provider_name', 'provider_name_example'),
-                        ('time_stamp', 'time_stamp_example'),
+                        ('graph_name', 'graph_name_example'),
+                        ('distance_name', 'distance_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
             '/api/v1/messageMessageGraph',

@@ -29,23 +29,28 @@ class CategoryActorEnrichment(BaseActorEnrichment):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'attribute_value': 'str'
+        'attribute_value': 'str',
+        'confidence': 'float'
     }
     if hasattr(BaseActorEnrichment, "swagger_types"):
         swagger_types.update(BaseActorEnrichment.swagger_types)
 
     attribute_map = {
-        'attribute_value': 'attributeValue'
+        'attribute_value': 'attributeValue',
+        'confidence': 'confidence'
     }
     if hasattr(BaseActorEnrichment, "attribute_map"):
         attribute_map.update(BaseActorEnrichment.attribute_map)
 
-    def __init__(self, attribute_value=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, attribute_value=None, confidence=None, *args, **kwargs):  # noqa: E501
         """CategoryActorEnrichment - a model defined in Swagger"""  # noqa: E501
         self._attribute_value = None
+        self._confidence = None
         self.discriminator = None
         if attribute_value is not None:
             self.attribute_value = attribute_value
+        if confidence is not None:
+            self.confidence = confidence
         BaseActorEnrichment.__init__(self, *args, **kwargs)
 
     @property
@@ -68,6 +73,29 @@ class CategoryActorEnrichment(BaseActorEnrichment):
         """
 
         self._attribute_value = attribute_value
+
+    @property
+    def confidence(self):
+        """Gets the confidence of this CategoryActorEnrichment.  # noqa: E501
+
+        The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
+
+        :return: The confidence of this CategoryActorEnrichment.  # noqa: E501
+        :rtype: float
+        """
+        return self._confidence
+
+    @confidence.setter
+    def confidence(self, confidence):
+        """Sets the confidence of this CategoryActorEnrichment.
+
+        The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
+
+        :param confidence: The confidence of this CategoryActorEnrichment.  # noqa: E501
+        :type: float
+        """
+
+        self._confidence = confidence
 
     def to_dict(self):
         """Returns the model properties as a dict"""
