@@ -9,44 +9,98 @@ from redis.commands.json.path import Path
 
 from uiuc_incas_server.models.actor_actor_graph import ActorActorGraph  # noqa: E501
 from uiuc_incas_server.models.actor_actor_graph_db import ActorActorGraphDB  # noqa: E501
-from uiuc_incas_server.models.actor_message_edge import ActorMessageEdge  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph import ActorMessageGraph  # noqa: E501
 from uiuc_incas_server.models.actor_message_graph_db import ActorMessageGraphDB  # noqa: E501
-from uiuc_incas_server.models.actor_to_actor_edge import ActorToActorEdge  # noqa: E501
+from uiuc_incas_server.models.graph_edge import GraphEdge  # noqa: E501
 from uiuc_incas_server.models.message_message_graph import MessageMessageGraph  # noqa: E501
 from uiuc_incas_server.models.message_message_graph_db import MessageMessageGraphDB  # noqa: E501
-from uiuc_incas_server.models.message_to_message_edge import MessageToMessageEdge  # noqa: E501
 from uiuc_incas_server import util
 
-get_db = connexion.utils.get_function_from_name('uiuc_incas_server.util.get_db')
+def generic_graph_list_get(prefix, provider_name, graph_name, distance_name, version, time_stamp, return_code=200):
+    if provider_name is None:
+        provider_name = '*'
+    if graph_name is None:
+        graph_name = '*'
+    if distance_name is None:
+        distance_name = '*'
+    if version is None:
+        version = '*'
+    if time_stamp is None:
+        time_stamp = '*'
+    pattern = f'{prefix}:{provider_name}:{graph_name}:{distance_name}:{version}:{time_stamp}'
+    db_meta = util.get_db(db_name='meta')
+    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+        graph_ids = util.get_all_keys(db_meta, pattern)
+    return graph_ids, return_code
 
-def actor_actor_graph_get(provider_name, time_stamp, version):  # noqa: E501
-    """actor_actor_graph_get
+def generic_graph_id_neighbor_get(id_, src_id, return_code=200):
+    db_graph = util.get_db(db_name='graph')
 
-    Gets graph id by providerName, timestamp and version. # noqa: E501
+    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+        if not db_graph.exists(id_):
+            return 'Key does not exist', 404
+        edges = db_graph.json().get(id_, Path(f'edges'))
 
-    :param provider_name: 
-    :type provider_name: str
-    :param time_stamp: 
-    :type time_stamp: str
-    :param version: 
-    :type version: str
+    ret = dpath.util.values(edges, f'{src_id}:*:*')
+    ret = util.serialize(ret)
+    return ret, return_code
 
-    :rtype: str
-    """
-    pattern = f'actor_actor:{provider_name}:{time_stamp}:{version}'
-    db_meta = get_db(db_name='meta')
-    try:
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists(pattern):
-                return 'Graph does not exist', 404
-            graph_id = db_meta.json().get(pattern, Path.rootPath())
-            return graph_id, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+def generic_graph_id_get(id_, klass, return_code=200):
+    db_graph = util.get_db(db_name='graph')
 
+    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+        if not db_graph.exists(id_):
+            return 'Key does not exist', 404
+        record = db_graph.json().get(id_, Path.rootPath())
+    record['edges'] = list(record['edges'].values())
+    ret = util.deserialize(record, klass)
+    return ret, return_code
 
+def generic_graph_post(body, pattern, klass, return_code=201):
+    db_meta = util.get_db(db_name='meta')
+    db_graph = util.get_db(db_name='graph')
+
+    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock_meta:
+        if db_meta.exists(pattern):
+            return 'Graph already exists', 409
+
+    content = util.serialize(body)
+    content['edges'] = {f'{edge["srcId"]}:{edge["dstId"]}:{edge["actionType"]}': edge for edge in content['edges']}
+    content = util.deserialize(content, klass)
+    graph_id = pattern
+
+    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
+        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
+            db_meta.json().set(pattern, Path.rootPath(), graph_id)
+            db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
+    return 'Created', return_code
+
+def generic_graph_id_put(id_, body, klass, return_code=200):
+    db_graph = util.get_db(db_name='graph')
+
+    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+        if not db_graph.exists(id_):
+            return 'Key does not exist', 404
+
+    content = util.serialize(body)
+    content['edges'] = {f'{edge["srcId"]}:{edge["dstId"]}:{edge["actionType"]}': edge for edge in content['edges']}
+    content = util.deserialize(content, klass)
+
+    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+        db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
+    return 'Updated', return_code
+
+def generic_graph_id_delete(id_, return_code=204):
+    db_graph = util.get_db(db_name='graph')
+
+    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+        if not db_graph.exists(id_):
+            return 'Key does not exist', 404
+        db_graph.delete(id_, Path.rootPath())
+
+    return 'Deleted', return_code
+
+@util.generic_db_lock_decor
 def actor_actor_graph_id_delete(id_):  # noqa: E501
     """actor_actor_graph_id_delete
 
@@ -55,20 +109,11 @@ def actor_actor_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            db_graph.delete(id_, Path.rootPath())
-            return 'Deleted', 204
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_delete(id_)
 
-
+@util.generic_db_lock_decor
 def actor_actor_graph_id_get(id_):  # noqa: E501
     """actor_actor_graph_id_get
 
@@ -79,20 +124,9 @@ def actor_actor_graph_id_get(id_):  # noqa: E501
 
     :rtype: ActorActorGraph
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            record = db_graph.json().get(id_, Path.rootPath())
-        record['edges'] = list(record['edges'].values())
-        ret = util.deserialize(record, ActorActorGraph)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_get(id_, ActorActorGraph)
 
-
+@util.generic_db_lock_decor
 def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
     """actor_actor_graph_id_neighbor_get
 
@@ -103,22 +137,11 @@ def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
     :param actor_id: 
     :type actor_id: str
 
-    :rtype: List[ActorToActorEdge]
+    :rtype: List[GraphEdge]
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            edges = db_graph.json().get(id_, Path(f'edges'))
-        ret = dpath.util.values(edges, f'{actor_id}-*-*')
-        ret = util.serialize(ret)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_neighbor_get(db_graph, id_, actor_id)
 
-
+@util.generic_db_lock_decor
 def actor_actor_graph_id_put(body, id_):  # noqa: E501
     """actor_actor_graph_id_put
 
@@ -129,27 +152,35 @@ def actor_actor_graph_id_put(body, id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-                if not db_graph.exists(id_):
-                    return 'Key does not exist', 404
-
-                content = util.serialize(body)
-                content['edges'] = {f'{edge["actorId1"]}-{edge["actorId2"]}-{edge["edgeId"]}': edge for edge in content['edges']}
-                content = util.deserialize(content, ActorActorGraphDB)
-
-                db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
-                return 'Updated', 200
-        except LockError:
-            return 'Lock not acquired', 500
+        return generic_graph_id_put(id_, body, ActorActorGraphDB)
     return 'Bad request', 400
 
+@util.generic_db_lock_decor
+def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+    """actor_actor_graph_list_get
 
+    Gets graph IDs by providing query keys. # noqa: E501
+
+    :param provider_name: 
+    :type provider_name: str
+    :param graph_name: 
+    :type graph_name: str
+    :param distance_name: 
+    :type distance_name: str
+    :param version: 
+    :type version: str
+    :param time_stamp: 
+    :type time_stamp: str
+
+    :rtype: List[str]
+    """
+    return generic_graph_list_get('actor_actor', provider_name, graph_name, distance_name, version, time_stamp)
+
+@util.generic_db_lock_decor
 def actor_actor_graph_post(body):  # noqa: E501
     """actor_actor_graph_post
 
@@ -158,59 +189,16 @@ def actor_actor_graph_post(body):  # noqa: E501
     :param body: The new graphs to add
     :type body: dict | bytes
 
-    :rtype: None
-    """
-    if connexion.request.is_json:
-        body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
-        pattern = f'actor_actor:{body.provider_name}:{body.time_stamp}:{body.version}'
-        db_meta = get_db(db_name='meta')
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
-                with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
-                    if db_meta.exists(pattern):
-                        return 'Graph already exists', 409
-                    
-                    content = util.serialize(body)
-                    content['edges'] = {f'{edge["actorId1"]}-{edge["actorId2"]}-{edge["edgeId"]}': edge for edge in content['edges']}
-                    content = util.deserialize(content, ActorActorGraphDB)
-
-                    graph_id = pattern
-                    db_meta.json().set(pattern, Path.rootPath(), graph_id)
-                    db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
-                    return 'Created', 201
-        except LockError:
-            return 'Lock not acquired', 500
-    return 'Bad request', 400
-
-
-def actor_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
-    """actor_message_graph_get
-
-    Gets graph id by providerName, timestamp and version. # noqa: E501
-
-    :param provider_name: 
-    :type provider_name: str
-    :param time_stamp: 
-    :type time_stamp: str
-    :param version: 
-    :type version: str
-
     :rtype: str
     """
-    pattern = f'actor_message:{provider_name}:{time_stamp}:{version}'
-    db_meta = get_db(db_name='meta')
-    try:
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists(pattern):
-                return 'Graph does not exist', 404
-            graph_id = db_meta.json().get(pattern, Path.rootPath())
-            return graph_id, 200
-    except LockError:
-        return 'Lock not acquired', 500
+    
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
+        pattern = f'actor_actor:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
 
-
+@util.generic_db_lock_decor
 def actor_message_graph_id_delete(id_):  # noqa: E501
     """actor_message_graph_id_delete
 
@@ -219,20 +207,11 @@ def actor_message_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            db_graph.delete(id_, Path.rootPath())
-            return 'Deleted', 204
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_delete(id_)
 
-
+@util.generic_db_lock_decor
 def actor_message_graph_id_get(id_):  # noqa: E501
     """actor_message_graph_id_get
 
@@ -243,20 +222,9 @@ def actor_message_graph_id_get(id_):  # noqa: E501
 
     :rtype: ActorMessageGraph
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            record = db_graph.json().get(id_, Path.rootPath())
-        record['edges'] = list(record['edges'].values())
-        ret = util.deserialize(record, ActorMessageGraph)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_get(id_, ActorMessageGraph)
 
-
+@util.generic_db_lock_decor
 def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  # noqa: E501
     """actor_message_graph_id_neighbor_get
 
@@ -269,29 +237,18 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  #
     :param actor_id: 
     :type actor_id: str
 
-    :rtype: List[ActorMessageEdge]
+    :rtype: List[GraphEdge]
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            edges = db_graph.json().get(id_, Path(f'edges'))
-        # check if current node is actor or message
-        res = None 
-        if actor_id is not None:
-            ret = dpath.util.values(edges, f'{actor_id}-*-*')
-        elif message_id is not None:
-            ret = dpath.util.values(edges, f'{message_id}-*-*')
-        else:
-            return 'Bad request', 400
-        ret = util.serialize(ret)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    if message_id is not None and actor_id is not None:
+        return 'Bad request', 400
+    elif message_id is not None:
+        return generic_graph_id_neighbor_get(db_graph, id_, message_id)
+    elif actor_id is not None:
+        return generic_graph_id_neighbor_get(db_graph, id_, actor_id)
+    else:
+        return 'Bad request', 400
 
-
+@util.generic_db_lock_decor
 def actor_message_graph_id_put(body, id_):  # noqa: E501
     """actor_message_graph_id_put
 
@@ -302,36 +259,35 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorMessageGraph)  # noqa: E501
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-                if not db_graph.exists(id_):
-                    return 'Key does not exist', 404
-
-                content = util.serialize(body)
-                edges = {}
-                for i in range(len(content['edges'])):
-                    edge = content['edges'][i]
-                    if edge['edgeType'] == 'actor_message':
-                        edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = edge
-                    elif edge['edgeType'] == 'message_actor':
-                        edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = edge
-                    else:
-                        return 'Bad request', 400
-                content['edges'] = edges
-                content = util.deserialize(content, ActorMessageGraphDB)
-
-                db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
-                return 'Updated', 200
-        except LockError:
-            return 'Lock not acquired', 500
+        return generic_graph_id_put(id_, body, ActorMessageGraphDB)
     return 'Bad request', 400
 
+@util.generic_db_lock_decor
+def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+    """actor_message_graph_list_get
 
+    Gets graph IDs by providing query keys. # noqa: E501
+
+    :param provider_name: 
+    :type provider_name: str
+    :param graph_name: 
+    :type graph_name: str
+    :param distance_name: 
+    :type distance_name: str
+    :param version: 
+    :type version: str
+    :param time_stamp: 
+    :type time_stamp: str
+
+    :rtype: List[str]
+    """
+    return generic_graph_list_get('actor_message', provider_name, graph_name, distance_name, version, time_stamp)
+
+@util.generic_db_lock_decor
 def actor_message_graph_post(body):  # noqa: E501
     """actor_message_graph_post
 
@@ -340,68 +296,15 @@ def actor_message_graph_post(body):  # noqa: E501
     :param body: The new graphs to add
     :type body: dict | bytes
 
-    :rtype: None
+    :rtype: str
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorMessageGraph)  # noqa: E501
-        pattern = f'actor_message:{body.provider_name}:{body.time_stamp}:{body.version}'
-        db_meta = get_db(db_name='meta')
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
-                with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
-                    if db_meta.exists(pattern):
-                        return 'Graph already exists', 409
-                    
-                    content = util.serialize(body)
-                    edges = {}
-                    for i in range(len(content['edges'])):
-                        edge = content['edges'][i]
-                        if edge['edgeType'] == 'actor_message':
-                            edges[f'{edge["actorId"]}-{edge["messageId"]}-{edge["edgeId"]}'] = edge
-                        elif edge['edgeType'] == 'message_actor':
-                            edges[f'{edge["messageId"]}-{edge["actorId"]}-{edge["edgeId"]}'] = edge
-                        else:
-                            return 'Bad request', 400
-                    content['edges'] = edges
-                    content = util.deserialize(content, ActorMessageGraphDB)
-
-                    graph_id = pattern
-                    db_meta.json().set(pattern, Path.rootPath(), graph_id)
-                    db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
-                    return 'Created', 201
-        except LockError:
-            return 'Lock not acquired', 500
+        pattern = f'actor_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        return generic_graph_post(body, pattern, ActorMessageGraphDB)
     return 'Bad request', 400
 
-
-def message_message_graph_get(provider_name, time_stamp, version):  # noqa: E501
-    """message_message_graph_get
-
-    Gets graph id by providerName, timestamp and version. # noqa: E501
-
-    :param provider_name: 
-    :type provider_name: str
-    :param time_stamp: 
-    :type time_stamp: str
-    :param version: 
-    :type version: str
-
-    :rtype: str
-    """
-    pattern = f'message_message:{provider_name}:{time_stamp}:{version}'
-    db_meta = get_db(db_name='meta')
-    try:
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists(pattern):
-                return 'Graph does not exist', 404
-            message_id = db_meta.json().get(pattern, Path.rootPath())
-            return message_id, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
-
-
+@util.generic_db_lock_decor
 def message_message_graph_id_delete(id_):  # noqa: E501
     """message_message_graph_id_delete
 
@@ -410,20 +313,11 @@ def message_message_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            db_graph.delete(id_, Path.rootPath())
-            return 'Deleted', 204
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_delete(id_)
 
-
+@util.generic_db_lock_decor
 def message_message_graph_id_get(id_):  # noqa: E501
     """message_message_graph_id_get
 
@@ -434,20 +328,9 @@ def message_message_graph_id_get(id_):  # noqa: E501
 
     :rtype: MessageMessageGraph
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            record = db_graph.json().get(id_, Path.rootPath())
-        record['edges'] = list(record['edges'].values())
-        ret = util.deserialize(record, MessageMessageGraph)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_get(id_, MessageMessageGraph)
 
-
+@util.generic_db_lock_decor
 def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
     """message_message_graph_id_neighbor_get
 
@@ -458,22 +341,11 @@ def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
     :param message_id: 
     :type message_id: str
 
-    :rtype: List[MessageToMessageEdge]
+    :rtype: List[GraphEdge]
     """
-    db_graph = get_db(db_name='graph')
-    try:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_):
-                return 'Key does not exist', 404
-            edges = db_graph.json().get(id_, Path(f'edges'))
-        ret = dpath.util.values(edges, f'{message_id}-*-*')
-        ret = util.serialize(ret)
-        return ret, 200
-    except LockError:
-        return 'Lock not acquired', 500
-    return 'Bad request', 400
+    return generic_graph_id_neighbor_get(db_graph, id_, message_id)
 
-
+@util.generic_db_lock_decor
 def message_message_graph_id_put(body, id_):  # noqa: E501
     """message_message_graph_id_put
 
@@ -484,27 +356,35 @@ def message_message_graph_id_put(body, id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: None
+    :rtype: str
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-                if not db_graph.exists(id_):
-                    return 'Key does not exist', 404
-
-                content = util.serialize(body)
-                content['edges'] = {f'{edge["messageId1"]}-{edge["messageId2"]}-{edge["edgeId"]}': edge for edge in content['edges']}
-                content = util.deserialize(content, MessageMessageGraphDB)
-
-                db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
-                return 'Updated', 200
-        except LockError:
-            return 'Lock not acquired', 500
+        return generic_graph_id_put(id_, body, MessageMessageGraphDB)
     return 'Bad request', 400
 
+@util.generic_db_lock_decor
+def message_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+    """message_message_graph_list_get
 
+    Gets graph IDs by providing query keys. # noqa: E501
+
+    :param provider_name: 
+    :type provider_name: str
+    :param graph_name: 
+    :type graph_name: str
+    :param distance_name: 
+    :type distance_name: str
+    :param version: 
+    :type version: str
+    :param time_stamp: 
+    :type time_stamp: str
+
+    :rtype: List[str]
+    """
+    return generic_graph_list_get('message_message', provider_name, graph_name, distance_name, version, time_stamp)
+
+@util.generic_db_lock_decor
 def message_message_graph_post(body):  # noqa: E501
     """message_message_graph_post
 
@@ -513,27 +393,10 @@ def message_message_graph_post(body):  # noqa: E501
     :param body: The new graph to add
     :type body: dict | bytes
 
-    :rtype: None
+    :rtype: str
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
-        pattern = f'message_message:{body.provider_name}:{body.time_stamp}:{body.version}'
-        db_meta = get_db(db_name='meta')
-        db_graph = get_db(db_name='graph')
-        try:
-            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
-                with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
-                    if db_meta.exists(pattern):
-                        return 'Graph already exists', 409
-                    
-                    content = util.serialize(body)
-                    content['edges'] = {f'{edge["messageId1"]}-{edge["messageId2"]}-{edge["edgeId"]}': edge for edge in content['edges']}
-                    content = util.deserialize(content, MessageMessageGraphDB)
-
-                    graph_id = pattern
-                    db_meta.json().set(pattern, Path.rootPath(), graph_id)
-                    db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
-                    return 'Created', 201
-        except LockError:
-            return 'Lock not acquired', 500
+        pattern = f'message_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
