@@ -9,11 +9,13 @@ from uiuc_incas_server.models.actor_batch_get_body import ActorBatchGetBody  # n
 from uiuc_incas_server.models.actor_enrichment import ActorEnrichment  # noqa: E501
 from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_delete_body import ActorEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.actor_enrichments_batch_delete_validation_response import ActorEnrichmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_get_body import ActorEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_validation_response import ActorEnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_id_response import ActorIdResponse  # noqa: E501
-from uiuc_incas_server.models.actor_segment_collections import ActorSegmentCollections  # noqa: E501
+from uiuc_incas_server.models.actor_segment_collection import ActorSegmentCollection  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_delete_body import ActorSegmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.actor_segments_batch_delete_validation_response import ActorSegmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_get_body import ActorSegmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_validation_response import ActorSegmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
@@ -324,7 +326,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = None
+        body = ActorSegmentCollection()
         response = self.client.open(
             '/api/v1/actor/{id}/segments'.format(id='id_example'),
             method='POST',
@@ -338,7 +340,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = None
+        body = ActorSegmentCollection()
         response = self.client.open(
             '/api/v1/actor/{id}/segments'.format(id='id_example'),
             method='PUT',

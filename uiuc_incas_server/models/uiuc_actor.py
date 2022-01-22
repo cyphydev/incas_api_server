@@ -32,7 +32,7 @@ class UiucActor(Actor):
         'uiuc_author_id': 'str',
         'uiuc_media_type': 'str',
         'enrichments': 'list[ActorEnrichment]',
-        'segments': 'ActorSegmentCollections'
+        'segment_collections': 'list[ActorSegmentCollection]'
     }
     if hasattr(Actor, "swagger_types"):
         swagger_types.update(Actor.swagger_types)
@@ -41,17 +41,17 @@ class UiucActor(Actor):
         'uiuc_author_id': 'uiucAuthorId',
         'uiuc_media_type': 'uiucMediaType',
         'enrichments': 'enrichments',
-        'segments': 'segments'
+        'segment_collections': 'segmentCollections'
     }
     if hasattr(Actor, "attribute_map"):
         attribute_map.update(Actor.attribute_map)
 
-    def __init__(self, uiuc_author_id=None, uiuc_media_type=None, enrichments=None, segments=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, uiuc_author_id=None, uiuc_media_type=None, enrichments=None, segment_collections=None, *args, **kwargs):  # noqa: E501
         """UiucActor - a model defined in Swagger"""  # noqa: E501
         self._uiuc_author_id = None
         self._uiuc_media_type = None
         self._enrichments = None
-        self._segments = None
+        self._segment_collections = None
         self.discriminator = None
         if uiuc_author_id is not None:
             self.uiuc_author_id = uiuc_author_id
@@ -59,8 +59,8 @@ class UiucActor(Actor):
             self.uiuc_media_type = uiuc_media_type
         if enrichments is not None:
             self.enrichments = enrichments
-        if segments is not None:
-            self.segments = segments
+        if segment_collections is not None:
+            self.segment_collections = segment_collections
         Actor.__init__(self, *args, **kwargs)
 
     @property
@@ -127,25 +127,25 @@ class UiucActor(Actor):
         self._enrichments = enrichments
 
     @property
-    def segments(self):
-        """Gets the segments of this UiucActor.  # noqa: E501
+    def segment_collections(self):
+        """Gets the segment_collections of this UiucActor.  # noqa: E501
 
 
-        :return: The segments of this UiucActor.  # noqa: E501
-        :rtype: ActorSegmentCollections
+        :return: The segment_collections of this UiucActor.  # noqa: E501
+        :rtype: list[ActorSegmentCollection]
         """
-        return self._segments
+        return self._segment_collections
 
-    @segments.setter
-    def segments(self, segments):
-        """Sets the segments of this UiucActor.
+    @segment_collections.setter
+    def segment_collections(self, segment_collections):
+        """Sets the segment_collections of this UiucActor.
 
 
-        :param segments: The segments of this UiucActor.  # noqa: E501
-        :type: ActorSegmentCollections
+        :param segment_collections: The segment_collections of this UiucActor.  # noqa: E501
+        :type: list[ActorSegmentCollection]
         """
 
-        self._segments = segments
+        self._segment_collections = segment_collections
 
     def to_dict(self):
         """Returns the model properties as a dict"""

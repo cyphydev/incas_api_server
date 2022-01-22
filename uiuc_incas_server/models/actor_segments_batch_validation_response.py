@@ -28,10 +28,10 @@ class ActorSegmentsBatchValidationResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'id_invalid': 'dict(str, ActorSegmentCollections)',
-        'value_invalid': 'dict(str, ActorSegmentCollections)',
-        'value_not_found': 'dict(str, ActorSegmentCollections)',
-        'value_existed': 'dict(str, ActorSegmentCollections)'
+        'id_invalid': 'dict(str, ActorSegmentCollection)',
+        'value_invalid': 'dict(str, ActorSegmentCollection)',
+        'value_not_found': 'dict(str, ActorSegmentCollection)',
+        'value_existed': 'dict(str, ActorSegmentCollection)'
     }
 
     attribute_map = {
@@ -63,7 +63,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :return: The id_invalid of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :rtype: dict(str, ActorSegmentCollections)
+        :rtype: dict(str, ActorSegmentCollection)
         """
         return self._id_invalid
 
@@ -73,7 +73,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :param id_invalid: The id_invalid of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :type: dict(str, ActorSegmentCollections)
+        :type: dict(str, ActorSegmentCollection)
         """
 
         self._id_invalid = id_invalid
@@ -84,7 +84,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :return: The value_invalid of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :rtype: dict(str, ActorSegmentCollections)
+        :rtype: dict(str, ActorSegmentCollection)
         """
         return self._value_invalid
 
@@ -94,7 +94,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :param value_invalid: The value_invalid of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :type: dict(str, ActorSegmentCollections)
+        :type: dict(str, ActorSegmentCollection)
         """
 
         self._value_invalid = value_invalid
@@ -105,7 +105,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :return: The value_not_found of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :rtype: dict(str, ActorSegmentCollections)
+        :rtype: dict(str, ActorSegmentCollection)
         """
         return self._value_not_found
 
@@ -115,7 +115,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :param value_not_found: The value_not_found of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :type: dict(str, ActorSegmentCollections)
+        :type: dict(str, ActorSegmentCollection)
         """
 
         self._value_not_found = value_not_found
@@ -126,7 +126,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :return: The value_existed of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :rtype: dict(str, ActorSegmentCollections)
+        :rtype: dict(str, ActorSegmentCollection)
         """
         return self._value_existed
 
@@ -136,7 +136,7 @@ class ActorSegmentsBatchValidationResponse(object):
 
 
         :param value_existed: The value_existed of this ActorSegmentsBatchValidationResponse.  # noqa: E501
-        :type: dict(str, ActorSegmentCollections)
+        :type: dict(str, ActorSegmentCollection)
         """
 
         self._value_existed = value_existed

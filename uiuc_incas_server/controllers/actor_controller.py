@@ -11,11 +11,13 @@ from uiuc_incas_server.models.actor_batch_get_body import ActorBatchGetBody  # n
 from uiuc_incas_server.models.actor_enrichment import ActorEnrichment  # noqa: E501
 from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_delete_body import ActorEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.actor_enrichments_batch_delete_validation_response import ActorEnrichmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_get_body import ActorEnrichmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_enrichments_batch_validation_response import ActorEnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_id_response import ActorIdResponse  # noqa: E501
-from uiuc_incas_server.models.actor_segment_collections import ActorSegmentCollections  # noqa: E501
+from uiuc_incas_server.models.actor_segment_collection import ActorSegmentCollection  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_delete_body import ActorSegmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.actor_segments_batch_delete_validation_response import ActorSegmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_get_body import ActorSegmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_validation_response import ActorSegmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
@@ -134,7 +136,7 @@ def actor_enrichments_batch_delete_validate(body):  # noqa: E501
     :param body: List of IDs and specifications
     :type body: dict | bytes
 
-    :rtype: ActorEnrichmentsBatchValidationResponse
+    :rtype: ActorEnrichmentsBatchDeleteValidationResponse
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorEnrichmentsBatchDeleteBody)  # noqa: E501
@@ -147,7 +149,7 @@ def actor_enrichments_batch_delete_validate(body):  # noqa: E501
             if db_meta.exists(pattern):
                 return 'Enrichment meta must be deleted first', 400
 
-        ret = ActorEnrichmentsBatchValidationResponse(id_invalid=[], value_not_found=[])
+        ret = ActorEnrichmentsBatchDeleteValidationResponse(id_invalid=[], value_not_found=[])
         db_data = util.get_db(db_name='actor_data')
         with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
             for id_ in body.ids:
@@ -676,7 +678,7 @@ def actor_id_segments_get(id_, collection_name=None, provider_name=None, version
     :param dev: 
     :type dev: bool
 
-    :rtype: ActorSegmentCollections
+    :rtype: List[ActorSegmentCollection]
     """
     return 'do some magic!'
 
@@ -695,7 +697,7 @@ def actor_id_segments_post(body, id_):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, Dict[str, float]].from_dict(connexion.request.get_json())  # noqa: E501
+        body = ActorSegmentCollection.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -713,7 +715,7 @@ def actor_id_segments_put(body, id_):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, Dict[str, float]].from_dict(connexion.request.get_json())  # noqa: E501
+        body = ActorSegmentCollection.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -770,7 +772,7 @@ def actor_segments_batch_delete_validate(body):  # noqa: E501
     :param body: List of IDs and specifications
     :type body: dict | bytes
 
-    :rtype: ActorSegmentsBatchValidationResponse
+    :rtype: ActorSegmentsBatchDeleteValidationResponse
     """
     if connexion.request.is_json:
         body = ActorSegmentsBatchDeleteBody.from_dict(connexion.request.get_json())  # noqa: E501
@@ -786,7 +788,7 @@ def actor_segments_batch_get(body):  # noqa: E501
     :param body: List of IDs and specifications
     :type body: dict | bytes
 
-    :rtype: Dict[str, ActorSegmentCollections]
+    :rtype: Dict[str, List[ActorSegmentCollection]]
     """
     if connexion.request.is_json:
         body = ActorSegmentsBatchGetBody.from_dict(connexion.request.get_json())  # noqa: E501
@@ -805,7 +807,7 @@ def actor_segments_batch_post(body):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollections].from_dict(connexion.request.get_json())  # noqa: E501
+        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -821,7 +823,7 @@ def actor_segments_batch_post_validate(body):  # noqa: E501
     :rtype: ActorSegmentsBatchValidationResponse
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollections].from_dict(connexion.request.get_json())  # noqa: E501
+        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -837,7 +839,7 @@ def actor_segments_batch_put(body):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollections].from_dict(connexion.request.get_json())  # noqa: E501
+        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -853,7 +855,7 @@ def actor_segments_batch_put_validate(body):  # noqa: E501
     :rtype: ActorSegmentsBatchValidationResponse
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollections].from_dict(connexion.request.get_json())  # noqa: E501
+        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 

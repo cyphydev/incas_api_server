@@ -7,7 +7,7 @@ info:
     name: Shengzhong Liu (sl29@illinois.edu)
   version: 1.1.0
 servers:
-- url: http://incas.cs.illinois.edu:8443/api/v1
+- url: https://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
 paths:
   /message/count:
@@ -305,7 +305,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteValidationResponse'
         "400":
           description: Bad request
           content:
@@ -1191,7 +1191,7 @@ paths:
     delete:
       tags:
       - actor
-      description: "Delete a specific message enrichment meta by providerName, enrichmentName\
+      description: "Delete a specific actor enrichment meta by providerName, enrichmentName\
         \ and version."
       operationId: actor_enrichments_meta_delete
       parameters:
@@ -1261,7 +1261,9 @@ paths:
               schema:
                 type: object
                 additionalProperties:
-                  $ref: '#/components/schemas/ActorSegmentCollections'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ActorSegmentCollection'
                 x-content-type: application/json
         "404":
           description: Not found
@@ -1291,7 +1293,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+                $ref: '#/components/schemas/ActorSegmentsBatchDeleteValidationResponse'
         "400":
           description: Bad request
           content:
@@ -1351,7 +1353,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorSegmentCollections'
+                $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "200":
@@ -1381,7 +1383,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorSegmentCollections'
+                $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "200":
@@ -1411,7 +1413,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorSegmentCollections'
+                $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "200":
@@ -1448,7 +1450,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorSegmentCollections'
+                $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "201":
@@ -1526,7 +1528,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteValidationResponse'
         "400":
           description: Bad request
           content:
@@ -1859,7 +1861,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorSegmentCollections'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActorSegmentCollection'
+                x-content-type: application/json
         "404":
           description: Not found
           content:
@@ -1894,7 +1899,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorSegmentCollections'
+              $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "200":
@@ -1938,7 +1943,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorSegmentCollections'
+              $ref: '#/components/schemas/ActorSegmentCollection'
         required: true
       responses:
         "201":
@@ -2138,7 +2143,7 @@ paths:
     post:
       tags:
       - actor
-      description: Submits a new enrichment for specific message.
+      description: Submits a new enrichment for specific actor.
       operationId: actor_id_enrichments_post
       parameters:
       - name: id
@@ -3156,6 +3161,24 @@ components:
           key: ""
         valueInvalid:
           key: null
+    MessageEnrichmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
     ActorIdResponse:
       type: object
       properties:
@@ -3256,6 +3279,24 @@ components:
           key: ""
         valueInvalid:
           key: null
+    ActorEnrichmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
     ActorSegmentsBatchGetBody:
       required:
       - ids
@@ -3297,19 +3338,19 @@ components:
         idInvalid:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorSegmentCollections'
+            $ref: '#/components/schemas/ActorSegmentCollection'
         valueInvalid:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorSegmentCollections'
+            $ref: '#/components/schemas/ActorSegmentCollection'
         valueNotFound:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorSegmentCollections'
+            $ref: '#/components/schemas/ActorSegmentCollection'
         valueExisted:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorSegmentCollections'
+            $ref: '#/components/schemas/ActorSegmentCollection'
       example:
         valueNotFound:
           key: null
@@ -3317,10 +3358,31 @@ components:
           key: null
         idInvalid:
           key:
-            key:
+            version: version
+            providerName: providerName
+            collectionName: collectionName
+            segments:
               key: 0.8008282
         valueInvalid:
           key: null
+    ActorSegmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
     UiucMessage:
       description: "a post of social media, news, etc."
       allOf:
@@ -3358,8 +3420,10 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ActorEnrichment'
-          segments:
-            $ref: '#/components/schemas/ActorSegmentCollections'
+          segmentCollections:
+            type: array
+            items:
+              $ref: '#/components/schemas/ActorSegmentCollection'
     UiucActorDB:
       allOf:
       - $ref: '#/components/schemas/Actor'
@@ -3373,16 +3437,33 @@ components:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/ActorEnrichment'
-          segments:
-            $ref: '#/components/schemas/ActorSegmentCollections'
-    ActorSegmentCollections:
+          segmentCollections:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActorSegmentCollection'
+    ActorSegmentCollection:
       type: object
-      additionalProperties:
-        type: object
-        additionalProperties:
-          type: number
-          format: float
-      description: Different segment collections the actor belonged to.
+      properties:
+        collectionName:
+          type: string
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segments:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+      example:
+        version: version
+        providerName: providerName
+        collectionName: collectionName
+        segments:
+          key: 0.8008282
     UiucSegmentCollectionMeta:
       type: object
       properties:
@@ -3411,8 +3492,6 @@ components:
         providerName: providerName
         collectionName: collectionName
     UiucSegmentCollection:
-      required:
-      - uuid
       type: object
       properties:
         collectionName:
