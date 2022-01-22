@@ -74,6 +74,7 @@ def actor_batch_get(body):  # noqa: E501
         return records, 200
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_count_get(media_type, entity_type=None):  # noqa: E501
     """actor_count_get
@@ -93,6 +94,7 @@ def actor_count_get(media_type, entity_type=None):  # noqa: E501
     with db_idx.lock('db_index_lock', blocking_timeout=5) as lock:
         cnt = util.count_keys(db_idx, f'forward:actor:{media_type.lower()}:{entity_type.lower()}*')
     return cnt, 200
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_batch_delete(body):  # noqa: E501
@@ -128,6 +130,7 @@ def actor_enrichments_batch_delete(body):  # noqa: E501
         return 'Deleted', 204
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_enrichments_batch_delete_validate(body):  # noqa: E501
     """actor_enrichments_batch_delete_validate
@@ -156,10 +159,11 @@ def actor_enrichments_batch_delete_validate(body):  # noqa: E501
             for id_ in body.ids:
                 if not db_data.exists(id_):
                     ret.id_invalid.append(id_)
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+                elif db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
                     ret.value_not_found.append(id_)
         return ret, 200
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_batch_get(body):  # noqa: E501
@@ -196,6 +200,7 @@ def actor_enrichments_batch_get(body):  # noqa: E501
         return all_enrichments, 200
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_enrichments_batch_post(body):  # noqa: E501
     """actor_enrichments_batch_post
@@ -226,6 +231,7 @@ def actor_enrichments_batch_post(body):  # noqa: E501
         return 'Created', 201
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_enrichments_batch_post_validate(body):  # noqa: E501
     """actor_enrichments_batch_post_validate
@@ -240,6 +246,7 @@ def actor_enrichments_batch_post_validate(body):  # noqa: E501
     if connexion.request.is_json:
         bodies = {k: util.deserialize(v, ActorEnrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
 
+        seen_set = set()
         ret = ActorEnrichmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found=None, value_existed={})
         db_data = util.get_db(db_name='actor_data')
         with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
@@ -247,12 +254,15 @@ def actor_enrichments_batch_post_validate(body):  # noqa: E501
                 pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
                 if pattern.find('*') != -1:
                     ret.value_invalid[id_] = body
-                if not db_data.exists(id_):
+                elif not db_data.exists(id_):
                     ret.id_invalid[id_] = body
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
+                elif db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None or (id_, pattern) in seen_set:
                     ret.value_existed[id_] = body
+                else:
+                    seen_set.add((id_, pattern))
         return ret, 200
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_batch_put(body):  # noqa: E501
@@ -284,6 +294,7 @@ def actor_enrichments_batch_put(body):  # noqa: E501
         return 'Updated', 200
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_enrichments_batch_put_validate(body):  # noqa: E501
     """actor_enrichments_batch_put_validate
@@ -305,12 +316,13 @@ def actor_enrichments_batch_put_validate(body):  # noqa: E501
                 pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
                 if pattern.find('*') != -1:
                     ret.value_invalid[id_] = body
-                if not db_data.exists(id_):
+                elif not db_data.exists(id_):
                     ret.id_invalid[id_] = body
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+                elif db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
                     ret.value_not_found[id_] = body
         return ret, 200
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_meta_delete(enrichment_name, provider_name, version):  # noqa: E501
@@ -337,6 +349,7 @@ def actor_enrichments_meta_delete(enrichment_name, provider_name, version):  # n
             return 'Key not found', 404
         db_meta.json().delete(pattern, Path.rootPath())
     return 'Deleted', 204
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_meta_get(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
@@ -368,6 +381,7 @@ def actor_enrichments_meta_get(enrichment_name=None, provider_name=None, version
             records[i] = util.deserialize(records[i], ActorEnrichmentMeta)
     return records, 200
 
+
 @util.generic_db_lock_decor
 def actor_enrichments_meta_post(body):  # noqa: E501
     """actor_enrichments_meta_post
@@ -392,6 +406,7 @@ def actor_enrichments_meta_post(body):  # noqa: E501
             db_meta.json().set(pattern, Path.rootPath(), util.serialize(body))
         return "Created", 201
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_enrichments_meta_put(body):  # noqa: E501
@@ -605,10 +620,7 @@ def actor_id_get(id_, with_enrichment=None, with_segment=None, enrichment_name=N
         record['enrichments'] = []
     
     if with_segment:
-        if dev:
-            segments = record['segment_collections']
-        else:
-            segments = {k: v for k, v in record['segment_collections'].items() if k in available_collection_metas}
+        segments = record['segment_collections']
         record['segment_collections'] = dpath.util.values(segments, collection_pattern)
     else:
         record['segment_collections'] = []
@@ -637,11 +649,6 @@ def actor_id_segments_delete(id_, collection_name, provider_name, version):  # n
     pattern = util.get_collection_pattern('actor', collection_name, provider_name, version)
     if pattern.find('*') != -1:
         return 'Bad request', 400
-
-    db_meta = util.get_db(db_name='meta')
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        if db_meta.exists(pattern):
-            return 'Segment meta must be deleted first', 400
 
     db_data = util.get_db(db_name='actor_data')
     db_seg = util.get_db(db_name='segment')
@@ -683,18 +690,11 @@ def actor_id_segments_get(id_, collection_name=None, provider_name=None, version
     """
     pattern = util.get_collection_pattern('actor', collection_name, provider_name, version)
 
-    db_meta = util.get_db(db_name='meta')
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        available_metas = util.get_all_keys(db_meta, pattern)
-
     db_data = util.get_db(db_name='actor_data')
     with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
         if not db_data.exists(id_):
             return 'ID does not exist', 404
         segcols = db_data.json().get(id_, Path('segment_collections'))
-    
-    if not dev:
-        segcols = {k: v for k, v in segcols.items() if k in available_metas}
     ret = [util.deserialize(v, ActorSegmentCollection) for v in dpath.util.values(segcols, pattern)]
     return ret, 200
 
@@ -735,15 +735,20 @@ def actor_id_segments_post(body, id_):  # noqa: E501
                     db_seg.json().set(pattern, Path.rootPath(), util.serialize(segcol))
                 else:
                     segs = db_seg.json().objkeys(pattern, Path('segments'))
-                    exist_flag = False
+                    # exist_flag = False
+                    # for seg in segs:
+                    #     if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None:
+                    #         exist_flag = True
+                    #         break
+                    # if exist_flag:
+                    #     return 'Actor is already in this segment collection', 409
+                    # for seg in segs:
+                    #     if seg in body.segments:
+                    #         db_seg.json().set(pattern, Path(f'segments["{seg}"]["{id_}"]'), body.segments[seg])
                     for seg in segs:
-                        if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None:
-                            exist_flag = True
-                            break
-                    if exist_flag:
-                        return 'Actor is already in this segment collection', 409
-                    for seg in segs:
-                        if seg in body.segments:
+                        if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None and seg not in body.segments:
+                            db_seg.json().delete(pattern, Path(f'segments["{seg}"]["{id_}"]'))
+                        elif seg in body.segments:
                             db_seg.json().set(pattern, Path(f'segments["{seg}"]["{id_}"]'), body.segments[seg])
                 db_data.json().set(id_, Path(f'segment_collections["{pattern}"]'), util.serialize(body))
         return 'Created', 201
@@ -782,13 +787,13 @@ def actor_id_segments_put(body, id_):  # noqa: E501
                     return 'Segment collection does not exist', 404
                 else:
                     segs = db_seg.json().objkeys(pattern, Path('segments'))
-                    exist_flag = False
-                    for seg in segs:
-                        if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None:
-                            exist_flag = True
-                            break
-                    if not exist_flag:
-                        return 'Actor does not appear to be in this segment collection', 404
+                    # exist_flag = False
+                    # for seg in segs:
+                    #     if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None:
+                    #         exist_flag = True
+                    #         break
+                    # if not exist_flag:
+                    #     return 'Actor does not appear to be in this segment collection', 404
                     for seg in segs:
                         if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None and seg not in body.segments:
                             db_seg.json().delete(pattern, Path(f'segments["{seg}"]["{id_}"]'))
@@ -839,8 +844,32 @@ def actor_segment_batch_delete(body):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = ActorSegmentsBatchDeleteBody.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        body = util.deserialize(connexion.request.get_json(), ActorSegmentsBatchDeleteBody)  # noqa: E501
+        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+        if pattern.find('*') != -1:
+            return 'Bad request', 400
+            
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                if not db_seg.exists(pattern):
+                    return f'Segment collection {pattern} not found, DB is inconsistent', 404
+
+            for id_ in body.ids:
+                if not db_data.exists(id_):
+                    return f'ID {id_} not found, nothing is done', 404
+                if db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is None:
+                    return f'Segment collection {pattern} not found in {id_}, nothing is done', 404
+            
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                for id_ in body.ids:
+                    db_data.json().delete(id_, Path(f'segment_collections["{pattern}"]'))
+                    for segment in db_seg.json().objkeys(pattern, Path('segments')):
+                        if db_seg.json().type(pattern, Path(f'segments["{segment}"]["{id_}"]')) is not None:
+                            db_seg.json().delete(pattern, Path(f'segments["{segment}"]["{id_}"]'))
+        return 'Deleted', 204
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -855,8 +884,26 @@ def actor_segments_batch_delete_validate(body):  # noqa: E501
     :rtype: ActorSegmentsBatchDeleteValidationResponse
     """
     if connexion.request.is_json:
-        body = ActorSegmentsBatchDeleteBody.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        body = util.deserialize(connexion.request.get_json(), ActorSegmentsBatchDeleteBody)  # noqa: E501
+        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+        if pattern.find('*') != -1:
+            return 'Bad request', 400
+            
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                if not db_seg.exists(pattern):
+                    return f'Segment collection {pattern} not found, DB is inconsistent', 404
+
+            ret = ActorSegmentsBatchDeleteValidationResponse(id_invalid=[], value_not_found=[])
+            for id_ in body.ids:
+                if not db_data.exists(id_):
+                    ret.id_invalid.append(id_)
+                elif db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is None:
+                    ret.value_not_found.append(id_)
+        return ret, 200
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -871,7 +918,19 @@ def actor_segments_batch_get(body):  # noqa: E501
     :rtype: Dict[str, List[ActorSegmentCollection]]
     """
     if connexion.request.is_json:
-        body = ActorSegmentsBatchGetBody.from_dict(connexion.request.get_json())  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), ActorSegmentsBatchGetBody)  # noqa: E501
+        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+
+        db_data = util.get_db(db_name='actor_data')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
+            all_segcols = db_data.json().mget(body.ids, Path('segment_collections'))
+        
+        for i in range(len(all_segcols)):
+            if all_segcols[i] is None:
+                continue
+            segcols = all_segcols[i]
+            all_segcols[i] = [util.deserialize(v, ActorSegmentCollection) for v in dpath.util.values(segcols, pattern)]
+        return all_segcols, 200
     return 'do some magic!'
 
 
@@ -887,8 +946,39 @@ def actor_segments_batch_post(body):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        bodies = {k: util.deserialize(v, ActorSegmentCollection) for k, v in connexion.request.get_json().items()}  # noqa: E501
+
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            for id_, body in bodies.items():
+                pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                if pattern.find('*') != -1:
+                    return 'Bad request', 400
+                if not db_data.exists(id_):
+                    return f'ID {id_} does not exist, nothing is done', 404
+                if db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is not None:
+                    return f'Segment collection {pattern} already exists in {id_}, nothing is done', 409
+            
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                for id_, body in bodies.items():
+                    pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                    if not db_seg.exists(pattern):
+                        segcol = UiucSegmentCollection(collection_name=body.collection_name, 
+                                                    provider_name=body.provider_name, 
+                                                    version=body.version, 
+                                                    segments={k: {id_: v} for k, v in body.segments.items()})
+                        db_seg.json().set(pattern, Path.rootPath(), util.serialize(segcol))
+                    else:
+                        segs = db_seg.json().objkeys(pattern, Path('segments'))
+                        for seg in segs:
+                            if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None and seg not in body.segments:
+                                db_seg.json().delete(pattern, Path(f'segments["{seg}"]["{id_}"]'))
+                            elif seg in body.segments:
+                                db_seg.json().set(pattern, Path(f'segments["{seg}"]["{id_}"]'), body.segments[seg])
+                    db_data.json().set(id_, Path(f'segment_collections["{pattern}"]'), util.serialize(body))
+        return 'Created', 201
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -903,8 +993,24 @@ def actor_segments_batch_post_validate(body):  # noqa: E501
     :rtype: ActorSegmentsBatchValidationResponse
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        bodies = {k: util.deserialize(v, ActorSegmentCollection) for k, v in connexion.request.get_json().items()}  # noqa: E501
+
+        seen_set = set()
+        ret = ActorSegmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found=None, value_existed={})
+        db_data = util.get_db(db_name='actor_data')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            for id_, body in bodies.items():
+                pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                if pattern.find('*') != -1:
+                    ret.value_invalid[id_] = body
+                elif not db_data.exists(id_):
+                    ret.id_invalid[id_] = body
+                elif db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is not None or (id_, pattern) in seen_set:
+                    ret.value_existed[id_] = body
+                else:
+                    seen_set.add((id_, pattern))
+        return ret, 200
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -919,8 +1025,35 @@ def actor_segments_batch_put(body):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        bodies = {k: util.deserialize(v, ActorSegmentCollection) for k, v in connexion.request.get_json().items()}  # noqa: E501
+
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            for id_, body in bodies.items():
+                pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                if pattern.find('*') != -1:
+                    return 'Bad request', 400
+                if not db_data.exists(id_):
+                    return f'ID {id_} does not exist, nothing is done', 404
+                if db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is None:
+                    return f'Segment collection {pattern} not found in {id_}, nothing is done', 409
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                for id_, body in bodies.items():
+                    if not db_seg.exists(pattern):
+                        return f'Segment collection {pattern} does not exist', 404
+
+                for id_, body in bodies.items():
+                    pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                    segs = db_seg.json().objkeys(pattern, Path('segments'))
+                    for seg in segs:
+                        if db_seg.json().type(pattern, Path(f'segments["{seg}"]["{id_}"]')) is not None and seg not in body.segments:
+                            db_seg.json().delete(pattern, Path(f'segments["{seg}"]["{id_}"]'))
+                        elif seg in body.segments:
+                            db_seg.json().set(pattern, Path(f'segments["{seg}"]["{id_}"]'), body.segments[seg])
+                    db_data.json().set(id_, Path(f'segment_collections["{pattern}"]'), util.serialize(body))
+        return 'Created', 201
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -935,8 +1068,25 @@ def actor_segments_batch_put_validate(body):  # noqa: E501
     :rtype: ActorSegmentsBatchValidationResponse
     """
     if connexion.request.is_json:
-        body = Dict[str, ActorSegmentCollection].from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        bodies = {k: util.deserialize(v, ActorSegmentCollection) for k, v in connexion.request.get_json().items()}  # noqa: E501
+
+        ret = ActorSegmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found=None, value_existed={})
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
+                for id_, body in bodies.items():
+                    pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+                    if pattern.find('*') != -1:
+                        ret.value_invalid[id_] = body
+                    elif not db_data.exists(id_):
+                        ret.id_invalid[id_] = body
+                    elif db_data.json().type(id_, Path(f'segment_collections["{pattern}"]')) is None:
+                        ret.value_not_found[id_] = body
+                    elif not db_seg.exists(pattern):
+                        ret.value_not_found[id_] = body
+        return ret, 200
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
