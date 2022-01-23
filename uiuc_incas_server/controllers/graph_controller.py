@@ -102,7 +102,7 @@ def generic_graph_id_delete(id_, return_code=204):
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_id_delete(id_):  # noqa: E501
+def actor_actor_graph_id_delete(id_, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -116,7 +116,7 @@ def actor_actor_graph_id_delete(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_id_get(id_):  # noqa: E501
+def actor_actor_graph_id_get(id_, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_id_get
 
     Gets specific actor-actor graph information by id. # noqa: E501
@@ -130,7 +130,7 @@ def actor_actor_graph_id_get(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
+def actor_actor_graph_id_neighbor_get(id_, actor_id, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and actor id. # noqa: E501
@@ -146,7 +146,7 @@ def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_id_put(body, id_):  # noqa: E501
+def actor_actor_graph_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_id_put
 
     Update the specific actor-actor graph by id. # noqa: E501
@@ -165,7 +165,7 @@ def actor_actor_graph_id_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_list_get
 
     Gets graph IDs by providing query keys. # noqa: E501
@@ -187,7 +187,7 @@ def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_nam
 
 
 @util.generic_db_lock_decor
-def actor_actor_graph_post(body):  # noqa: E501
+def actor_actor_graph_post(body, user=None, token_info=None):  # noqa: E501
     """actor_actor_graph_post
 
     Submits a new graph. # noqa: E501
@@ -205,7 +205,7 @@ def actor_actor_graph_post(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_id_delete(id_):  # noqa: E501
+def actor_message_graph_id_delete(id_, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -219,7 +219,7 @@ def actor_message_graph_id_delete(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_id_get(id_):  # noqa: E501
+def actor_message_graph_id_get(id_, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_id_get
 
     Gets specific actor-message graph information by id. # noqa: E501
@@ -233,7 +233,7 @@ def actor_message_graph_id_get(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  # noqa: E501
+def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and message or actor id. # noqa: E501
@@ -258,7 +258,7 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  #
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_id_put(body, id_):  # noqa: E501
+def actor_message_graph_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_id_put
 
     Update the specific actor-message graph by id. # noqa: E501
@@ -277,7 +277,7 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_list_get
 
     Gets graph IDs by providing query keys. # noqa: E501
@@ -299,7 +299,7 @@ def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_n
 
 
 @util.generic_db_lock_decor
-def actor_message_graph_post(body):  # noqa: E501
+def actor_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     """actor_message_graph_post
 
     Submits a new graph. # noqa: E501
@@ -317,7 +317,7 @@ def actor_message_graph_post(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def message_message_graph_id_delete(id_):  # noqa: E501
+def message_message_graph_id_delete(id_, user=None, token_info=None):  # noqa: E501
     """message_message_graph_id_delete
 
     Delete the specific graph by id. # noqa: E501
@@ -331,7 +331,7 @@ def message_message_graph_id_delete(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def message_message_graph_id_get(id_):  # noqa: E501
+def message_message_graph_id_get(id_, user=None, token_info=None):  # noqa: E501
     """message_message_graph_id_get
 
     Gets specific message-message graph information by id. # noqa: E501
@@ -345,7 +345,7 @@ def message_message_graph_id_get(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
+def message_message_graph_id_neighbor_get(id_, message_id, user=None, token_info=None):  # noqa: E501
     """message_message_graph_id_neighbor_get
 
     Gets the neighbors for specific node from specific graph by graph id and message&#x27;s id. # noqa: E501
@@ -361,7 +361,7 @@ def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def message_message_graph_id_put(body, id_):  # noqa: E501
+def message_message_graph_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """message_message_graph_id_put
 
     Update the specific message-message graph by id. # noqa: E501
@@ -380,7 +380,7 @@ def message_message_graph_id_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def message_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
+def message_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None, user=None, token_info=None):  # noqa: E501
     """message_message_graph_list_get
 
     Gets graph IDs by providing query keys. # noqa: E501
@@ -402,7 +402,7 @@ def message_message_graph_list_get(provider_name=None, graph_name=None, distance
 
 
 @util.generic_db_lock_decor
-def message_message_graph_post(body):  # noqa: E501
+def message_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     """message_message_graph_post
 
     Submits a new graph. # noqa: E501

@@ -13,7 +13,7 @@ from uiuc_incas_server import util
 
 
 @util.generic_db_lock_decor
-def segment_collection_id_delete(id_):  # noqa: E501
+def segment_collection_id_delete(id_, user=None, token_info=None):  # noqa: E501
     """segment_collection_id_delete
 
     Deletes the segment collection by id. # noqa: E501
@@ -39,7 +39,7 @@ def segment_collection_id_delete(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def segment_collection_id_get(id_):  # noqa: E501
+def segment_collection_id_get(id_, user=None, token_info=None):  # noqa: E501
     """segment_collection_id_get
 
     Gets a segment collection by id. # noqa: E501
@@ -59,7 +59,7 @@ def segment_collection_id_get(id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def segment_collection_id_put(body, id_):  # noqa: E501
+def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """segment_collection_id_put
 
     Update basic segment collection information by id. # noqa: E501
@@ -88,7 +88,7 @@ def segment_collection_id_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def segment_collection_list_get(collection_name=None, provider_name=None, version=None):  # noqa: E501
+def segment_collection_list_get(collection_name=None, provider_name=None, version=None, user=None, token_info=None):  # noqa: E501
     """segment_collection_list_get
 
     Return list of available segment collection keys by collectionName, providerName, and version. # noqa: E501
@@ -110,7 +110,7 @@ def segment_collection_list_get(collection_name=None, provider_name=None, versio
 
 
 @util.generic_db_lock_decor
-def segment_collection_post(body):  # noqa: E501
+def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
     """segment_collection_post
 
     Add a new segment collection. # noqa: E501

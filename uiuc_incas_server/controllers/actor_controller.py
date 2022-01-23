@@ -25,7 +25,7 @@ from uiuc_incas_server.models.uiuc_segment_collection import UiucSegmentCollecti
 from uiuc_incas_server import util
 
 @util.generic_db_lock_decor
-def actor_batch_get(body):  # noqa: E501
+def actor_batch_get(body, user=None, token_info=None):  # noqa: E501
     """actor_batch_get
 
     Returns a batch of actors given a list of IDs and specifications. # noqa: E501
@@ -75,7 +75,7 @@ def actor_batch_get(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_count_get(media_type, entity_type=None):  # noqa: E501
+def actor_count_get(media_type, entity_type=None, user=None, token_info=None):  # noqa: E501
     """actor_count_get
 
     Return the number of actor IDs available. # noqa: E501
@@ -96,7 +96,7 @@ def actor_count_get(media_type, entity_type=None):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_delete(body):  # noqa: E501
+def actor_enrichments_batch_delete(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_delete
 
     Deletes a batch of enrichments given a list of IDs and specifications. # noqa: E501
@@ -131,7 +131,7 @@ def actor_enrichments_batch_delete(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_delete_validate(body):  # noqa: E501
+def actor_enrichments_batch_delete_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_delete_validate
 
     Validation endpoint for batch enrichment deletion, successful attempt will return a token. # noqa: E501
@@ -165,7 +165,7 @@ def actor_enrichments_batch_delete_validate(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_get(body):  # noqa: E501
+def actor_enrichments_batch_get(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_get
 
     Returns a batch of enrichments given a list of IDs and specifications. # noqa: E501
@@ -201,7 +201,7 @@ def actor_enrichments_batch_get(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_post(body):  # noqa: E501
+def actor_enrichments_batch_post(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_post
 
     Submits a enrichment for each actor ID. # noqa: E501
@@ -232,7 +232,7 @@ def actor_enrichments_batch_post(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_post_validate(body):  # noqa: E501
+def actor_enrichments_batch_post_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_post_validate
 
     Validation endpoint for batch enrichment creation, successful attempt will return a token. # noqa: E501
@@ -264,7 +264,7 @@ def actor_enrichments_batch_post_validate(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_put(body):  # noqa: E501
+def actor_enrichments_batch_put(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_put
 
     Updates a enrichment for each actor ID. # noqa: E501
@@ -295,7 +295,7 @@ def actor_enrichments_batch_put(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_batch_put_validate(body):  # noqa: E501
+def actor_enrichments_batch_put_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_batch_put_validate
 
     Validation endpoint for batch enrichment update, successful attempt will return a token. # noqa: E501
@@ -324,7 +324,7 @@ def actor_enrichments_batch_put_validate(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_meta_delete(enrichment_name, provider_name, version):  # noqa: E501
+def actor_enrichments_meta_delete(enrichment_name, provider_name, version, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_meta_delete
 
     Delete a specific actor enrichment meta by providerName, enrichmentName and version. # noqa: E501
@@ -351,7 +351,7 @@ def actor_enrichments_meta_delete(enrichment_name, provider_name, version):  # n
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_meta_get(enrichment_name=None, provider_name=None, version=None):  # noqa: E501
+def actor_enrichments_meta_get(enrichment_name=None, provider_name=None, version=None, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_meta_get
 
     Returns current actor enrichment metas by providerName, enrichmentName and version. # noqa: E501
@@ -382,7 +382,7 @@ def actor_enrichments_meta_get(enrichment_name=None, provider_name=None, version
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_meta_post(body):  # noqa: E501
+def actor_enrichments_meta_post(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_meta_post
 
     Submits an actor enrichment meta (post after all actors have been added). # noqa: E501
@@ -408,7 +408,7 @@ def actor_enrichments_meta_post(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_enrichments_meta_put(body):  # noqa: E501
+def actor_enrichments_meta_put(body, user=None, token_info=None):  # noqa: E501
     """actor_enrichments_meta_put
 
     Updates an actor enrichment meta (after all actors have been added) by providerName, enrichmentName and version. # noqa: E501
@@ -434,7 +434,7 @@ def actor_enrichments_meta_put(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version):  # noqa: E501
+def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version, user=None, token_info=None):  # noqa: E501
     """actor_id_enrichments_delete
 
     Delete the enrichments for specific actor by type, providerName and version # noqa: E501
@@ -470,7 +470,7 @@ def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version):  
 
 
 @util.generic_db_lock_decor
-def actor_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
+def actor_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None, dev=None, user=None, token_info=None):  # noqa: E501
     """actor_id_enrichments_get
 
     Returns all matched enrichment for the specific actor by type, providerName and version. # noqa: E501
@@ -507,7 +507,7 @@ def actor_id_enrichments_get(id_, enrichment_name=None, provider_name=None, vers
 
 
 @util.generic_db_lock_decor
-def actor_id_enrichments_post(body, id_):  # noqa: E501
+def actor_id_enrichments_post(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_id_enrichments_post
 
     Submits a new enrichment for specific actor. # noqa: E501
@@ -537,7 +537,7 @@ def actor_id_enrichments_post(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_id_enrichments_put(body, id_):  # noqa: E501
+def actor_id_enrichments_put(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_id_enrichments_put
 
     Update the enrichments for specific actor by type, providerName and version. # noqa: E501
@@ -567,7 +567,7 @@ def actor_id_enrichments_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_id_get(id_, with_enrichment=None, with_segment=None, enrichment_name=None, enrichment_provider_name=None, enrichment_version=None, collection_name=None, collection_provider_name=None, collection_version=None, dev=None):  # noqa: E501
+def actor_id_get(id_, with_enrichment=None, with_segment=None, enrichment_name=None, enrichment_provider_name=None, enrichment_version=None, collection_name=None, collection_provider_name=None, collection_version=None, dev=None, user=None, token_info=None):  # noqa: E501
     """actor_id_get
 
     Returns specific actor by id. # noqa: E501
@@ -629,7 +629,7 @@ def actor_id_get(id_, with_enrichment=None, with_segment=None, enrichment_name=N
 
 
 @util.generic_db_lock_decor
-def actor_id_segments_delete(id_, collection_name, provider_name, version):  # noqa: E501
+def actor_id_segments_delete(id_, collection_name, provider_name, version, user=None, token_info=None):  # noqa: E501
     """actor_id_segments_delete
 
     Deletes all matched segments for specific actor by segmentCollectionName # noqa: E501
@@ -669,7 +669,7 @@ def actor_id_segments_delete(id_, collection_name, provider_name, version):  # n
 
 
 @util.generic_db_lock_decor
-def actor_id_segments_get(id_, collection_name=None, provider_name=None, version=None, dev=None):  # noqa: E501
+def actor_id_segments_get(id_, collection_name=None, provider_name=None, version=None, dev=None, user=None, token_info=None):  # noqa: E501
     """actor_id_segments_get
 
     Returns all matched segment collections the actor belonged to by collectionName. # noqa: E501
@@ -699,7 +699,7 @@ def actor_id_segments_get(id_, collection_name=None, provider_name=None, version
 
 
 @util.generic_db_lock_decor
-def actor_id_segments_post(body, id_):  # noqa: E501
+def actor_id_segments_post(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_id_segments_post
 
     Add a new segment collection for the specific actor # noqa: E501
@@ -758,7 +758,7 @@ def actor_id_segments_post(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_id_segments_put(body, id_):  # noqa: E501
+def actor_id_segments_put(body, id_, user=None, token_info=None):  # noqa: E501
     """actor_id_segments_put
 
     Update a segment collection for the specific actor by segment name # noqa: E501
@@ -807,7 +807,7 @@ def actor_id_segments_put(body, id_):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_list_get(begin, end, media_type, entity_type=None):  # noqa: E501
+def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_info=None):  # noqa: E501
     """actor_list_get
 
     Return list of actor IDs available in [begin, end). # noqa: E501
@@ -835,7 +835,7 @@ def actor_list_get(begin, end, media_type, entity_type=None):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segment_batch_delete(body):  # noqa: E501
+def actor_segment_batch_delete(body, user=None, token_info=None):  # noqa: E501
     """actor_segment_batch_delete
 
     Deletes a batch of segment collections given a list of IDs and specifications. # noqa: E501
@@ -875,7 +875,7 @@ def actor_segment_batch_delete(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_delete_validate(body):  # noqa: E501
+def actor_segments_batch_delete_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_delete_validate
 
     Validation endpoint for batch segment deletion, successful attempt will return a token. # noqa: E501
@@ -909,7 +909,7 @@ def actor_segments_batch_delete_validate(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_get(body):  # noqa: E501
+def actor_segments_batch_get(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_get
 
     Returns a batch of segment collections given a list of IDs and specifications. # noqa: E501
@@ -937,7 +937,7 @@ def actor_segments_batch_get(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_post(body):  # noqa: E501
+def actor_segments_batch_post(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_post
 
     Submits a segment collection for each actor ID. # noqa: E501
@@ -984,7 +984,7 @@ def actor_segments_batch_post(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_post_validate(body):  # noqa: E501
+def actor_segments_batch_post_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_post_validate
 
     Validation endpoint for batch segment creation, successful attempt will return a token. # noqa: E501
@@ -1016,7 +1016,7 @@ def actor_segments_batch_post_validate(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_put(body):  # noqa: E501
+def actor_segments_batch_put(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_put
 
     Updates a segment collection for each actor ID. # noqa: E501
@@ -1059,7 +1059,7 @@ def actor_segments_batch_put(body):  # noqa: E501
 
 
 @util.generic_db_lock_decor
-def actor_segments_batch_put_validate(body):  # noqa: E501
+def actor_segments_batch_put_validate(body, user=None, token_info=None):  # noqa: E501
     """actor_segments_batch_put_validate
 
     Validation endpoint for batch segment update, successful attempt will return a token. # noqa: E501
