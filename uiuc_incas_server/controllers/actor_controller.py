@@ -64,7 +64,7 @@ def actor_batch_get(body, user=None, token_info=None):  # noqa: E501
                 if body.dev:
                     segments = records[i]['segments']
                 else:
-                    segments = {k: v for k, v in records[i]['segments'].items() if k in available_metas}
+                    segments = {k: v for k, v in records[i]['segments'].items() if k in available_collection_metas}
                 records[i]['segments'] = dpath.util.values(segments, collection_pattern)
             else:
                 records[i]['segments'] = []
@@ -830,7 +830,7 @@ def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_in
     with db_idx.lock('db_index_lock', blocking_timeout=5) as lock:
         keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type.lower(), i) for i in range(begin, end)]
         ret = db_idx.json().mget(keys, Path.rootPath())
-    ret = [deserialize(x, ActorIdResponse) for x in records]
+    ret = [util.deserialize(x, ActorIdResponse) for x in ret]
     return ret, 200
 
 
