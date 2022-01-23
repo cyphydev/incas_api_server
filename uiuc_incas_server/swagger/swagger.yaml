@@ -12,6 +12,84 @@ servers:
 security:
 - ApiKeyAuth: []
 paths:
+  /message:
+    post:
+      tags:
+      - admin
+      description: Add messages.
+      operationId: admin_message_post
+      requestBody:
+        description: Array of messages
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.admin_controller
+  /actor:
+    post:
+      tags:
+      - admin
+      description: Add actors.
+      operationId: admin_actor_post
+      requestBody:
+        description: Array of actors
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Actor'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.admin_controller
   /message/count:
     get:
       tags:
@@ -166,7 +244,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -210,7 +288,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -414,7 +492,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -452,7 +530,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -490,7 +568,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -535,7 +613,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/MessageEnrichment'
+                $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "201":
@@ -746,7 +824,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "200":
@@ -798,7 +876,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/BaseMessageEnrichment'
         required: true
       responses:
         "201":
@@ -1329,7 +1407,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -1373,7 +1451,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -1857,7 +1935,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -1895,7 +1973,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -1933,7 +2011,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -1978,7 +2056,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/ActorEnrichment'
+                $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "201":
@@ -2453,7 +2531,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "200":
@@ -2505,7 +2583,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/BaseActorEnrichment'
         required: true
       responses:
         "201":
@@ -4727,6 +4805,6 @@ components:
     ApiKeyAuth:
       type: apiKey
       name: X-API-KEY
-      in: header
+      in: query
       x-apikeyInfoFunc: uiuc_incas_server.controllers.authorization_controller.check_ApiKeyAuth
 

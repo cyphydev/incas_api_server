@@ -3,6 +3,7 @@ from connexion.exceptions import OAuthProblem
 
 import redis
 from redis.commands.json.path import Path
+from redis.exceptions import LockError
 from uiuc_incas_server import util
 
 """
