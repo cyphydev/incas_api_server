@@ -104,7 +104,7 @@ def actor_enrichments_batch_delete(body):  # noqa: E501
     :param body: List of IDs and specifications
     :type body: dict | bytes
 
-    :rtype: str
+    :rtype: None
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorEnrichmentsBatchDeleteBody)  # noqa: E501
@@ -336,7 +336,7 @@ def actor_enrichments_meta_delete(enrichment_name, provider_name, version):  # n
     :param version: 
     :type version: str
 
-    :rtype: str
+    :rtype: None
     """
     pattern = util.get_enrichment_pattern('actor', enrichment_name, provider_name, version)
     if pattern.find('*') != -1:
@@ -448,7 +448,7 @@ def actor_id_enrichments_delete(id_, enrichment_name, provider_name, version):  
     :param version: 
     :type version: str
 
-    :rtype: str
+    :rtype: None
     """
     pattern = util.get_enrichment_pattern('actor', enrichment_name, provider_name, version)
     if pattern.find('*') != -1:
@@ -643,7 +643,7 @@ def actor_id_segments_delete(id_, collection_name, provider_name, version):  # n
     :param version: 
     :type version: str
 
-    :rtype: str
+    :rtype: None
     """
     pattern = util.get_collection_pattern('actor', collection_name, provider_name, version)
     if pattern.find('*') != -1:
@@ -843,7 +843,7 @@ def actor_segment_batch_delete(body):  # noqa: E501
     :param body: List of IDs and specifications
     :type body: dict | bytes
 
-    :rtype: str
+    :rtype: None
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorSegmentsBatchDeleteBody)  # noqa: E501

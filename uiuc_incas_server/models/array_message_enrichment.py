@@ -30,7 +30,7 @@ class ArrayMessageEnrichment(BaseMessageEnrichment):
     """
     swagger_types = {
         'attribute_value': 'list[float]',
-        'confidence': 'list'
+        'confidence': 'list[float]'
     }
     if hasattr(BaseMessageEnrichment, "swagger_types"):
         swagger_types.update(BaseMessageEnrichment.swagger_types)
@@ -81,7 +81,7 @@ class ArrayMessageEnrichment(BaseMessageEnrichment):
         The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
 
         :return: The confidence of this ArrayMessageEnrichment.  # noqa: E501
-        :rtype: list
+        :rtype: list[float]
         """
         return self._confidence
 
@@ -92,7 +92,7 @@ class ArrayMessageEnrichment(BaseMessageEnrichment):
         The confidence that this enrichment is correct, expressed as a percentage between 0.0 and 1.0  # noqa: E501
 
         :param confidence: The confidence of this ArrayMessageEnrichment.  # noqa: E501
-        :type: list
+        :type: list[float]
         """
 
         self._confidence = confidence

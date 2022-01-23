@@ -100,6 +100,7 @@ def generic_graph_id_delete(id_, return_code=204):
 
     return 'Deleted', return_code
 
+
 @util.generic_db_lock_decor
 def actor_actor_graph_id_delete(id_):  # noqa: E501
     """actor_actor_graph_id_delete
@@ -109,9 +110,10 @@ def actor_actor_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: str
+    :rtype: None
     """
     return generic_graph_id_delete(id_)
+
 
 @util.generic_db_lock_decor
 def actor_actor_graph_id_get(id_):  # noqa: E501
@@ -125,6 +127,7 @@ def actor_actor_graph_id_get(id_):  # noqa: E501
     :rtype: ActorActorGraph
     """
     return generic_graph_id_get(id_, ActorActorGraph)
+
 
 @util.generic_db_lock_decor
 def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
@@ -140,6 +143,7 @@ def actor_actor_graph_id_neighbor_get(id_, actor_id):  # noqa: E501
     :rtype: List[GraphEdge]
     """
     return generic_graph_id_neighbor_get(db_graph, id_, actor_id)
+
 
 @util.generic_db_lock_decor
 def actor_actor_graph_id_put(body, id_):  # noqa: E501
@@ -158,6 +162,7 @@ def actor_actor_graph_id_put(body, id_):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
         return generic_graph_id_put(id_, body, ActorActorGraphDB)
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
@@ -180,6 +185,7 @@ def actor_actor_graph_list_get(provider_name=None, graph_name=None, distance_nam
     """
     return generic_graph_list_get('actor_actor', provider_name, graph_name, distance_name, version, time_stamp)
 
+
 @util.generic_db_lock_decor
 def actor_actor_graph_post(body):  # noqa: E501
     """actor_actor_graph_post
@@ -191,12 +197,12 @@ def actor_actor_graph_post(body):  # noqa: E501
 
     :rtype: str
     """
-    
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
         pattern = f'actor_actor:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
         return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_message_graph_id_delete(id_):  # noqa: E501
@@ -207,9 +213,10 @@ def actor_message_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: str
+    :rtype: None
     """
     return generic_graph_id_delete(id_)
+
 
 @util.generic_db_lock_decor
 def actor_message_graph_id_get(id_):  # noqa: E501
@@ -223,6 +230,7 @@ def actor_message_graph_id_get(id_):  # noqa: E501
     :rtype: ActorMessageGraph
     """
     return generic_graph_id_get(id_, ActorMessageGraph)
+
 
 @util.generic_db_lock_decor
 def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  # noqa: E501
@@ -248,6 +256,7 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None):  #
     else:
         return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def actor_message_graph_id_put(body, id_):  # noqa: E501
     """actor_message_graph_id_put
@@ -265,6 +274,7 @@ def actor_message_graph_id_put(body, id_):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), ActorMessageGraph)  # noqa: E501
         return generic_graph_id_put(id_, body, ActorMessageGraphDB)
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
@@ -287,6 +297,7 @@ def actor_message_graph_list_get(provider_name=None, graph_name=None, distance_n
     """
     return generic_graph_list_get('actor_message', provider_name, graph_name, distance_name, version, time_stamp)
 
+
 @util.generic_db_lock_decor
 def actor_message_graph_post(body):  # noqa: E501
     """actor_message_graph_post
@@ -304,6 +315,7 @@ def actor_message_graph_post(body):  # noqa: E501
         return generic_graph_post(body, pattern, ActorMessageGraphDB)
     return 'Bad request', 400
 
+
 @util.generic_db_lock_decor
 def message_message_graph_id_delete(id_):  # noqa: E501
     """message_message_graph_id_delete
@@ -313,9 +325,10 @@ def message_message_graph_id_delete(id_):  # noqa: E501
     :param id: Graph ID
     :type id: str
 
-    :rtype: str
+    :rtype: None
     """
     return generic_graph_id_delete(id_)
+
 
 @util.generic_db_lock_decor
 def message_message_graph_id_get(id_):  # noqa: E501
@@ -329,6 +342,7 @@ def message_message_graph_id_get(id_):  # noqa: E501
     :rtype: MessageMessageGraph
     """
     return generic_graph_id_get(id_, MessageMessageGraph)
+
 
 @util.generic_db_lock_decor
 def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
@@ -344,6 +358,7 @@ def message_message_graph_id_neighbor_get(id_, message_id):  # noqa: E501
     :rtype: List[GraphEdge]
     """
     return generic_graph_id_neighbor_get(db_graph, id_, message_id)
+
 
 @util.generic_db_lock_decor
 def message_message_graph_id_put(body, id_):  # noqa: E501
@@ -362,6 +377,7 @@ def message_message_graph_id_put(body, id_):  # noqa: E501
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
         return generic_graph_id_put(id_, body, MessageMessageGraphDB)
     return 'Bad request', 400
+
 
 @util.generic_db_lock_decor
 def message_message_graph_list_get(provider_name=None, graph_name=None, distance_name=None, version=None, time_stamp=None):  # noqa: E501
@@ -383,6 +399,7 @@ def message_message_graph_list_get(provider_name=None, graph_name=None, distance
     :rtype: List[str]
     """
     return generic_graph_list_get('message_message', provider_name, graph_name, distance_name, version, time_stamp)
+
 
 @util.generic_db_lock_decor
 def message_message_graph_post(body):  # noqa: E501

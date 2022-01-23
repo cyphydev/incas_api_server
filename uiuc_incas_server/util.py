@@ -16,6 +16,7 @@ from uiuc_incas_server import type_util
 import uiuc_incas_server.models
 
 import redis
+from redis.exceptions import LockError
 
 PRIMITIVE_TYPES = (float, bool, bytes, six.text_type) + six.integer_types
 NATIVE_TYPES_MAPPING = {

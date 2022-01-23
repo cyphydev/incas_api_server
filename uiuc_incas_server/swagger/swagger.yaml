@@ -9,6 +9,8 @@ info:
 servers:
 - url: https://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
+security:
+- ApiKeyAuth: []
 paths:
   /message/count:
     get:
@@ -40,6 +42,14 @@ paths:
                 type: integer
                 description: The number of messages available
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/list:
     get:
@@ -88,6 +98,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/MessageIdResponse'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/meta:
     get:
@@ -128,6 +146,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/MessageEnrichmentMeta'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     put:
       tags:
@@ -140,7 +166,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+              $ref: '#/components/schemas/MessageEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -157,6 +183,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -176,7 +210,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+              $ref: '#/components/schemas/MessageEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -193,6 +227,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -232,20 +274,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: Not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -277,6 +315,14 @@ paths:
                   items:
                     $ref: '#/components/schemas/MessageEnrichment'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
           content:
@@ -313,6 +359,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batchDelete:
     post:
@@ -330,20 +384,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -364,7 +414,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "200":
@@ -380,6 +430,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -394,7 +452,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "200":
@@ -410,6 +468,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batch:
     put:
@@ -424,7 +490,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "200":
@@ -434,15 +500,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -461,7 +535,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "201":
@@ -478,6 +552,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -544,15 +626,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UiucMessage'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -613,15 +703,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/MessageEnrichment'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -648,7 +746,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichment'
+              $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "200":
@@ -658,15 +756,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -692,7 +798,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichment'
+              $ref: '#/components/schemas/MessageEnrichment'
         required: true
       responses:
         "201":
@@ -709,6 +815,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -756,20 +870,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -799,6 +909,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/UiucMessage'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
           content:
@@ -846,6 +964,14 @@ paths:
                 items:
                   type: string
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
   /segmentCollection:
     post:
@@ -875,6 +1001,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -905,15 +1039,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UiucSegmentCollection'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -949,15 +1091,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -981,20 +1131,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -1045,6 +1191,14 @@ paths:
                 type: integer
                 description: The number of actors available
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/list:
     get:
@@ -1107,6 +1261,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorIdResponse'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/meta:
     get:
@@ -1147,6 +1309,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorEnrichmentMeta'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     put:
       tags:
@@ -1159,7 +1329,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
+              $ref: '#/components/schemas/ActorEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -1176,6 +1346,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -1195,7 +1373,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
+              $ref: '#/components/schemas/ActorEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -1212,6 +1390,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -1251,20 +1437,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -1297,6 +1479,14 @@ paths:
                   items:
                     $ref: '#/components/schemas/ActorSegmentCollection'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
           content:
@@ -1333,6 +1523,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/segments/batchDelete:
     post:
@@ -1351,20 +1549,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -1401,6 +1595,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -1431,6 +1633,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/segments/batch:
     put:
@@ -1455,15 +1665,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -1499,6 +1717,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -1532,6 +1758,14 @@ paths:
                   items:
                     $ref: '#/components/schemas/ActorEnrichment'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
           content:
@@ -1568,6 +1802,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchDelete:
     post:
@@ -1585,20 +1827,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -1619,7 +1857,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "200":
@@ -1635,6 +1873,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -1649,7 +1895,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "200":
@@ -1665,6 +1911,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batch:
     put:
@@ -1679,7 +1933,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "200":
@@ -1689,15 +1943,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -1716,7 +1978,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "201":
@@ -1733,6 +1995,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -1828,15 +2098,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UiucActor'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -1897,15 +2175,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorSegmentCollection'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -1941,15 +2227,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -1992,6 +2286,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -2038,20 +2340,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -2112,15 +2410,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorEnrichment'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2147,7 +2453,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichment'
+              $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "200":
@@ -2157,15 +2463,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2191,7 +2505,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichment'
+              $ref: '#/components/schemas/ActorEnrichment'
         required: true
       responses:
         "201":
@@ -2208,6 +2522,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -2255,20 +2577,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -2298,6 +2616,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/UiucActor'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
           content:
@@ -2328,15 +2654,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageMessageGraph'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2372,15 +2706,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2404,20 +2746,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -2483,6 +2821,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /messageMessageGraph:
     post:
@@ -2512,6 +2858,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -2553,15 +2907,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2590,15 +2952,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActorMessageGraph'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2634,15 +3004,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2666,20 +3044,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -2745,6 +3119,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph:
     post:
@@ -2774,6 +3156,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -2822,15 +3212,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2859,15 +3257,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActorActorGraph'
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2903,15 +3309,23 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -2935,20 +3349,16 @@ paths:
       responses:
         "204":
           description: Deleted
-          content:
-            text/plain:
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
               schema:
                 type: string
-                x-content-type: text/plain
         "404":
           description: id not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
           content:
             text/plain:
               schema:
@@ -3014,6 +3424,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph:
     post:
@@ -3043,6 +3461,14 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
           content:
@@ -3084,15 +3510,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
           content:
             text/plain:
               schema:
@@ -3769,6 +4203,11 @@ components:
             type: array
             description: "The confidence that this enrichment is correct, expressed\
               \ as a percentage between 0.0 and 1.0"
+            items:
+              maximum: 1.0
+              minimum: 0.0
+              type: number
+              format: double
     TextMessageEnrichment:
       description: This defines a text enrichment.
       allOf:
@@ -4275,4 +4714,19 @@ components:
         type: string
       description: "This is a hash map (or dictionary) with strings as keys and strings\
         \ as values, that is used to put custom user data on an object"
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+      headers:
+        WWW_Authenticate:
+          style: simple
+          explode: false
+          schema:
+            type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-KEY
+      in: header
+      x-apikeyInfoFunc: uiuc_incas_server.controllers.authorization_controller.check_ApiKeyAuth
 

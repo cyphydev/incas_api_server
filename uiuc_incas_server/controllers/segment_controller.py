@@ -21,7 +21,7 @@ def segment_collection_id_delete(id_):  # noqa: E501
     :param id: Segment collection ID
     :type id: str
 
-    :rtype: str
+    :rtype: None
     """
     db_data = util.get_db(db_name='actor_data')
     db_seg = util.get_db(db_name='segment')
