@@ -28,39 +28,72 @@ class UiucSegmentCollection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'description': 'str',
         'collection_name': 'str',
         'provider_name': 'str',
         'version': 'str',
+        'segment_descriptions': 'dict(str, str)',
         'segments': 'dict(str, dict(str, float))',
         'extra_attributes': 'ExtraAttributes'
     }
 
     attribute_map = {
+        'description': 'description',
         'collection_name': 'collectionName',
         'provider_name': 'providerName',
         'version': 'version',
+        'segment_descriptions': 'segmentDescriptions',
         'segments': 'segments',
         'extra_attributes': 'extraAttributes'
     }
 
-    def __init__(self, collection_name=None, provider_name=None, version=None, segments=None, extra_attributes=None):  # noqa: E501
+    def __init__(self, description=None, collection_name=None, provider_name=None, version=None, segment_descriptions=None, segments=None, extra_attributes=None):  # noqa: E501
         """UiucSegmentCollection - a model defined in Swagger"""  # noqa: E501
+        self._description = None
         self._collection_name = None
         self._provider_name = None
         self._version = None
+        self._segment_descriptions = None
         self._segments = None
         self._extra_attributes = None
         self.discriminator = None
+        if description is not None:
+            self.description = description
         if collection_name is not None:
             self.collection_name = collection_name
         if provider_name is not None:
             self.provider_name = provider_name
         if version is not None:
             self.version = version
+        if segment_descriptions is not None:
+            self.segment_descriptions = segment_descriptions
         if segments is not None:
             self.segments = segments
         if extra_attributes is not None:
             self.extra_attributes = extra_attributes
+
+    @property
+    def description(self):
+        """Gets the description of this UiucSegmentCollection.  # noqa: E501
+
+        Description of the segment.  # noqa: E501
+
+        :return: The description of this UiucSegmentCollection.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description):
+        """Sets the description of this UiucSegmentCollection.
+
+        Description of the segment.  # noqa: E501
+
+        :param description: The description of this UiucSegmentCollection.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def collection_name(self):
@@ -130,6 +163,27 @@ class UiucSegmentCollection(object):
         """
 
         self._version = version
+
+    @property
+    def segment_descriptions(self):
+        """Gets the segment_descriptions of this UiucSegmentCollection.  # noqa: E501
+
+
+        :return: The segment_descriptions of this UiucSegmentCollection.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._segment_descriptions
+
+    @segment_descriptions.setter
+    def segment_descriptions(self, segment_descriptions):
+        """Sets the segment_descriptions of this UiucSegmentCollection.
+
+
+        :param segment_descriptions: The segment_descriptions of this UiucSegmentCollection.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._segment_descriptions = segment_descriptions
 
     @property
     def segments(self):

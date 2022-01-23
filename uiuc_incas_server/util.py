@@ -305,17 +305,20 @@ def __deserialize_model(data, klass):
             instance = __deserialize(data, klass_name)
     return instance
 
-def get_triple_pattern(prefix, insert, name, provider, version):
-    if name is None:
-        name = '*'
+def get_enrichment_pattern(prefix, enrichment_name, provider, version):
+    if enrichment_name is None:
+        enrichment_name = '*'
     if provider is None:
         provider = '*'
     if version is None:
         version = '*'
-    return f'{prefix}:{insert}:{name}:{provider}:{version}'
-
-def get_enrichment_pattern(prefix, enrichment_name, provider, version):
-    return get_triple_pattern(prefix, 'enrich', enrichment_name, provider, version)
+    return f'{prefix}:enrich:{enrichment_name}:{provider}:{version}'
 
 def get_collection_pattern(prefix, collection_name, provider, version):
-    return get_triple_pattern(prefix, 'segment', collection_name, provider, version)
+    if collection_name is None:
+        collection_name = '*'
+    if provider is None:
+        provider = '*'
+    if version is None:
+        version = '*'
+    return f'segment:{collection_name}:{provider}:{version}'

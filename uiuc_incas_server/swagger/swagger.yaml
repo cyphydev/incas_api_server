@@ -807,6 +807,200 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /segmentCollection/list:
+    get:
+      tags:
+      - segment
+      description: "Return list of available segment collection keys by collectionName,\
+        \ providerName, and version."
+      operationId: segment_collection_list_get
+      parameters:
+      - name: collectionName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of segment collection keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection:
+    post:
+      tags:
+      - segment
+      description: Add a new segment collection.
+      operationId: segment_collection_post
+      requestBody:
+        description: The new segment collection to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection/{id}:
+    get:
+      tags:
+      - segment
+      description: Gets a segment collection by id.
+      operationId: segment_collection_id_get
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Requested segment collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucSegmentCollection'
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+    put:
+      tags:
+      - segment
+      description: Update basic segment collection information by id.
+      operationId: segment_collection_id_put
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The segment collection meta
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+    delete:
+      tags:
+      - segment
+      description: Deletes the segment collection by id.
+      operationId: segment_collection_id_delete
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
   /actor/count:
     get:
       tags:
@@ -913,168 +1107,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorIdResponse'
                 x-content-type: application/json
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-  /actor/segments/meta:
-    get:
-      tags:
-      - actor
-      description: "Returns current actor segment collection metas by collectionName,\
-        \ providerName, and version."
-      operationId: actor_segments_meta_get
-      parameters:
-      - name: collectionName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: providerName
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A list of actor segment collection meta
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UiucSegmentCollectionMeta'
-                x-content-type: application/json
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-    put:
-      tags:
-      - actor
-      description: "Updates an actor segment collection meta (after all actors have\
-        \ been added) by providerName, segmentCollectionName and version."
-      operationId: actor_segments_meta_put
-      requestBody:
-        description: The new segment collection meta to update
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
-        required: true
-      responses:
-        "200":
-          description: Updated
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "400":
-          description: Invalid input
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "409":
-          description: Input already exists
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-    post:
-      tags:
-      - actor
-      description: Add a new segment collection meta
-      operationId: actor_segments_meta_post
-      requestBody:
-        description: The new segment collection meta to add
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
-        required: true
-      responses:
-        "201":
-          description: Posted
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "400":
-          description: Invalid input
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "409":
-          description: Input already exists
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-    delete:
-      tags:
-      - actor
-      description: "Deletes the segment collection metas by segmentCollectionName,\
-        \ providerName and version."
-      operationId: actor_segments_meta_delete
-      parameters:
-      - name: collectionName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: providerName
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: version
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: Deleted
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "404":
-          description: Not found
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: Unauthorized
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/meta:
     get:
@@ -3458,6 +3490,8 @@ components:
           additionalProperties:
             type: number
             format: float
+      description: "An entry in actor's segment collections array, store membership\
+        \ assignment for each segment."
       example:
         version: version
         providerName: providerName
@@ -3483,17 +3517,13 @@ components:
           type: object
           additionalProperties:
             type: string
-      description: Stores the meta data related to segments
-      example:
-        segmentDescriptions:
-          key: segmentDescriptions
-        description: description
-        version: version
-        providerName: providerName
-        collectionName: collectionName
+      description: Stores the meta data related to segments.
     UiucSegmentCollection:
       type: object
       properties:
+        description:
+          type: string
+          description: Description of the segment.
         collectionName:
           type: string
           description: Name of the segment.
@@ -3503,6 +3533,10 @@ components:
         version:
           type: string
           description: "The version within the same (provider, name)."
+        segmentDescriptions:
+          type: object
+          additionalProperties:
+            type: string
         segments:
           type: object
           additionalProperties:
@@ -3513,7 +3547,19 @@ components:
           description: Different segment sets with user probability.
         extraAttributes:
           $ref: '#/components/schemas/ExtraAttributes'
-      description: A segment to group actors
+      description: A segment to group actors.
+      example:
+        segmentDescriptions:
+          key: segmentDescriptions
+        description: description
+        version: version
+        providerName: providerName
+        extraAttributes:
+          key: extraAttributes
+        collectionName: collectionName
+        segments:
+          key:
+            key: 0.8008282
     BaseMessageEnrichmentMeta:
       required:
       - enrichmentType

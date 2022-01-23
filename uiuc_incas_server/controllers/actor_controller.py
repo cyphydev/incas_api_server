@@ -22,7 +22,6 @@ from uiuc_incas_server.models.actor_segments_batch_get_body import ActorSegments
 from uiuc_incas_server.models.actor_segments_batch_validation_response import ActorSegmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
 from uiuc_incas_server.models.uiuc_segment_collection import UiucSegmentCollection  # noqa: E501
-from uiuc_incas_server.models.uiuc_segment_collection_meta import UiucSegmentCollectionMeta  # noqa: E501
 from uiuc_incas_server import util
 
 @util.generic_db_lock_decor
@@ -728,10 +727,13 @@ def actor_id_segments_post(body, id_):  # noqa: E501
             
             with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
                 if not db_seg.exists(pattern):
-                    segcol = UiucSegmentCollection(collection_name=body.collection_name, 
-                                                   provider_name=body.provider_name, 
-                                                   version=body.version, 
-                                                   segments={k: {id_: v} for k, v in body.segments.items()})
+                    segcol = UiucSegmentCollection(
+                        description='',
+                        collection_name=body.collection_name,
+                        provider_name=body.provider_name,
+                        version=body.version,
+                        segment_descriptions={k: '' for k in body.segments.keys()},
+                        segments={k: {id_: v} for k, v in body.segments.items()})
                     db_seg.json().set(pattern, Path.rootPath(), util.serialize(segcol))
                 else:
                     segs = db_seg.json().objkeys(pattern, Path('segments'))
@@ -931,7 +933,7 @@ def actor_segments_batch_get(body):  # noqa: E501
             segcols = all_segcols[i]
             all_segcols[i] = [util.deserialize(v, ActorSegmentCollection) for v in dpath.util.values(segcols, pattern)]
         return all_segcols, 200
-    return 'do some magic!'
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -1086,111 +1088,4 @@ def actor_segments_batch_put_validate(body):  # noqa: E501
                     elif not db_seg.exists(pattern):
                         ret.value_not_found[id_] = body
         return ret, 200
-    return 'Bad request', 400
-
-
-@util.generic_db_lock_decor
-def actor_segments_meta_delete(collection_name, provider_name, version):  # noqa: E501
-    """actor_segments_meta_delete
-
-    Deletes the segment collection metas by segmentCollectionName, providerName and version. # noqa: E501
-
-    :param collection_name: 
-    :type collection_name: str
-    :param provider_name: 
-    :type provider_name: str
-    :param version: 
-    :type version: str
-
-    :rtype: str
-    """
-    pattern = util.get_collection_pattern('actor', collection_name, provider_name, version)
-    if pattern.find('*') != -1:
-        return 'Bad request', 400
-
-    db_meta = util.get_db(db_name='meta')
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        if not db_meta.exists(pattern):
-            return 'Key not found', 404
-        db_meta.json().delete(pattern, Path.rootPath())
-    return 'Deleted', 204
-
-@util.generic_db_lock_decor
-def actor_segments_meta_get(collection_name=None, provider_name=None, version=None):  # noqa: E501
-    """actor_segments_meta_get
-
-    Returns current actor segment collection metas by collectionName, providerName, and version. # noqa: E501
-
-    :param collection_name: 
-    :type collection_name: str
-    :param provider_name: 
-    :type provider_name: str
-    :param version: 
-    :type version: str
-
-    :rtype: List[UiucSegmentCollectionMeta]
-    """
-    pattern = util.get_collection_pattern('actor', collection_name, provider_name, version)
-
-    db_meta = util.get_db(db_name='meta')
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        ks = util.get_all_keys(db_meta, pattern)
-        if len(ks) == 0:
-            return 'No keys found', 404
-        
-        records = db_meta.json().mget(ks, Path.rootPath())
-        for i in range(len(records)):
-            if records[i] is None:
-                continue
-            records[i] = util.deserialize(records[i], UiucSegmentCollectionMeta)
-    return records, 200
-
-@util.generic_db_lock_decor
-def actor_segments_meta_post(body):  # noqa: E501
-    """actor_segments_meta_post
-
-    Add a new segment collection meta # noqa: E501
-
-    :param body: The new segment collection meta to add
-    :type body: dict | bytes
-
-    :rtype: str
-    """
-    if connexion.request.is_json:
-        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollectionMeta)  # noqa: E501
-        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
-        if pattern.find('*') != -1:
-            return 'Bad request', 400
-        
-        db_meta = util.get_db(db_name='meta')
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if db_meta.exists(pattern):
-                return 'Key already exists', 409
-            db_meta.json().set(pattern, Path.rootPath(), util.serialize(body))
-        return "Created", 201
-    return 'Bad request', 400
-
-@util.generic_db_lock_decor
-def actor_segments_meta_put(body):  # noqa: E501
-    """actor_segments_meta_put
-
-    Updates an actor segment collection meta (after all actors have been added) by providerName, segmentCollectionName and version. # noqa: E501
-
-    :param body: The new segment collection meta to update
-    :type body: dict | bytes
-
-    :rtype: str
-    """
-    if connexion.request.is_json:
-        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollectionMeta)  # noqa: E501
-        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
-        if pattern.find('*') != -1:
-            return 'Bad request', 400
-        
-        db_meta = util.get_db(db_name='meta')
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists(pattern):
-                return 'Key not found', 404
-            db_meta.json().set(pattern, Path.rootPath(), util.serialize(body))
-        return "Updated", 200
     return 'Bad request', 400
