@@ -56,6 +56,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                         idx_pattern = f'forward:actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}'
                         data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
+                        actor['uiuc_author_id'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern)) is None:
                             db_meta.set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
@@ -112,6 +113,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         idx_pattern = f'forward:message:{message["mediaType"].lower()}'
                         data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
+                        message['uiuc_message_id'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern)) is None:
                             db_meta.set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
