@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from uiuc_incas_server.models.actor import Actor  # noqa: E501
-from uiuc_incas_server.models.message import Message  # noqa: E501
+from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
+from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
 
@@ -18,7 +18,7 @@ class TestAdminController(BaseTestCase):
 
         
         """
-        body = [Actor()]
+        body = [UiucActor()]
         response = self.client.open(
             '/api/v1/actor',
             method='POST',
@@ -32,7 +32,7 @@ class TestAdminController(BaseTestCase):
 
         
         """
-        body = [Message()]
+        body = [UiucMessage()]
         response = self.client.open(
             '/api/v1/message',
             method='POST',

@@ -25,7 +25,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/Message'
+                $ref: '#/components/schemas/UiucMessage'
         required: true
       responses:
         "201":
@@ -64,7 +64,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/Actor'
+                $ref: '#/components/schemas/UiucActor'
         required: true
       responses:
         "201":

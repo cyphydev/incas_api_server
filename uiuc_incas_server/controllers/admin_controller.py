@@ -53,7 +53,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                     for actor in bodies:
                         actor['enrichments'] = {}
                         actor['segmentCollections'] = {}
-                        idx_pattern = f'forward:actor:{actor['mediaType'].lower()}:{actor['entityType'].lower()}'
+                        idx_pattern = f'forward:actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}'
                         data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
 
@@ -109,7 +109,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                 with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
                     for message in bodies:
                         message['enrichments'] = {}
-                        idx_pattern = f'forward:message:{message['mediaType'].lower()}'
+                        idx_pattern = f'forward:message:{message["mediaType"].lower()}'
                         data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
 
