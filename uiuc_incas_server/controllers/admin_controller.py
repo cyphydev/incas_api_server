@@ -4,6 +4,7 @@ import six
 
 import redis
 from redis.exceptions import LockError
+from redis.commands.json.path import Path
 
 from uiuc_incas_server.models.actor_id_response import ActorIdResponse  # noqa: E501
 from uiuc_incas_server.models.message_id_response import MessageIdResponse  # noqa: E501
@@ -40,7 +41,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
         db_data = util.get_db(db_name='actor_data')
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             if not db_meta.exists('status'):
-                db_meta.set('status', Path.rootPath(), {})
+                db_meta.json().set('status', Path.rootPath(), {})
 
         with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
             # for actor in bodies:
@@ -53,23 +54,23 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                     for actor in bodies:
                         actor['enrichments'] = {}
                         actor['segmentCollections'] = {}
-                        idx_pattern = f'forward:actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}'
-                        data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
+                        idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
+                        data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
                         actor['uiuc_author_id'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern)) is None:
-                            db_meta.set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
+                            db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
                         counter = db_meta.json().get('status', Path(idx_pattern))
 
-                        db_idx.set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
+                        db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
                             global_id=actor['id'],
                             actor_id=data_pattern
                         )))
-                        db_idx.set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+                        db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
-                        db_data.set(data_pattern, Path.rootPath(), actor)
-                        db_meta.set('status', Path(idx_pattern), counter + 1)
+                        db_data.json().set(data_pattern, Path.rootPath(), actor)
+                        db_meta.json().set('status', Path(idx_pattern), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400
 
@@ -90,7 +91,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
     if connexion.request.is_json:
         bodies = [util.serialize(util.deserialize(d, UiucMessage)) for d in connexion.request.get_json()]  # noqa: E501
         for message in bodies:
-            if message['mediaType'] is None or actor['mediaType'] == '':
+            if message['mediaType'] is None or message['mediaType'] == '':
                 return 'Media type cannot be empty', 400
 
         db_idx = util.get_db(db_name='index')
@@ -98,7 +99,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
         db_data = util.get_db(db_name='message_data')
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             if not db_meta.exists('status'):
-                db_meta.set('status', Path.rootPath(), {})
+                db_meta.json().set('status', Path.rootPath(), {})
 
         with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
             # for message in bodies:
@@ -116,16 +117,16 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         message['uiuc_message_id'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern)) is None:
-                            db_meta.set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
+                            db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
                         counter = db_meta.json().get('status', Path(idx_pattern))
 
-                        db_idx.set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
+                        db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
                             global_id=message['id'],
                             media_id=data_pattern
                         )))
-                        db_idx.set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+                        db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
-                        db_data.set(data_pattern, Path.rootPath(), message)
-                        db_meta.set('status', Path(idx_pattern), counter + 1)
+                        db_data.json().set(data_pattern, Path.rootPath(), message)
+                        db_meta.json().set('status', Path(idx_pattern), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400

@@ -588,8 +588,8 @@ def message_list_get(begin, end, media_type, user=None, token_info=None):  # noq
     :rtype: List[MessageIdResponse]
     """
     db_idx = util.get_db(db_name='index')
-    with db_data.lock('db_index_lock', blocking_timeout=5) as lock:
+    with db_idx.lock('db_index_lock', blocking_timeout=5) as lock:
         keys = ['forward:message:{}:{}'.format(media_type.lower(), i) for i in range(begin, end)]
         records = db_idx.json().mget(keys, Path.rootPath())
-    ret = [deserialize(x, MessageIdResponse) for x in records]
+    ret = [util.deserialize(x, MessageIdResponse) for x in records]
     return ret, 200

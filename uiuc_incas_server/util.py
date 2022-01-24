@@ -59,11 +59,11 @@ def get_db(db_name, server_host='localhost', server_port=6379):
 
 def count_keys(db, pattern):
     cnt, cur = 0, 0
-    cur, ks = db_idx.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+    cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
     cur = int(cur)
     cnt += len(ks)
     while cur != 0:
-        cur, ks = db_idx.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+        cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
         cur = int(cur)
         cnt += len(ks)
     return cnt
