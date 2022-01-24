@@ -155,8 +155,6 @@ def message_enrichments_batch_get(body, user=None, token_info=None):  # noqa: E5
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageEnrichmentsBatchGetBody)  # noqa: E501
         pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
-        if pattern.find('*') != -1:
-            return 'Bad request', 400
 
         db_meta = util.get_db(db_name='meta')
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
