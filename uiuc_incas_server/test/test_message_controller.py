@@ -9,7 +9,10 @@ from uiuc_incas_server.models.message_batch_get_body import MessageBatchGetBody 
 from uiuc_incas_server.models.message_enrichment import MessageEnrichment  # noqa: E501
 from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMeta  # noqa: E501
 from uiuc_incas_server.models.message_enrichments_batch_delete_body import MessageEnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_delete_validation_response import MessageEnrichmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.message_enrichments_batch_get_body import MessageEnrichmentsBatchGetBody  # noqa: E501
+from uiuc_incas_server.models.message_enrichments_batch_validation_response import MessageEnrichmentsBatchValidationResponse  # noqa: E501
+from uiuc_incas_server.models.message_id_response import MessageIdResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
@@ -58,6 +61,20 @@ class TestMessageController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_message_enrichments_batch_delete_validate(self):
+        """Test case for message_enrichments_batch_delete_validate
+
+        
+        """
+        body = MessageEnrichmentsBatchDeleteBody()
+        response = self.client.open(
+            '/api/v1/message/enrichments/batchDelete/validate',
+            method='POST',
+            data=json.dumps(body),
+            content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_message_enrichments_batch_get(self):
         """Test case for message_enrichments_batch_get
 
@@ -86,6 +103,20 @@ class TestMessageController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_message_enrichments_batch_post_validate(self):
+        """Test case for message_enrichments_batch_post_validate
+
+        
+        """
+        body = None
+        response = self.client.open(
+            '/api/v1/message/enrichments/batch/validate',
+            method='POST',
+            data=json.dumps(body),
+            content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_message_enrichments_batch_put(self):
         """Test case for message_enrichments_batch_put
 
@@ -94,6 +125,20 @@ class TestMessageController(BaseTestCase):
         body = None
         response = self.client.open(
             '/api/v1/message/enrichments/batch',
+            method='PUT',
+            data=json.dumps(body),
+            content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_message_enrichments_batch_put_validate(self):
+        """Test case for message_enrichments_batch_put_validate
+
+        
+        """
+        body = None
+        response = self.client.open(
+            '/api/v1/message/enrichments/batch/validate',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')

@@ -2,14 +2,94 @@ openapi: 3.0.0
 info:
   title: INCAS TA2-UIUC Datatypes
   description: This API document is defined based on INCAS Common Datatypes version
-    0.0.3.
+    0.0.6.
   contact:
     name: Shengzhong Liu (sl29@illinois.edu)
-  version: 1.0.0
+  version: 1.1.0
 servers:
-- url: http://incas.cs.illinois.edu:8445/api/v1
+- url: https://incas.cs.illinois.edu:8443/api/v1
   description: UIUC INCAS API Server
+security:
+- ApiKeyAuth: []
 paths:
+  /message:
+    post:
+      tags:
+      - admin
+      description: Add messages.
+      operationId: admin_message_post
+      requestBody:
+        description: Array of messages
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UiucMessage'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.admin_controller
+  /actor:
+    post:
+      tags:
+      - admin
+      description: Add actors.
+      operationId: admin_actor_post
+      requestBody:
+        description: Array of actors
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UiucActor'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.admin_controller
   /message/count:
     get:
       tags:
@@ -40,6 +120,14 @@ paths:
                 type: integer
                 description: The number of messages available
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/list:
     get:
@@ -86,8 +174,16 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/MessageIdResponse'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/meta:
     get:
@@ -128,6 +224,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/MessageEnrichmentMeta'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     put:
       tags:
@@ -145,10 +249,33 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -166,10 +293,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     delete:
       tags:
@@ -202,10 +352,21 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batchGet:
     post:
@@ -232,8 +393,58 @@ paths:
                   items:
                     $ref: '#/components/schemas/MessageEnrichment'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batchDelete/validate:
+    post:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment deletion, successful\
+        \ attempt will return a token."
+      operationId: message_enrichments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batchDelete:
     post:
@@ -251,10 +462,98 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /message/enrichments/batch/validate:
+    put:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment update, successful attempt\
+        \ will return a token."
+      operationId: message_enrichments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseMessageEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
-          description: Unauthorized
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+    post:
+      tags:
+      - message
+      description: "Validation endpoint for batch enrichment creation, successful\
+        \ attempt will return a token."
+      operationId: message_enrichments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseMessageEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/enrichments/batch:
     put:
@@ -274,10 +573,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -296,10 +618,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/{id}:
     get:
@@ -359,10 +704,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UiucMessage'
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/{id}/enrichments:
     get:
@@ -418,10 +781,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/MessageEnrichment'
                 x-content-type: application/json
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     put:
       tags:
@@ -448,10 +829,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     post:
       tags:
@@ -477,10 +881,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
     delete:
       tags:
@@ -521,10 +948,21 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
   /message/batchGet:
     post:
@@ -549,9 +987,244 @@ paths:
                 items:
                   $ref: '#/components/schemas/UiucMessage'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+  /segmentCollection/list:
+    get:
+      tags:
+      - segment
+      description: "Return list of available segment collection keys by collectionName,\
+        \ providerName, and version."
+      operationId: segment_collection_list_get
+      parameters:
+      - name: collectionName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of segment collection keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection:
+    post:
+      tags:
+      - segment
+      description: Add a new segment collection.
+      operationId: segment_collection_post
+      requestBody:
+        description: The new segment collection to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection/{id}:
+    get:
+      tags:
+      - segment
+      description: Gets a segment collection by id.
+      operationId: segment_collection_id_get
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Requested segment collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucSegmentCollection'
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+    put:
+      tags:
+      - segment
+      description: Update basic segment collection information by id.
+      operationId: segment_collection_id_put
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The segment collection meta
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+    delete:
+      tags:
+      - segment
+      description: Deletes the segment collection by id.
+      operationId: segment_collection_id_delete
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
   /actor/count:
     get:
       tags:
@@ -559,10 +1232,24 @@ paths:
       description: Return the number of actor IDs available.
       operationId: actor_count_get
       parameters:
-      - name: entityType
+      - name: mediaType
         in: query
         description: Type of entity to retrieve
         required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: false
         style: form
         explode: true
         schema:
@@ -582,6 +1269,14 @@ paths:
                 type: integer
                 description: The number of actors available
                 x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/list:
     get:
@@ -606,10 +1301,24 @@ paths:
         explode: true
         schema:
           type: integer
-      - name: entityType
+      - name: mediaType
         in: query
         description: Type of entity to retrieve
         required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - MEDIA_UNSPECIFIED
+          - News
+          - Reddit
+          - Twitter
+          - Webpage
+      - name: entityType
+        in: query
+        description: Type of entity to retrieve
+        required: false
         style: form
         explode: true
         schema:
@@ -628,8 +1337,16 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/ActorIdResponse'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/meta:
     get:
@@ -670,6 +1387,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorEnrichmentMeta'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     put:
       tags:
@@ -687,10 +1412,33 @@ paths:
       responses:
         "200":
           description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -708,15 +1456,38 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
       - actor
-      description: "Delete a specific message enrichment meta by providerName, enrichmentName\
+      description: "Delete a specific actor enrichment meta by providerName, enrichmentName\
         \ and version."
       operationId: actor_enrichments_meta_delete
       parameters:
@@ -744,10 +1515,301 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchGet:
+    post:
+      tags:
+      - actor
+      description: Returns a batch of segment collections given a list of IDs and
+        specifications.
+      operationId: actor_segments_batch_get
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchGetBody'
+        required: true
+      responses:
+        "200":
+          description: A batch of list of segment collections
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ActorSegmentCollection'
+                x-content-type: application/json
         "401":
-          description: Unauthorized
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchDelete/validate:
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment deletion, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchDeleteValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batchDelete:
+    post:
+      tags:
+      - actor
+      description: Deletes a batch of segment collections given a list of IDs and
+        specifications.
+      operationId: actor_segment_batch_delete
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentsBatchDeleteBody'
+        required: true
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batch/validate:
+    put:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment update, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch segment creation, successful attempt\
+        \ will return a token."
+      operationId: actor_segments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorSegmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/segments/batch:
+    put:
+      tags:
+      - actor
+      description: Updates a segment collection for each actor ID.
+      operationId: actor_segments_batch_put
+      requestBody:
+        description: Map of IDs and segment collections
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Submits a segment collection for each actor ID.
+      operationId: actor_segments_batch_post
+      requestBody:
+        description: Map of IDs and segment collections
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchGet:
     post:
@@ -774,8 +1836,58 @@ paths:
                   items:
                     $ref: '#/components/schemas/ActorEnrichment'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batchDelete/validate:
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment deletion, successful\
+        \ attempt will return a token."
+      operationId: actor_enrichments_batch_delete_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteBody'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchDelete:
     post:
@@ -793,10 +1905,98 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/enrichments/batch/validate:
+    put:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment update, successful attempt\
+        \ will return a token."
+      operationId: actor_enrichments_batch_put_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseActorEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "401":
-          description: Unauthorized
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: "Validation endpoint for batch enrichment creation, successful\
+        \ attempt will return a token."
+      operationId: actor_enrichments_batch_post_validate
+      requestBody:
+        description: List of IDs and specifications
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/BaseActorEnrichment'
+        required: true
+      responses:
+        "200":
+          description: Examined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batch:
     put:
@@ -816,10 +2016,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
@@ -838,10 +2061,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}:
     get:
@@ -866,7 +2112,110 @@ paths:
         explode: true
         schema:
           type: boolean
+      - name: withSegment
+        in: query
+        description: Whether to retrieve segments
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       - name: enrichmentName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: enrichmentProviderName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: enrichmentVersion
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionProviderName
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: collectionVersion
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: dev
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: Requested actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UiucActor'
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+  /actor/{id}/segments:
+    get:
+      tags:
+      - actor
+      description: Returns all matched segment collections the actor belonged to by
+        collectionName.
+      operationId: actor_id_segments_get
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: collectionName
         in: query
         required: false
         style: form
@@ -896,15 +2245,194 @@ paths:
           type: boolean
       responses:
         "200":
-          description: Requested actor
+          description: Requested segment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UiucActor'
-        "404":
-          description: Not found
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActorSegmentCollection'
+                x-content-type: application/json
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    put:
+      tags:
+      - actor
+      description: Update a segment collection for the specific actor by segment name
+      operationId: actor_id_segments_put
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The segment collections to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    post:
+      tags:
+      - actor
+      description: Add a new segment collection for the specific actor
+      operationId: actor_id_segments_post
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The new segment collections to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorSegmentCollection'
+        required: true
+      responses:
+        "201":
+          description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "409":
+          description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+    delete:
+      tags:
+      - actor
+      description: Deletes all matched segments for specific actor by segmentCollectionName
+      operationId: actor_id_segments_delete
+      parameters:
+      - name: id
+        in: path
+        description: Actor ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: collectionName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: providerName
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/{id}/enrichments:
     get:
@@ -960,10 +2488,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/ActorEnrichment'
                 x-content-type: application/json
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     put:
       tags:
@@ -990,15 +2536,38 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     post:
       tags:
       - actor
-      description: Submits a new enrichment for specific message.
+      description: Submits a new enrichment for specific actor.
       operationId: actor_id_enrichments_post
       parameters:
       - name: id
@@ -1019,10 +2588,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
@@ -1063,10 +2655,21 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/batchGet:
     post:
@@ -1091,8 +2694,21 @@ paths:
                 items:
                   $ref: '#/components/schemas/UiucActor'
                 x-content-type: application/json
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /messageMessageGraph/{id}:
     get:
@@ -1116,10 +2732,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageMessageGraph'
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1145,10 +2779,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1167,52 +2824,91 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /messageMessageGraph:
+  /messageMessageGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: message_message_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: message_message_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Required graph id
+          description: Requested graph IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /messageMessageGraph:
     post:
       tags:
       - graph
@@ -1228,10 +2924,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /messageMessageGraph/{id}/neighbor:
     get:
@@ -1249,7 +2968,7 @@ paths:
         explode: false
         schema:
           type: string
-      - name: messageID
+      - name: messageId
         in: query
         required: true
         style: form
@@ -1266,10 +2985,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph/{id}:
     get:
@@ -1293,10 +3030,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActorMessageGraph'
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1322,10 +3077,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1344,52 +3122,91 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /actorMessageGraph:
+  /actorMessageGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: actor_message_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: actor_message_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Requested graph id
+          description: Requested graph IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /actorMessageGraph:
     post:
       tags:
       - graph
@@ -1405,10 +3222,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorMessageGraph/{id}/neighbor:
     get:
@@ -1426,14 +3266,14 @@ paths:
         explode: false
         schema:
           type: string
-      - name: messageID
+      - name: messageId
         in: query
         required: false
         style: form
         explode: true
         schema:
           type: string
-      - name: actorID
+      - name: actorId
         in: query
         required: false
         style: form
@@ -1450,10 +3290,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph/{id}:
     get:
@@ -1477,10 +3335,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActorActorGraph'
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     put:
       tags:
@@ -1506,10 +3382,33 @@ paths:
       responses:
         "200":
           description: Updated
-        "404":
-          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
     delete:
       tags:
@@ -1528,52 +3427,91 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "404":
           description: id not found
-        "401":
-          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
-  /actorActorGraph:
+  /actorActorGraph/list:
     get:
       tags:
       - graph
-      description: "Gets graph id by providerName, timestamp and version."
-      operationId: actor_actor_graph_get
+      description: Gets graph IDs by providing query keys.
+      operationId: actor_actor_graph_list_get
       parameters:
       - name: providerName
         in: query
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
-      - name: timeStamp
+      - name: graphName
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: distanceName
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       - name: version
         in: query
-        required: true
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timeStamp
+        in: query
+        required: false
         style: form
         explode: true
         schema:
           type: string
       responses:
         "200":
-          description: Requested graph id
+          description: Requested graph IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+        "400":
+          description: Invalid query
           content:
             text/plain:
               schema:
                 type: string
                 x-content-type: text/plain
-        "404":
-          description: Not found
-        "400":
-          description: Invalid query
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
+  /actorActorGraph:
     post:
       tags:
       - graph
@@ -1589,10 +3527,33 @@ paths:
       responses:
         "201":
           description: Posted
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
         "400":
           description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
         "409":
           description: Input already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
   /actorActorGraph/{id}/neighbor:
     get:
@@ -1610,7 +3571,7 @@ paths:
         explode: false
         schema:
           type: string
-      - name: actorID
+      - name: actorId
         in: query
         required: true
         style: form
@@ -1627,13 +3588,41 @@ paths:
                 items:
                   $ref: '#/components/schemas/GraphEdge'
                 x-content-type: application/json
-        "404":
-          description: Not found
         "400":
           description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.graph_controller
 components:
   schemas:
+    MessageIdResponse:
+      type: object
+      properties:
+        globalId:
+          type: string
+        mediaId:
+          type: string
+      example:
+        globalId: globalId
+        mediaId: mediaId
     MessageEnrichmentsBatchGetBody:
       required:
       - ids
@@ -1688,6 +3677,62 @@ components:
           type: string
         dev:
           type: boolean
+    MessageEnrichmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MessageEnrichment'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key: ""
+        valueInvalid:
+          key: null
+    MessageEnrichmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
+    ActorIdResponse:
+      type: object
+      properties:
+        globalId:
+          type: string
+        actorId:
+          type: string
+      example:
+        actorId: actorId
+        globalId: globalId
     ActorEnrichmentsBatchGetBody:
       required:
       - ids
@@ -1734,7 +3779,78 @@ components:
             type: string
         withEnrichment:
           type: boolean
+        withSegment:
+          type: boolean
         enrichmentName:
+          type: string
+        enrichmentProviderName:
+          type: string
+        enrichmentVersion:
+          type: string
+        collectionName:
+          type: string
+        collectionProviderName:
+          type: string
+        collectionVersion:
+          type: string
+        dev:
+          type: boolean
+    ActorEnrichmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorEnrichment'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key: ""
+        valueInvalid:
+          key: null
+    ActorEnrichmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
+    ActorSegmentsBatchGetBody:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        collectionName:
           type: string
         providerName:
           type: string
@@ -1742,13 +3858,82 @@ components:
           type: string
         dev:
           type: boolean
+    ActorSegmentsBatchDeleteBody:
+      required:
+      - collectionName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        collectionName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    ActorSegmentsBatchValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollection'
+        valueInvalid:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollection'
+        valueNotFound:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollection'
+        valueExisted:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollection'
+      example:
+        valueNotFound:
+          key: null
+        valueExisted:
+          key: null
+        idInvalid:
+          key:
+            version: version
+            providerName: providerName
+            collectionName: collectionName
+            segments:
+              key: 0.8008282
+        valueInvalid:
+          key: null
+    ActorSegmentsBatchDeleteValidationResponse:
+      type: object
+      properties:
+        idInvalid:
+          type: array
+          items:
+            type: string
+        valueNotFound:
+          type: array
+          items:
+            type: string
+      example:
+        valueNotFound:
+        - valueNotFound
+        - valueNotFound
+        idInvalid:
+        - idInvalid
+        - idInvalid
     UiucMessage:
       description: "a post of social media, news, etc."
       allOf:
       - $ref: '#/components/schemas/Message'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucMessageId:
             type: string
           enrichments:
             type: array
@@ -1760,7 +3945,7 @@ components:
       - $ref: '#/components/schemas/Message'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucMessageId:
             type: string
           enrichments:
             type: object
@@ -1773,10 +3958,16 @@ components:
         properties:
           uiucAuthorId:
             type: string
+          uiucMediaType:
+            type: string
           enrichments:
             type: array
             items:
               $ref: '#/components/schemas/ActorEnrichment'
+          segmentCollections:
+            type: array
+            items:
+              $ref: '#/components/schemas/ActorSegmentCollection'
     UiucActorDB:
       allOf:
       - $ref: '#/components/schemas/Actor'
@@ -1784,32 +3975,111 @@ components:
         properties:
           uiucAuthorId:
             type: string
+          uiucMediaType:
+            type: string
           enrichments:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/ActorEnrichment'
-    UiucSegment:
-      required:
-      - uuid
+          segmentCollections:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActorSegmentCollection'
+    ActorSegmentCollection:
       type: object
       properties:
-        uuid:
+        collectionName:
           type: string
-          description: The unique segment identifier
-          format: uuid
-        referencedActorUuid:
-          type: array
-          items:
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segments:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+      description: "An entry in actor's segment collections array, store membership\
+        \ assignment for each segment."
+      example:
+        version: version
+        providerName: providerName
+        collectionName: collectionName
+        segments:
+          key: 0.8008282
+    UiucSegmentCollectionMeta:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the segment.
+        collectionName:
+          type: string
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segmentDescriptions:
+          type: object
+          additionalProperties:
             type: string
-            format: uuid
+      description: Stores the meta data related to segments.
+    UiucSegmentCollection:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the segment.
+        collectionName:
+          type: string
+          description: Name of the segment.
+        providerName:
+          type: string
+          description: "The team (e.g., UIUC-DMG) who provides the segment."
+        version:
+          type: string
+          description: "The version within the same (provider, name)."
+        segmentDescriptions:
+          type: object
+          additionalProperties:
+            type: string
+        segments:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+              format: float
+          description: Different segment sets with user probability.
         extraAttributes:
           $ref: '#/components/schemas/ExtraAttributes'
-      description: A set of Actors
+      description: A segment to group actors.
+      example:
+        segmentDescriptions:
+          key: segmentDescriptions
+        description: description
+        version: version
+        providerName: providerName
+        extraAttributes:
+          key: extraAttributes
+        collectionName: collectionName
+        segments:
+          key:
+            key: 0.8008282
     BaseMessageEnrichmentMeta:
       required:
       - enrichmentType
       type: object
       properties:
+        description:
+          type: string
+          description: Description of the enrichment algorithm.
         providerName:
           type: string
           description: "The team (e.g., UIUC-DMG) who provides the enrichment."
@@ -1833,6 +4103,9 @@ components:
       - enrichmentType
       type: object
       properties:
+        description:
+          type: string
+          description: Description of the enrichment algorithm.
         providerName:
           type: string
           description: "The team (e.g., UIUC-DMG) who provides the enrichment."
@@ -1855,8 +4128,11 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
         description: Defines all available categories in category message enrichment.
     NumericalMessageEnrichmentMeta:
       allOf:
@@ -1866,9 +4142,12 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
-        description: "Defines the hash map (posID, class) for multi-label regression/classification."
+        properties:
+          labelMap:
+            type: object
+            additionalProperties:
+              type: integer
+        description: "Defines the hash map (class, posID) for multi-label regression/classification."
     TextMessageEnrichmentMeta:
       allOf:
       - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
@@ -1877,8 +4156,11 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
         description: Defines all available categories in category actor enrichment.
     NumericalActorEnrichmentMeta:
       allOf:
@@ -1888,9 +4170,12 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
       - type: object
-        additionalProperties:
-          type: string
-        description: "Defines the hash map of (posID, class) for multi-class regression/classification."
+        properties:
+          labelMap:
+            type: object
+            additionalProperties:
+              type: integer
+        description: "Defines the hash map of (class, posID) for multi-class regression/classification."
     TextActorEnrichmentMeta:
       allOf:
       - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
@@ -1898,7 +4183,7 @@ components:
     MessageEnrichmentMeta:
       type: object
       description: This is the unified interface for message enrichment algorithm
-        meta informaiton.
+        meta information.
       discriminator:
         propertyName: enrichment_type
         mapping:
@@ -1914,7 +4199,7 @@ components:
     ActorEnrichmentMeta:
       type: object
       description: This is the unified interface for actor enrichment algorithm meta
-        informaiton.
+        information.
       discriminator:
         propertyName: enrichment_type
         mapping:
@@ -1941,13 +4226,6 @@ components:
         version:
           type: string
           description: "The version within the same (provider, name)."
-        confidence:
-          maximum: 1.0
-          minimum: 0.0
-          type: number
-          description: "The confidence that this enrichment is correct, expressed\
-            \ as a percentage between 0.0 and 1.0"
-          format: double
         enrichmentType:
           type: string
           description: For discriminator
@@ -1965,6 +4243,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     NumericalMessageEnrichment:
       description: Defines a numeric enrichment.
       allOf:
@@ -1974,6 +4259,13 @@ components:
           attributeValue:
             type: number
             format: float
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ArrayMessageEnrichment:
       description: Defines a vector/matrix/tensor or multi-label enrichment.
       allOf:
@@ -1985,6 +4277,15 @@ components:
             items:
               type: number
               format: float
+          confidence:
+            type: array
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            items:
+              maximum: 1.0
+              minimum: 0.0
+              type: number
+              format: double
     TextMessageEnrichment:
       description: This defines a text enrichment.
       allOf:
@@ -1993,6 +4294,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     MessageEnrichment:
       type: object
       description: This is the unified interface for message enrichment output.
@@ -2022,13 +4330,6 @@ components:
         version:
           type: string
           description: "The version within the same (provider, enrichmentName)."
-        confidence:
-          maximum: 1.0
-          minimum: 0.0
-          type: number
-          description: "The confidence that this enrichment is correct, expressed\
-            \ as a percentage between 0.0 and 1.0"
-          format: double
         enrichmentType:
           type: string
           description: For discriminator
@@ -2046,6 +4347,13 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     NumericalActorEnrichment:
       description: Defines a numerical enrichment for actor.
       allOf:
@@ -2054,6 +4362,13 @@ components:
         properties:
           attributeValue:
             type: number
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ArrayActorEnrichment:
       description: Defines a vector/matrix/tensor or multi-label enrichment for actor.
       allOf:
@@ -2065,6 +4380,15 @@ components:
             items:
               type: number
               format: float
+          confidence:
+            type: array
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            items:
+              maximum: 1.0
+              minimum: 0.0
+              type: number
+              format: double
     TextActorEnrichment:
       description: This defines a text enrichment for actor.
       allOf:
@@ -2073,13 +4397,20 @@ components:
         properties:
           attributeValue:
             type: string
+          confidence:
+            maximum: 1.0
+            minimum: 0.0
+            type: number
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            format: double
     ActorEnrichment:
       type: object
       description: This is the unified interface for actor enrichment output.
       discriminator:
         propertyName: enrichment_type
         mapping:
-          enumeration: CategoryActorEnrichment
+          category: CategoryActorEnrichment
           numerical: NumericalActorEnrichment
           array: ArrayActorEnrichment
           text: TextActorEnrichment
@@ -2096,6 +4427,8 @@ components:
         edgeType:
           type: string
           description: For discriminator
+        actionType:
+          type: string
         srcId:
           type: string
         dstId:
@@ -2108,8 +4441,13 @@ components:
         weight:
           type: number
           format: float
-        actionType:
-          type: string
+      example:
+        actionType: actionType
+        distance: 0.08008282
+        srcId: srcId
+        edgeType: edgeType
+        dstId: dstId
+        weight: 6.0274563
     BaseGraph:
       required:
       - graphType
@@ -2228,8 +4566,6 @@ components:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/GraphEdge'
-    Response:
-      description: how to define it?
     Message:
       type: object
       properties:
@@ -2456,4 +4792,19 @@ components:
         type: string
       description: "This is a hash map (or dictionary) with strings as keys and strings\
         \ as values, that is used to put custom user data on an object"
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+      headers:
+        WWW_Authenticate:
+          style: simple
+          explode: false
+          schema:
+            type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-KEY
+      in: query
+      x-apikeyInfoFunc: uiuc_incas_server.controllers.authorization_controller.check_ApiKeyAuth
 

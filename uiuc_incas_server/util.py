@@ -16,6 +16,7 @@ from uiuc_incas_server import type_util
 import uiuc_incas_server.models
 
 import redis
+from redis.exceptions import LockError
 
 PRIMITIVE_TYPES = (float, bool, bytes, six.text_type) + six.integer_types
 NATIVE_TYPES_MAPPING = {
@@ -31,19 +32,23 @@ NATIVE_TYPES_MAPPING = {
 
 DB_IDX = {
     'index': 0,
-    'message_data': 1,
-    'actor_data': 2,
-    'meta': 3,
-    'graph': 4
+    'auth': 1,
+    'message_data': 2,
+    'actor_data': 3,
+    'meta': 4,
+    'graph': 5,
+    'segment': 6
 }
 
 DB_MAP = {
     'index': None,
+    'auth': None,
     'message_data': None,
     'actor_data': None,
     'meta': None, # [message|actor]:name:provider:version -> EnrichmentMeta
                   # graph:provider:timestamp:version -> graph ID
-    'graph': None
+    'graph': None,
+    'segment': None
 }
 
 def get_db(db_name, server_host='localhost', server_port=6379):
@@ -51,6 +56,36 @@ def get_db(db_name, server_host='localhost', server_port=6379):
     if DB_MAP[db_name] is None:
         DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name])
     return DB_MAP[db_name]
+
+def count_keys(db, pattern):
+    cnt, cur = 0, 0
+    cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+    cur = int(cur)
+    cnt += len(ks)
+    while cur != 0:
+        cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+        cur = int(cur)
+        cnt += len(ks)
+    return cnt
+
+def get_all_keys(db, pattern):
+    cur, kks = 0, []
+    cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+    cur = int(cur)
+    kks.extend(map(lambda x: x.decode('utf-8'), ks))
+    while cur != 0:
+        cur, ks = db.execute_command(f'SCAN {cur} MATCH {pattern} COUNT 10000')
+        cur = int(cur)
+        kks.extend(map(lambda x: x.decode('utf-8'), ks))
+    return set(kks)
+
+def generic_db_lock_decor(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except LockError:
+            return 'Lock not acquired', 500
+    return wrapper
 
 def serialize(obj):
     return sanitize_for_serialization(obj)
@@ -270,3 +305,21 @@ def __deserialize_model(data, klass):
         if klass_name:
             instance = __deserialize(data, klass_name)
     return instance
+
+def get_enrichment_pattern(prefix, enrichment_name, provider, version):
+    if enrichment_name is None:
+        enrichment_name = '*'
+    if provider is None:
+        provider = '*'
+    if version is None:
+        version = '*'
+    return f'{prefix}:enrich:{enrichment_name}:{provider}:{version}'
+
+def get_collection_pattern(prefix, collection_name, provider, version):
+    if collection_name is None:
+        collection_name = '*'
+    if provider is None:
+        provider = '*'
+    if version is None:
+        version = '*'
+    return f'segment:{collection_name}:{provider}:{version}'
