@@ -423,5 +423,5 @@ def message_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
         pattern = f'message_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
-        return generic_graph_post('message_message', body, pattern, ActorActorGraphDB)
+        return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
