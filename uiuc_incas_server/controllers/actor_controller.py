@@ -178,8 +178,6 @@ def actor_enrichments_batch_get(body, user=None, token_info=None):  # noqa: E501
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorEnrichmentsBatchGetBody)  # noqa: E501
         pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
-        if pattern.find('*') != -1:
-            return 'Bad request', 400
 
         db_meta = util.get_db(db_name='meta')
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
@@ -802,7 +800,7 @@ def actor_id_segments_put(body, id_, user=None, token_info=None):  # noqa: E501
                         elif seg in body.segments:
                             db_seg.json().set(pattern, Path(f'segments["{seg}"]["{id_}"]'), body.segments[seg])
                 db_data.json().set(id_, Path(f'segmentCollections["{pattern}"]'), util.serialize(body))
-        return 'Created', 201
+        return 'Updated', 200
     return 'Bad request', 400
 
 
