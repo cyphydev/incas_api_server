@@ -34,7 +34,7 @@ class ActorEnrichment(object):
     }
 
     discriminator_value_class_map = {
-            'enumeration'.lower(): 'CategoryActorEnrichment',
+            'category'.lower(): 'CategoryActorEnrichment',
             'numerical'.lower(): 'NumericalActorEnrichment',
             'array'.lower(): 'ArrayActorEnrichment',
             'text'.lower(): 'TextActorEnrichment',

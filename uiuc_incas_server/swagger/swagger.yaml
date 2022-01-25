@@ -4410,7 +4410,7 @@ components:
       discriminator:
         propertyName: enrichment_type
         mapping:
-          enumeration: CategoryActorEnrichment
+          category: CategoryActorEnrichment
           numerical: NumericalActorEnrichment
           array: ArrayActorEnrichment
           text: TextActorEnrichment
