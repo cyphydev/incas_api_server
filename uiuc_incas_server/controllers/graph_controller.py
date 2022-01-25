@@ -57,9 +57,6 @@ def generic_graph_id_get(id_, klass, return_code=200):
     return ret, return_code
 
 def generic_graph_post(body, pattern, klass, return_code=201):
-    if pattern.count(":") < 5:
-        return 'Graph id is incorrect', 404
-
     db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
 
@@ -78,7 +75,10 @@ def generic_graph_post(body, pattern, klass, return_code=201):
             db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
     return 'Created', return_code
 
-def generic_graph_id_put(id_, body, klass, return_code=200):
+def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
+    if id_ != f'{prefix}:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}':
+        return "Graph ID and its realted fields are not changeable", 400
+
     db_graph = util.get_db(db_name='graph')
 
     with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
@@ -97,15 +97,14 @@ def generic_graph_id_delete(id_, return_code=204):
     db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
 
-    with db_meta.lock('db_graph_lock', blocking_timeout=5) as lock:
-        if not db_meta.exists(id_):
-            return 'Key does not exist in meta database', 404
-        db_meta.delete(id_, Path.rootPath())
-
-    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-        if not db_graph.exists(id_):
-            return 'Key does not exist in database', 404
-        db_graph.delete(id_, Path.rootPath())
+    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+        if not db_meta.exists(id_): 
+            return 'Key does not exist in the meta database', 404
+        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+            if not db_graph.exists(id_): 
+                return 'Key does not exist in the graph database', 404
+            db_meta.delete(id_, Path.rootPath())
+            db_graph.delete(id_, Path.rootPath())
 
     return 'Deleted', return_code
 
@@ -169,7 +168,7 @@ def actor_actor_graph_id_put(body, id_, user=None, token_info=None):  # noqa: E5
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
-        return generic_graph_id_put(id_, body, ActorActorGraphDB)
+        return generic_graph_id_put('actor_actor', id_, body, ActorActorGraphDB)
     return 'Bad request', 400
 
 
@@ -281,7 +280,7 @@ def actor_message_graph_id_put(body, id_, user=None, token_info=None):  # noqa: 
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorMessageGraph)  # noqa: E501
-        return generic_graph_id_put(id_, body, ActorMessageGraphDB)
+        return generic_graph_id_put('actor_message', id_, body, ActorMessageGraphDB)
     return 'Bad request', 400
 
 
@@ -384,7 +383,7 @@ def message_message_graph_id_put(body, id_, user=None, token_info=None):  # noqa
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
-        return generic_graph_id_put(id_, body, MessageMessageGraphDB)
+        return generic_graph_id_put('message_message', id_, body, MessageMessageGraphDB)
     return 'Bad request', 400
 
 
@@ -424,5 +423,5 @@ def message_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
         pattern = f'message_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
-        return generic_graph_post(body, pattern, ActorActorGraphDB)
+        return generic_graph_post('message_message', body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
