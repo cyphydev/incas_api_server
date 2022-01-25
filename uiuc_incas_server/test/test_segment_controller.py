@@ -6,7 +6,6 @@ from flask import json
 from six import BytesIO
 
 from uiuc_incas_server.models.uiuc_segment_collection import UiucSegmentCollection  # noqa: E501
-from uiuc_incas_server.models.uiuc_segment_collection_meta import UiucSegmentCollectionMeta  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
 
@@ -40,7 +39,7 @@ class TestSegmentController(BaseTestCase):
 
         
         """
-        body = UiucSegmentCollectionMeta()
+        body = UiucSegmentCollection()
         response = self.client.open(
             '/api/v1/segmentCollection/{id}'.format(id='id_example'),
             method='PUT',
@@ -69,9 +68,23 @@ class TestSegmentController(BaseTestCase):
 
         
         """
-        body = UiucSegmentCollectionMeta()
+        body = UiucSegmentCollection()
         response = self.client.open(
             '/api/v1/segmentCollection',
+            method='POST',
+            data=json.dumps(body),
+            content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_segment_collection_validate_post(self):
+        """Test case for segment_collection_validate_post
+
+        
+        """
+        body = UiucSegmentCollection()
+        response = self.client.open(
+            '/api/v1/segmentCollection/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

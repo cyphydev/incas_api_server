@@ -8,7 +8,6 @@ from jsonpath_ng import jsonpath, parse
 from redis.commands.json.path import Path
 
 from uiuc_incas_server.models.uiuc_segment_collection import UiucSegmentCollection  # noqa: E501
-from uiuc_incas_server.models.uiuc_segment_collection_meta import UiucSegmentCollectionMeta  # noqa: E501
 from uiuc_incas_server import util
 
 
@@ -62,7 +61,7 @@ def segment_collection_id_get(id_, user=None, token_info=None):  # noqa: E501
 def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """segment_collection_id_put
 
-    Update basic segment collection information by id. # noqa: E501
+    Update segment collection by id. # noqa: E501
 
     :param body: The segment collection meta
     :type body: dict | bytes
@@ -72,17 +71,19 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
     :rtype: str
     """
     if connexion.request.is_json:
-        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollectionMeta)  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
         pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
         if pattern != id_:
-            return 'Key does not have meta', 400
+            return 'Key fields cannot be modified', 400
 
         db_seg = util.get_db(db_name='segment')
         with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
             if not db_seg.exists(id_):
                 return 'Key does not exist', 404
-            db_seg.json().set(id_, Path('description'), body.description)
-            db_seg.json().set(id_, Path('segmentDescriptions'), body.segment_descriptions)
+            # TODO: Get the current records, delete the old values from the actor_data db.
+            # Delete current records from segment db.
+            # Add new records to segment db.
+            # Add new records to actor_data db.
         return 'Updated', 200
     return 'Bad request', 400
 
@@ -121,7 +122,7 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
     :rtype: str
     """
     if connexion.request.is_json:
-        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollectionMeta)  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
         pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
         if pattern.find('*') != -1:
             return 'Bad request', 400
@@ -130,13 +131,37 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
         with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
             if db_seg.exists(pattern):
                 return 'Segment collection already exists', 409
-            segcol = UiucSegmentCollection(
-                description=body.description,
-                collection_name=body.collection_name,
-                provider_name=body.provider_name,
-                version=body.version,
-                segment_descriptions=body.segment_descriptions,
-                segments={})
-            db_seg.json().set(pattern, Path.rootPath(), util.serialize(segcol))
+            # TODO: Add new records to segment db.
+            # Add new records to actor_data db.
         return 'Created', 201
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def segment_collection_validate_post(body, user=None, token_info=None):  # noqa: E501
+    """segment_collection_validate_post
+
+    Validate a new segment collection. # noqa: E501
+
+    :param body: The new segment collection to add
+    :type body: dict | bytes
+
+    :rtype: List[str]
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
+        pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
+        if pattern.find('*') != -1:
+            return 'Bad request', 400
+        
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+        with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
+            if db_seg.exists(pattern):
+                return 'Segment collection already exists', 409
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
+            # TODO: Check if any actors cannot be find in actor db,
+            # form a list of actors that cannot be found and return it with 200.
+            ret = []
+        return ret, 200
     return 'Bad request', 400
