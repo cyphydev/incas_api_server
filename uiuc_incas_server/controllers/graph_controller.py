@@ -30,7 +30,7 @@ def generic_graph_list_get(prefix, provider_name, graph_name, distance_name, ver
     pattern = f'{prefix}:{provider_name}:{graph_name}:{distance_name}:{version}:{time_stamp}'
     db_meta = util.get_db(db_name='meta')
     with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        graph_ids = util.get_all_keys(db_meta, pattern)
+        graph_ids = list(util.get_all_keys(db_meta, pattern))
     return graph_ids, return_code
 
 def generic_graph_id_neighbor_get(id_, src_id, return_code=200):
@@ -57,6 +57,9 @@ def generic_graph_id_get(id_, klass, return_code=200):
     return ret, return_code
 
 def generic_graph_post(body, pattern, klass, return_code=201):
+    if pattern.count(":") < 5:
+        return 'Graph id is incorrect', 404
+
     db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
 
@@ -91,11 +94,17 @@ def generic_graph_id_put(id_, body, klass, return_code=200):
     return 'Updated', return_code
 
 def generic_graph_id_delete(id_, return_code=204):
+    db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
+
+    with db_meta.lock('db_graph_lock', blocking_timeout=5) as lock:
+        if not db_meta.exists(id_):
+            return 'Key does not exist in meta database', 404
+        db_meta.delete(id_, Path.rootPath())
 
     with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
         if not db_graph.exists(id_):
-            return 'Key does not exist', 404
+            return 'Key does not exist in database', 404
         db_graph.delete(id_, Path.rootPath())
 
     return 'Deleted', return_code
@@ -142,7 +151,7 @@ def actor_actor_graph_id_neighbor_get(id_, actor_id, user=None, token_info=None)
 
     :rtype: List[GraphEdge]
     """
-    return generic_graph_id_neighbor_get(db_graph, id_, actor_id)
+    return generic_graph_id_neighbor_get(id_, actor_id)
 
 
 @util.generic_db_lock_decor
@@ -250,9 +259,9 @@ def actor_message_graph_id_neighbor_get(id_, message_id=None, actor_id=None, use
     if message_id is not None and actor_id is not None:
         return 'Bad request', 400
     elif message_id is not None:
-        return generic_graph_id_neighbor_get(db_graph, id_, message_id)
+        return generic_graph_id_neighbor_get(id_, message_id)
     elif actor_id is not None:
-        return generic_graph_id_neighbor_get(db_graph, id_, actor_id)
+        return generic_graph_id_neighbor_get(id_, actor_id)
     else:
         return 'Bad request', 400
 
@@ -357,7 +366,7 @@ def message_message_graph_id_neighbor_get(id_, message_id, user=None, token_info
 
     :rtype: List[GraphEdge]
     """
-    return generic_graph_id_neighbor_get(db_graph, id_, message_id)
+    return generic_graph_id_neighbor_get(id_, message_id)
 
 
 @util.generic_db_lock_decor
