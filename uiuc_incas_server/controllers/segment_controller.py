@@ -30,10 +30,10 @@ def segment_collection_id_delete(id_, user=None, token_info=None):  # noqa: E501
             return 'Key does not exist', 404
         record = db_seg.json().get(id_, Path.rootPath())
         with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock2:
-            for actors in record.segments.values():
+            for actors in record['segments'].values():
                 for actor in actors.keys():
-                    if db_data.json().type(actor, Path(f'segment_collections["{id_}"]')) is not None:
-                        db_data.json().delete(actor, Path(f'segment_collections["{id_}"]'))
+                    if db_data.json().type(actor, Path(f'segmentCollections["{id_}"]')) is not None:
+                        db_data.json().delete(actor, Path(f'segmentCollections["{id_}"]'))
             db_seg.delete(id_, Path.rootPath())
     return 'Deleted', 204
 
@@ -75,14 +75,14 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
         body = util.deserialize(connexion.request.get_json(), UiucSegmentCollectionMeta)  # noqa: E501
         pattern = util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version)
         if pattern != id_:
-            return 'Key does not meta', 400
+            return 'Key does not have meta', 400
 
         db_seg = util.get_db(db_name='segment')
         with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
             if not db_seg.exists(id_):
                 return 'Key does not exist', 404
             db_seg.json().set(id_, Path('description'), body.description)
-            db_seg.json().set(id_, Path('segment_descriptions'), body.segment_descriptions)
+            db_seg.json().set(id_, Path('segmentDescriptions'), body.segment_descriptions)
         return 'Updated', 200
     return 'Bad request', 400
 
@@ -106,7 +106,7 @@ def segment_collection_list_get(collection_name=None, provider_name=None, versio
     db_seg = util.get_db(db_name='segment')
     with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
         seg_ids = util.get_all_keys(db_seg, pattern)
-    return seg_ids, 200
+    return list(seg_ids), 200
 
 
 @util.generic_db_lock_decor
