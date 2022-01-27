@@ -1051,6 +1051,45 @@ paths:
               schema:
                 type: string
       x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection/validate:
+    post:
+      tags:
+      - segment
+      description: Validate a new segment collection.
+      operationId: segment_collection_validate_post
+      requestBody:
+        description: The new segment collection to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Posted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                x-content-type: application/json
+        "400":
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
   /segmentCollection:
     post:
       tags:
@@ -1062,7 +1101,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+              $ref: '#/components/schemas/UiucSegmentCollection'
         required: true
       responses:
         "201":
@@ -1143,7 +1182,7 @@ paths:
     put:
       tags:
       - segment
-      description: Update basic segment collection information by id.
+      description: Update segment collection by id.
       operationId: segment_collection_id_put
       parameters:
       - name: id
@@ -1159,7 +1198,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UiucSegmentCollectionMeta'
+              $ref: '#/components/schemas/UiucSegmentCollection'
         required: true
       responses:
         "200":
