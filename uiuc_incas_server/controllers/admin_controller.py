@@ -114,20 +114,22 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         idx_pattern = f'forward:message:{message["mediaType"].lower()}'
                         if message["mediaType"].lower() == 'twitter':
                             data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
-                            rev_idx_pattern = f'reverse:{data_pattern}'
-                            message['uiuc_message_id'] = data_pattern
+                        else:
+                            return 'Unsupported media type', 400
+                        rev_idx_pattern = f'reverse:{data_pattern}'
+                        message['uiuc_message_id'] = data_pattern
 
-                            if db_meta.json().type('status', Path(idx_pattern)) is None:
-                                db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
-                            counter = db_meta.json().get('status', Path(idx_pattern))
+                        if db_meta.json().type('status', Path(idx_pattern)) is None:
+                            db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
+                        counter = db_meta.json().get('status', Path(idx_pattern))
 
-                            db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
-                                global_id=message['id'],
-                                media_id=data_pattern
-                            )))
-                            db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+                        db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
+                            global_id=message['id'],
+                            media_id=data_pattern
+                        )))
+                        db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
-                            db_data.json().set(data_pattern, Path.rootPath(), message)
-                            db_meta.json().set('status', Path(idx_pattern), counter + 1)
-        return 'OK', 201
+                        db_data.json().set(data_pattern, Path.rootPath(), message)
+                        db_meta.json().set('status', Path(idx_pattern), counter + 1)
+    return 'OK', 201
     return 'Bad Request', 400
