@@ -58,7 +58,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                         idx_pattern_status = idx_pattern.replace(':', '_')
                         data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
-                        actor['uiuc_author_id'] = data_pattern
+                        actor['uiucAuthorId'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern_status)) is None:
                             db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
@@ -119,7 +119,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         else:
                             return 'Unsupported media type', 400
                         rev_idx_pattern = f'reverse:{data_pattern}'
-                        message['uiuc_message_id'] = data_pattern
+                        message['uiucMessageId'] = data_pattern
 
                         if db_meta.json().type('status', Path(idx_pattern_status)) is None:
                             db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
