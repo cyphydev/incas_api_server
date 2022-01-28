@@ -55,13 +55,14 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                         actor['enrichments'] = {}
                         actor['segmentCollections'] = {}
                         idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
+                        idx_pattern_status = idx_pattern.replace(':', '_')
                         data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
                         rev_idx_pattern = f'reverse:{data_pattern}'
                         actor['uiuc_author_id'] = data_pattern
 
-                        if db_meta.json().type('status', Path(idx_pattern)) is None:
-                            db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
-                        counter = db_meta.json().get('status', Path(idx_pattern))
+                        if db_meta.json().type('status', Path(idx_pattern_status)) is None:
+                            db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
+                        counter = db_meta.json().get('status', Path(idx_pattern_status))
 
                         db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
                             global_id=actor['id'],
@@ -70,7 +71,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                         db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
                         db_data.json().set(data_pattern, Path.rootPath(), actor)
-                        db_meta.json().set('status', Path(idx_pattern), counter + 1)
+                        db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400
 
@@ -112,6 +113,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                     for message in bodies:
                         message['enrichments'] = {}
                         idx_pattern = f'forward:message:{message["mediaType"].lower()}'
+                        idx_pattern_status = idx_pattern.replace(':', '_')
                         if message["mediaType"].lower() == 'twitter':
                             data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
                         else:
@@ -119,9 +121,9 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         rev_idx_pattern = f'reverse:{data_pattern}'
                         message['uiuc_message_id'] = data_pattern
 
-                        if db_meta.json().type('status', Path(idx_pattern)) is None:
-                            db_meta.json().set('status', Path(idx_pattern), util.count_keys(db_idx, idx_pattern + ':*'))
-                        counter = db_meta.json().get('status', Path(idx_pattern))
+                        if db_meta.json().type('status', Path(idx_pattern_status)) is None:
+                            db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
+                        counter = db_meta.json().get('status', Path(idx_pattern_status))
 
                         db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
                             global_id=message['id'],
@@ -130,6 +132,6 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                         db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
                         db_data.json().set(data_pattern, Path.rootPath(), message)
-                        db_meta.json().set('status', Path(idx_pattern), counter + 1)
+                        db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
     return 'OK', 201
     return 'Bad Request', 400
