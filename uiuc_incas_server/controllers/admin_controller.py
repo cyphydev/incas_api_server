@@ -133,5 +133,5 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
 
                         db_data.json().set(data_pattern, Path.rootPath(), message)
                         db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
-    return 'OK', 201
+        return 'OK', 201
     return 'Bad Request', 400
