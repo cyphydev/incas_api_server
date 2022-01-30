@@ -17,17 +17,11 @@ from uiuc_incas_server.models.message_message_graph_db import MessageMessageGrap
 from uiuc_incas_server import util
 
 def generic_graph_list_get(prefix, provider_name, graph_name, distance_name, version, time_stamp, return_code=200):
-    if provider_name is None:
-        provider_name = '*'
-    if graph_name is None:
-        graph_name = '*'
-    if distance_name is None:
-        distance_name = '*'
-    if version is None:
-        version = '*'
-    if time_stamp is None:
-        time_stamp = '*'
-    pattern = f'{prefix}:{provider_name}:{graph_name}:{distance_name}:{version}:{time_stamp}'
+    pattern = util.get_graph_pattern(prefix, provider_name, graph_name, distance_name, version, time_stamp)
+    
+    if pattern.find('*') != -1:
+        return "Bad request", 400
+
     db_meta = util.get_db(db_name='meta')
     with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
         graph_ids = list(util.get_all_keys(db_meta, pattern))
@@ -63,6 +57,9 @@ def generic_graph_post(body, pattern, klass, return_code=201):
     with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock_meta:
         if db_meta.exists(pattern):
             return 'Graph already exists', 409
+
+    if pattern.find('*') != -1:
+        return "Bad request", 400
 
     content = util.serialize(body)
     content['edges'] = {f'{edge["srcId"]}:{edge["dstId"]}:{edge["actionType"]}': edge for edge in content['edges']}
@@ -207,7 +204,7 @@ def actor_actor_graph_post(body, user=None, token_info=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorActorGraph)  # noqa: E501
-        pattern = f'actor_actor:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        pattern = util.get_graph_pattern('actor_actor', body.provider_name, body.graph_name, body.distance_name, body.version, body.time_stamp)
         return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
 
@@ -319,7 +316,7 @@ def actor_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), ActorMessageGraph)  # noqa: E501
-        pattern = f'actor_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        pattern = util.get_graph_pattern('actor_message', body.provider_name, body.graph_name, body.distance_name, body.version, body.time_stamp)
         return generic_graph_post(body, pattern, ActorMessageGraphDB)
     return 'Bad request', 400
 
@@ -422,6 +419,6 @@ def message_message_graph_post(body, user=None, token_info=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), MessageMessageGraph)  # noqa: E501
-        pattern = f'message_message:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}'
+        pattern = util.get_graph_pattern('message_message', body.provider_name, body.graph_name, body.distance_name, body.version, body.time_stamp)
         return generic_graph_post(body, pattern, ActorActorGraphDB)
     return 'Bad request', 400
