@@ -323,3 +323,17 @@ def get_collection_pattern(prefix, collection_name, provider, version):
     if version is None:
         version = '*'
     return f'segment:{collection_name}:{provider}:{version}'
+
+def get_graph_pattern(prefix, provider_name, graph_name, distance_name, version, time_stamp):
+    if provider_name is None:
+        provider_name = '*'
+    if graph_name is None:
+        graph_name = '*'
+    if distance_name is None:
+        distance_name = '*'
+    if version is None:
+        version = '*'
+    if time_stamp is None:
+        time_stamp = '*'
+    pattern = f'{prefix}:{provider_name}:{graph_name}:{distance_name}:{version}:{time_stamp}'
+    return pattern
