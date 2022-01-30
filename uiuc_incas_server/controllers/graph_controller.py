@@ -18,10 +18,6 @@ from uiuc_incas_server import util
 
 def generic_graph_list_get(prefix, provider_name, graph_name, distance_name, version, time_stamp, return_code=200):
     pattern = util.get_graph_pattern(prefix, provider_name, graph_name, distance_name, version, time_stamp)
-    
-    if pattern.find('*') != -1:
-        return "Bad request", 400
-
     db_meta = util.get_db(db_name='meta')
     with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
         graph_ids = list(util.get_all_keys(db_meta, pattern))
@@ -73,7 +69,7 @@ def generic_graph_post(body, pattern, klass, return_code=201):
     return 'Created', return_code
 
 def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
-    if id_ != f'{prefix}:{body.provider_name}:{body.graph_name}:{body.distance_name}:{body.version}:{body.time_stamp}':
+    if id_ != util.get_graph_pattern(prefix, body.provider_name, body.graph_name, body.distance_name, body.version, body.time_stamp):
         return "Graph ID and its realted fields are not changeable", 400
 
     db_graph = util.get_db(db_name='graph')
