@@ -80,17 +80,43 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
             return 'Key fields cannot be modified', 400
 
         db_seg = util.get_db(db_name='segment')
+        db_data = util.get_db(db_name='actor_data')
+        
         with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
             if not db_seg.exists(id_):
-                return 'Key does not exist', 404
-            db_seg.json().set(id_, Path('description'), body.description)
-            db_seg.json().set(id_, Path('segmentDescriptions'), body.segment_descriptions)
-            # TODO: First check all user IDs are valid
-            # CAREFUL!!! all checking needs to be done before any modification
-            # First get the segments currently in the collection.
-            # Delete those memberships from the actor_data db.
-            # Then add the new segments to the actor_data db.
-            # Then update the segments in the segment db.
+                return 'Segment does not exist', 404
+
+            with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock2:
+                for seg in body.segments.values():
+                    for actor_id in seg.keys():
+                        if not db_data.exists(actor_id):
+                            return f'Actor {actor_id} does not exist', 404
+                
+                record = db_seg.json().get(id_, Path.rootPath())
+                all_actors = set()
+                for actors in record['segments'].values():
+                    for actor in actors:
+                        if actor not in all_actors:
+                            all_actors.add(actor)
+                            db_data.json().delete(actor, Path(f'segmentCollections["{pattern}"]'))
+                
+                db_seg.json().set(id_, Path.rootPath(), util.serialize(body))
+                actors_segs = {}
+                for seg_name, actors in body.segments.items():
+                    for actor_id, membership in actors.items():
+                        if actor_id not in actors_segs:
+                            actors_segs[actor_id] = {}
+                        actors_segs[actor_id][seg_name] = membership
+                for actor_id, segs in actors_segs.items():
+                    actor_seg_body = ActorSegmentCollection(
+                        provider_name=body.provider_name,
+                        collection_name=body.collection_name,
+                        version=body.version,
+                        segments=segs
+                    )
+                    db_data.json().set(actor_id, Path(
+                        f'segmentCollections["{pattern}"]'), util.serialize(actor_seg_body))
+                    
         return 'Updated', 200
     return 'Bad request', 400
 
@@ -183,5 +209,5 @@ def segment_collection_validate_post(body, user=None, token_info=None):  # noqa:
     :rtype: List[str]
     """
     if connexion.request.is_json:
-        body = UiucSegmentCollection.from_dict(connexion.request.get_json())  # noqa: E501
+        body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
     return 'do some magic!'
