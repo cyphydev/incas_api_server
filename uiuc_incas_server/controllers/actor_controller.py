@@ -826,9 +826,12 @@ def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_in
     
     db_idx = util.get_db(db_name='index')
     with db_idx.lock('db_index_lock', blocking_timeout=5) as lock:
-        keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type.lower(), i) for i in range(begin, end)]
+        if entity_type != '*':
+            keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type.lower(), i) for i in range(begin, end)]
+        else:
+            keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type, i) for i in range(begin, end) for entity_type in ['person', 'media', 'organization', 'government']]
         ret = db_idx.json().mget(keys, Path.rootPath())
-    ret = [util.deserialize(x, ActorIdResponse) for x in ret]
+    ret = [util.deserialize(x, ActorIdResponse) for x in ret if x]
     return ret, 200
 
 
