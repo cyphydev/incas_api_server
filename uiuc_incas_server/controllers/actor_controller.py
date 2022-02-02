@@ -832,7 +832,7 @@ def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_in
         else:
             keys = chain(*[list(util.get_all_keys(db_idx, f'forward:actor:{media_type.lower()}:{entity_type.lower()}:{i}')) for i in range(begin, end)])
         ret = db_idx.json().mget(keys, Path.rootPath())
-    ret = [util.deserialize(x, ActorIdResponse) for x in ret if x]
+    ret = [util.deserialize(x, ActorIdResponse) for x in ret]
     return ret, 200
 
 
