@@ -1,6 +1,7 @@
 import connexion
 import six
 import dpath.util
+from itertools import chain
 
 import redis
 from redis.exceptions import LockError
@@ -829,7 +830,7 @@ def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_in
         if entity_type != '*':
             keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type.lower(), i) for i in range(begin, end)]
         else:
-            keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type, i) for i in range(begin, end) for entity_type in ['person', 'media', 'organization', 'government']]
+            keys = chain(*[list(util.get_all_keys(db_idx, f'forward:actor:{media_type.lower()}:{entity_type.lower()}:{i}')) for i in range(begin, end)])
         ret = db_idx.json().mget(keys, Path.rootPath())
     ret = [util.deserialize(x, ActorIdResponse) for x in ret if x]
     return ret, 200

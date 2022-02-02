@@ -74,9 +74,7 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
-        pattern = util.get_collection_pattern(
-            'actor', body.collection_name, body.provider_name, body.version)
-        if pattern != id_:
+        if util.get_collection_pattern('actor', body.collection_name, body.provider_name, body.version) != id_:
             return 'Key fields cannot be modified', 400
 
         db_seg = util.get_db(db_name='segment')
@@ -86,19 +84,28 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
             if not db_seg.exists(id_):
                 return 'Segment does not exist', 404
 
+        all_new_actors = set()
+        for seg in body.segments.values():
+            for actor_id in seg.keys():
+                all_new_actors.add(actor_id)
+
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
+            for actor_id in all_new_actors:
+                if not db_data.exists(actor_id):
+                    return f'Actor {actor_id} does not exist', 404
+                        
+        all_old_actors = set()
+        with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
+            record = db_seg.json().get(id_, Path.rootPath())
+        for actors in record['segments'].values():
+            for actor in actors:
+                all_old_actors.add(actor)
+                    
+        with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock1:
             with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock2:
-                for seg in body.segments.values():
-                    for actor_id in seg.keys():
-                        if not db_data.exists(actor_id):
-                            return f'Actor {actor_id} does not exist', 404
-                
-                record = db_seg.json().get(id_, Path.rootPath())
-                all_actors = set()
-                for actors in record['segments'].values():
-                    for actor in actors:
-                        if actor not in all_actors:
-                            all_actors.add(actor)
-                            db_data.json().delete(actor, Path(f'segmentCollections["{pattern}"]'))
+                for actor in all_old_actors:
+                    if db_data.json().type(actor, Path(f'segmentCollections["{id_}"]')) is not None:
+                        db_data.json().delete(actor, Path(f'segmentCollections["{id_}"]'))
                 
                 db_seg.json().set(id_, Path.rootPath(), util.serialize(body))
                 actors_segs = {}
@@ -115,8 +122,7 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
                         segments=segs
                     )
                     db_data.json().set(actor_id, Path(
-                        f'segmentCollections["{pattern}"]'), util.serialize(actor_seg_body))
-                    
+                        f'segmentCollections["{id_}"]'), util.serialize(actor_seg_body))
         return 'Updated', 200
     return 'Bad request', 400
 
