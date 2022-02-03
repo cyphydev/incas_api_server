@@ -174,12 +174,16 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
         with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock1:
             if db_seg.exists(pattern):
                 return 'Segment collection already exists', 409
-
+        
+        all_new_actors = set()
+        for seg in body.segments.values():
+            for actor_id in seg.keys():
+                all_new_actors.add(actor_id)
+                
         with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
-            for seg in body.segments.values():
-                for actor_id in seg.keys():
-                    if not db_data.exists(actor_id):
-                        return f'Actor {actor_id} does not exist', 404
+            for actor_id in all_new_actors:
+                if not db_data.exists(actor_id):
+                    return f'Actor {actor_id} does not exist', 404
                     
             with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
                 db_seg.json().set(pattern, Path.rootPath(), util.serialize(body))
