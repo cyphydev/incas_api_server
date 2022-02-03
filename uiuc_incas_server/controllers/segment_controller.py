@@ -219,4 +219,27 @@ def segment_collection_validate_post(body, user=None, token_info=None):  # noqa:
     """
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), UiucSegmentCollection)  # noqa: E501
-    return 'do some magic!'
+        pattern = util.get_collection_pattern(
+            'actor', body.collection_name, body.provider_name, body.version)
+        if pattern.find('*') != -1:
+            return 'Bad request', 400
+        
+        db_data = util.get_db(db_name='actor_data')
+        db_seg = util.get_db(db_name='segment')
+
+        with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock1:
+            if db_seg.exists(pattern):
+                return 'Segment collection already exists', 409
+        
+        all_actors = set()
+        for seg in body.segments.values():
+            for actor_id in seg.keys():
+                all_actors.add(actor_id)
+        
+        actor_list = []
+        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+            for actor_id in all_actors:
+                if not db_data.exists(actor_id):
+                    actor_list.append(actor_id)
+        return actor_list, 200
+    return 'Bad request', 400
