@@ -189,14 +189,25 @@ def message_enrichments_batch_post(body, user=None, token_info=None):  # noqa: E
         bodies = {k: util.deserialize(v, MessageEnrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
 
         db_data = util.get_db(db_name='message_data')
+        db_meta = util.get_db(db_name='meta')
+        
+        all_patterns = set()
+        exist_status = dict()
+        for body in bodies.values():
+            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            if pattern.find('*') != -1:
+                return 'Bad request', 400
+            all_patterns.add(pattern)
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+            for pattern in all_patterns:
+                exist_status[pattern] = True if db_meta.exists(pattern) else False
+                
         with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
-                if pattern.find('*') != -1:
-                    return 'Bad request', 400
                 if not db_data.exists(id_):
                     return f'ID {id_} does not exist, nothing is done', 404
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
+                if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
                     return f'Enrichment {pattern} already exists in {id_}, nothing is done', 409
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
@@ -220,6 +231,17 @@ def message_enrichments_batch_post_validate(body, user=None, token_info=None):  
         
         ret = MessageEnrichmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found=None, value_existed={})
         db_data = util.get_db(db_name='message_data')
+        db_meta = util.get_db(db_name='meta')
+        
+        all_patterns = set()
+        exist_status = dict()
+        for body in bodies.values():
+            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            all_patterns.add(pattern)
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+            for pattern in all_patterns:
+                exist_status[pattern] = True if db_meta.exists(pattern) else False
+            
         with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
@@ -227,7 +249,7 @@ def message_enrichments_batch_post_validate(body, user=None, token_info=None):  
                     ret.value_invalid[id_] = body
                 if not db_data.exists(id_):
                     ret.id_invalid[id_] = body
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
+                if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is not None:
                     ret.value_existed[id_] = body
         return ret, 200
     return 'Bad request', 400
@@ -247,14 +269,25 @@ def message_enrichments_batch_put(body, user=None, token_info=None):  # noqa: E5
         bodies = {k: util.deserialize(v, MessageEnrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
 
         db_data = util.get_db(db_name='message_data')
+        db_meta = util.get_db(db_name='meta')
+        
+        all_patterns = set()
+        exist_status = dict()
+        for body in bodies.values():
+            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            if pattern.find('*') != -1:
+                return 'Bad request', 400
+            all_patterns.add(pattern)
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+            for pattern in all_patterns:
+                exist_status[pattern] = True if db_meta.exists(pattern) else False
+                
         with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
-                if pattern.find('*') != -1:
-                    return 'Bad request', 400
                 if not db_data.exists(id_):
                     return f'ID {id_} does not exist, nothing is done', 404
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+                if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
                     return f'Enrichment {pattern} not found in {id_}, nothing is done', 404
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
@@ -278,6 +311,17 @@ def message_enrichments_batch_put_validate(body, user=None, token_info=None):  #
 
         ret = MessageEnrichmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found={}, value_existed=None)
         db_data = util.get_db(db_name='message_data')
+        db_meta = util.get_db(db_name='meta')
+        
+        all_patterns = set()
+        exist_status = dict()
+        for body in bodies.values():
+            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            all_patterns.add(pattern)
+        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+            for pattern in all_patterns:
+                exist_status[pattern] = True if db_meta.exists(pattern) else False
+                
         with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
             for id_, body in bodies.items():
                 pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
@@ -285,7 +329,7 @@ def message_enrichments_batch_put_validate(body, user=None, token_info=None):  #
                     ret.value_invalid[id_] = body
                 if not db_data.exists(id_):
                     ret.id_invalid[id_] = body
-                if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+                if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
                     ret.value_not_found[id_] = body
         return ret, 200
     return 'Bad request', 400
