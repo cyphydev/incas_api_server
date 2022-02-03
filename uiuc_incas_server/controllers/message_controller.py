@@ -194,7 +194,7 @@ def message_enrichments_batch_post(body, user=None, token_info=None):  # noqa: E
         all_patterns = set()
         exist_status = dict()
         for body in bodies.values():
-            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
             if pattern.find('*') != -1:
                 return 'Bad request', 400
             all_patterns.add(pattern)
@@ -236,7 +236,7 @@ def message_enrichments_batch_post_validate(body, user=None, token_info=None):  
         all_patterns = set()
         exist_status = dict()
         for body in bodies.values():
-            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
             all_patterns.add(pattern)
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             for pattern in all_patterns:
@@ -274,7 +274,7 @@ def message_enrichments_batch_put(body, user=None, token_info=None):  # noqa: E5
         all_patterns = set()
         exist_status = dict()
         for body in bodies.values():
-            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
             if pattern.find('*') != -1:
                 return 'Bad request', 400
             all_patterns.add(pattern)
@@ -316,7 +316,7 @@ def message_enrichments_batch_put_validate(body, user=None, token_info=None):  #
         all_patterns = set()
         exist_status = dict()
         for body in bodies.values():
-            pattern = util.get_enrichment_pattern('actor', body.enrichment_name, body.provider_name, body.version)
+            pattern = util.get_enrichment_pattern('message', body.enrichment_name, body.provider_name, body.version)
             all_patterns.add(pattern)
         with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
             for pattern in all_patterns:
