@@ -39,39 +39,39 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
         db_idx = util.get_db(db_name='index')
         db_meta = util.get_db(db_name='meta')
         db_data = util.get_db(db_name='actor_data')
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists('status'):
-                db_meta.json().set('status', Path.rootPath(), {})
+        # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+        if not db_meta.exists('status'):
+            db_meta.json().set('status', Path.rootPath(), {})
 
-        with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+        # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
             # for actor in bodies:
             #     data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
             #     if db_data.exists(data_pattern):
             #         return f'Actor {data_pattern} already exists', 409
             
-            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
-                with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
-                    for actor in bodies:
-                        actor['enrichments'] = {}
-                        actor['segmentCollections'] = {}
-                        idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
-                        idx_pattern_status = idx_pattern.replace(':', '_')
-                        data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
-                        rev_idx_pattern = f'reverse:{data_pattern}'
-                        actor['uiucAuthorId'] = data_pattern
+        #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
+        #        with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
+        for actor in bodies:
+            actor['enrichments'] = {}
+            actor['segmentCollections'] = {}
+            idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
+            idx_pattern_status = idx_pattern.replace(':', '_')
+            data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
+            rev_idx_pattern = f'reverse:{data_pattern}'
+            actor['uiucAuthorId'] = data_pattern
 
-                        if db_meta.json().type('status', Path(idx_pattern_status)) is None:
-                            db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
-                        counter = db_meta.json().get('status', Path(idx_pattern_status))
+            if db_meta.json().type('status', Path(idx_pattern_status)) is None:
+                db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
+            counter = db_meta.json().get('status', Path(idx_pattern_status))
 
-                        db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
-                            global_id=actor['id'],
-                            actor_id=data_pattern
-                        )))
-                        db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+            db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
+                global_id=actor['id'],
+                actor_id=data_pattern
+            )))
+            db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
-                        db_data.json().set(data_pattern, Path.rootPath(), actor)
-                        db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
+            db_data.json().set(data_pattern, Path.rootPath(), actor)
+            db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400
 
@@ -98,40 +98,40 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
         db_idx = util.get_db(db_name='index')
         db_meta = util.get_db(db_name='meta')
         db_data = util.get_db(db_name='message_data')
-        with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-            if not db_meta.exists('status'):
-                db_meta.json().set('status', Path.rootPath(), {})
+        # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+        if not db_meta.exists('status'):
+            db_meta.json().set('status', Path.rootPath(), {})
 
-        with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
+        # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
             # for message in bodies:
             #     data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
             #     if db_data.exists(data_pattern):
             #         return f'Message {data_pattern} already exists', 409
             
-            with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
-                with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
-                    for message in bodies:
-                        message['enrichments'] = {}
-                        idx_pattern = f'forward:message:{message["mediaType"].lower()}'
-                        idx_pattern_status = idx_pattern.replace(':', '_')
-                        if message["mediaType"].lower() == 'twitter':
-                            data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
-                        else:
-                            return 'Unsupported media type', 400
-                        rev_idx_pattern = f'reverse:{data_pattern}'
-                        message['uiucMessageId'] = data_pattern
+            # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
+                # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
+        for message in bodies:
+            message['enrichments'] = {}
+            idx_pattern = f'forward:message:{message["mediaType"].lower()}'
+            idx_pattern_status = idx_pattern.replace(':', '_')
+            if message["mediaType"].lower() == 'twitter':
+                data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
+            else:
+                return 'Unsupported media type', 400
+            rev_idx_pattern = f'reverse:{data_pattern}'
+            message['uiucMessageId'] = data_pattern
 
-                        if db_meta.json().type('status', Path(idx_pattern_status)) is None:
-                            db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
-                        counter = db_meta.json().get('status', Path(idx_pattern_status))
+            if db_meta.json().type('status', Path(idx_pattern_status)) is None:
+                db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
+            counter = db_meta.json().get('status', Path(idx_pattern_status))
 
-                        db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
-                            global_id=message['id'],
-                            media_id=data_pattern
-                        )))
-                        db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+            db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
+                global_id=message['id'],
+                media_id=data_pattern
+            )))
+            db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
 
-                        db_data.json().set(data_pattern, Path.rootPath(), message)
-                        db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
+            db_data.json().set(data_pattern, Path.rootPath(), message)
+            db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400

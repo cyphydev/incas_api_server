@@ -19,17 +19,18 @@ from uiuc_incas_server import util
 def generic_graph_list_get(prefix, provider_name, graph_name, distance_name, version, time_stamp, return_code=200):
     pattern = util.get_graph_pattern(prefix, provider_name, graph_name, distance_name, version, time_stamp)
     db_meta = util.get_db(db_name='meta')
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        graph_ids = list(util.get_all_keys(db_meta, pattern))
+    # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+    graph_ids = list(util.get_all_keys(db_meta, pattern)) #
+    
     return graph_ids, return_code
 
 def generic_graph_id_neighbor_get(id_, src_id, return_code=200):
     db_graph = util.get_db(db_name='graph')
 
-    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-        if not db_graph.exists(id_):
-            return 'Key does not exist', 404
-        edges = db_graph.json().get(id_, Path(f'edges'))
+    # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+    if not db_graph.exists(id_): #
+        return 'Key does not exist', 404 #
+    edges = db_graph.json().get(id_, Path(f'edges')) #
 
     ret = dpath.util.values(edges, f'{src_id}:*:*')
     ret = util.serialize(ret)
@@ -38,10 +39,11 @@ def generic_graph_id_neighbor_get(id_, src_id, return_code=200):
 def generic_graph_id_get(id_, klass, return_code=200):
     db_graph = util.get_db(db_name='graph')
 
-    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-        if not db_graph.exists(id_):
-            return 'Key does not exist', 404
-        record = db_graph.json().get(id_, Path.rootPath())
+    # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+    if not db_graph.exists(id_): #
+        return 'Key does not exist', 404 #
+    record = db_graph.json().get(id_, Path.rootPath()) #
+
     record['edges'] = list(record['edges'].values())
     ret = util.deserialize(record, klass)
     return ret, return_code
@@ -50,9 +52,9 @@ def generic_graph_post(body, pattern, klass, return_code=201):
     db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
 
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock_meta:
-        if db_meta.exists(pattern):
-            return 'Graph already exists', 409
+    # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock_meta:
+    if db_meta.exists(pattern): #
+        return 'Graph already exists', 409 #
 
     if pattern.find('*') != -1:
         return "Bad request", 400
@@ -62,10 +64,10 @@ def generic_graph_post(body, pattern, klass, return_code=201):
     content = util.deserialize(content, klass)
     graph_id = pattern
 
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
-            db_meta.json().set(pattern, Path.rootPath(), graph_id)
-            db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content))
+    # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
+    #     with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
+    db_meta.json().set(pattern, Path.rootPath(), graph_id) #
+    db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content)) # 
     return 'Created', return_code
 
 def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
@@ -74,30 +76,32 @@ def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
 
     db_graph = util.get_db(db_name='graph')
 
-    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-        if not db_graph.exists(id_):
-            return 'Key does not exist', 404
+    # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+    if not db_graph.exists(id_): #
+        return 'Key does not exist', 404 #
 
     content = util.serialize(body)
     content['edges'] = {f'{edge["srcId"]}:{edge["dstId"]}:{edge["actionType"]}': edge for edge in content['edges']}
     content = util.deserialize(content, klass)
 
-    with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-        db_graph.json().set(id_, Path.rootPath(), util.serialize(content))
+    # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+    db_graph.json().set(id_, Path.rootPath(), util.serialize(content)) #
+
     return 'Updated', return_code
 
 def generic_graph_id_delete(id_, return_code=204):
     db_meta = util.get_db(db_name='meta')
     db_graph = util.get_db(db_name='graph')
 
-    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-        if not db_meta.exists(id_): 
-            return 'Key does not exist in the meta database', 404
-        with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-            if not db_graph.exists(id_): 
-                return 'Key does not exist in the graph database', 404
-            db_meta.delete(id_, Path.rootPath())
-            db_graph.delete(id_, Path.rootPath())
+    # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
+    if not db_meta.exists(id_): 
+        return 'Key does not exist in the meta database', 404
+    db_meta.delete(id_, Path.rootPath())
+
+    # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
+    if not db_graph.exists(id_): 
+        return 'Key does not exist in the graph database', 404
+    db_graph.delete(id_, Path.rootPath())
 
     return 'Deleted', return_code
 
