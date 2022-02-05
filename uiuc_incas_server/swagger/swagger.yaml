@@ -222,7 +222,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MessageEnrichmentMeta'
+                  $ref: '#/components/schemas/EnrichmentMeta'
                 x-content-type: application/json
         "401":
           description: API key is missing or invalid
@@ -244,7 +244,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -288,7 +288,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+              $ref: '#/components/schemas/BaseEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -379,7 +379,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentsBatchGetBody'
+              $ref: '#/components/schemas/EnrichmentsBatchGetBody'
         required: true
       responses:
         "200":
@@ -391,7 +391,7 @@ paths:
                 additionalProperties:
                   type: array
                   items:
-                    $ref: '#/components/schemas/MessageEnrichment'
+                    $ref: '#/components/schemas/Enrichment'
                 x-content-type: application/json
         "401":
           description: API key is missing or invalid
@@ -421,7 +421,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteBody'
+              $ref: '#/components/schemas/EnrichmentsBatchDeleteBody'
         required: true
       responses:
         "200":
@@ -429,7 +429,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchDeleteValidationResponse'
         "400":
           description: Bad request
           content:
@@ -457,7 +457,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageEnrichmentsBatchDeleteBody'
+              $ref: '#/components/schemas/EnrichmentsBatchDeleteBody'
         required: true
       responses:
         "204":
@@ -492,7 +492,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -500,7 +500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchValidationResponse'
         "400":
           description: Bad request
           content:
@@ -530,7 +530,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -538,7 +538,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchValidationResponse'
         "400":
           description: Bad request
           content:
@@ -568,7 +568,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -613,7 +613,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseMessageEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "201":
@@ -779,7 +779,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MessageEnrichment'
+                  $ref: '#/components/schemas/Enrichment'
                 x-content-type: application/json
         "400":
           description: Invalid query
@@ -824,7 +824,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichment'
+              $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -876,7 +876,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseMessageEnrichment'
+              $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "201":
@@ -1264,6 +1264,60 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
+  /segmentCollection/{id}/partial:
+    put:
+      tags:
+      - segment
+      description: "Update segment collection by id, only update values that are modified\
+        \ in the request body."
+      operationId: segment_collection_id_partial_put
+      parameters:
+      - name: id
+        in: path
+        description: Segment collection ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: The segment collection meta
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UiucSegmentCollection'
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "400":
+          description: Invalid query
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.segment_controller
   /actor/count:
     get:
       tags:
@@ -1424,7 +1478,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ActorEnrichmentMeta'
+                  $ref: '#/components/schemas/EnrichmentMeta'
                 x-content-type: application/json
         "401":
           description: API key is missing or invalid
@@ -1446,7 +1500,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseEnrichmentMeta'
         required: true
       responses:
         "200":
@@ -1490,7 +1544,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichmentMeta'
+              $ref: '#/components/schemas/BaseEnrichmentMeta'
         required: true
       responses:
         "201":
@@ -1805,51 +1859,6 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-    post:
-      tags:
-      - actor
-      description: Submits a segment collection for each actor ID.
-      operationId: actor_segments_batch_post
-      requestBody:
-        description: Map of IDs and segment collections
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/ActorSegmentCollection'
-        required: true
-      responses:
-        "201":
-          description: Posted
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "400":
-          description: Invalid input
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: API key is missing or invalid
-          headers:
-            WWW_Authenticate:
-              style: simple
-              explode: false
-              schema:
-                type: string
-        "409":
-          description: Input already exists
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
   /actor/enrichments/batchGet:
     post:
       tags:
@@ -1861,7 +1870,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentsBatchGetBody'
+              $ref: '#/components/schemas/EnrichmentsBatchGetBody'
         required: true
       responses:
         "200":
@@ -1873,7 +1882,7 @@ paths:
                 additionalProperties:
                   type: array
                   items:
-                    $ref: '#/components/schemas/ActorEnrichment'
+                    $ref: '#/components/schemas/Enrichment'
                 x-content-type: application/json
         "401":
           description: API key is missing or invalid
@@ -1903,7 +1912,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteBody'
+              $ref: '#/components/schemas/EnrichmentsBatchDeleteBody'
         required: true
       responses:
         "200":
@@ -1911,7 +1920,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchDeleteValidationResponse'
         "400":
           description: Bad request
           content:
@@ -1939,7 +1948,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorEnrichmentsBatchDeleteBody'
+              $ref: '#/components/schemas/EnrichmentsBatchDeleteBody'
         required: true
       responses:
         "204":
@@ -1974,7 +1983,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -1982,7 +1991,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchValidationResponse'
         "400":
           description: Bad request
           content:
@@ -2012,7 +2021,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -2020,7 +2029,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActorEnrichmentsBatchValidationResponse'
+                $ref: '#/components/schemas/EnrichmentsBatchValidationResponse'
         "400":
           description: Bad request
           content:
@@ -2050,7 +2059,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -2095,7 +2104,7 @@ paths:
             schema:
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/BaseActorEnrichment'
+                $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "201":
@@ -2367,58 +2376,6 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
-    post:
-      tags:
-      - actor
-      description: Add a new segment collection for the specific actor
-      operationId: actor_id_segments_post
-      parameters:
-      - name: id
-        in: path
-        description: Actor ID
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      requestBody:
-        description: The new segment collections to add
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ActorSegmentCollection'
-        required: true
-      responses:
-        "201":
-          description: Posted
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "400":
-          description: Invalid input
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-        "401":
-          description: API key is missing or invalid
-          headers:
-            WWW_Authenticate:
-              style: simple
-              explode: false
-              schema:
-                type: string
-        "409":
-          description: Input already exists
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
     delete:
       tags:
       - actor
@@ -2525,7 +2482,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ActorEnrichment'
+                  $ref: '#/components/schemas/Enrichment'
                 x-content-type: application/json
         "400":
           description: Invalid query
@@ -2570,7 +2527,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichment'
+              $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "200":
@@ -2622,7 +2579,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseActorEnrichment'
+              $ref: '#/components/schemas/BaseEnrichment'
         required: true
       responses:
         "201":
@@ -3662,41 +3619,6 @@ components:
       example:
         globalId: globalId
         mediaId: mediaId
-    MessageEnrichmentsBatchGetBody:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-        dev:
-          type: boolean
-    MessageEnrichmentsBatchDeleteBody:
-      required:
-      - enrichmentName
-      - ids
-      - providerName
-      - version
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
     MessageBatchGetBody:
       required:
       - ids
@@ -3716,52 +3638,6 @@ components:
           type: string
         dev:
           type: boolean
-    MessageEnrichmentsBatchValidationResponse:
-      type: object
-      properties:
-        idInvalid:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/MessageEnrichment'
-        valueInvalid:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/MessageEnrichment'
-        valueNotFound:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/MessageEnrichment'
-        valueExisted:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/MessageEnrichment'
-      example:
-        valueNotFound:
-          key: null
-        valueExisted:
-          key: null
-        idInvalid:
-          key: ""
-        valueInvalid:
-          key: null
-    MessageEnrichmentsBatchDeleteValidationResponse:
-      type: object
-      properties:
-        idInvalid:
-          type: array
-          items:
-            type: string
-        valueNotFound:
-          type: array
-          items:
-            type: string
-      example:
-        valueNotFound:
-        - valueNotFound
-        - valueNotFound
-        idInvalid:
-        - idInvalid
-        - idInvalid
     ActorIdResponse:
       type: object
       properties:
@@ -3772,41 +3648,6 @@ components:
       example:
         actorId: actorId
         globalId: globalId
-    ActorEnrichmentsBatchGetBody:
-      required:
-      - ids
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
-        dev:
-          type: boolean
-    ActorEnrichmentsBatchDeleteBody:
-      required:
-      - enrichmentName
-      - ids
-      - providerName
-      - version
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-        enrichmentName:
-          type: string
-        providerName:
-          type: string
-        version:
-          type: string
     ActorBatchGetBody:
       required:
       - ids
@@ -3834,35 +3675,76 @@ components:
           type: string
         dev:
           type: boolean
-    ActorEnrichmentsBatchValidationResponse:
+    EnrichmentsBatchGetBody:
+      required:
+      - ids
       type: object
       properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+        dev:
+          type: boolean
+    EnrichmentsBatchDeleteBody:
+      required:
+      - enrichmentName
+      - ids
+      - providerName
+      - version
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        enrichmentName:
+          type: string
+        providerName:
+          type: string
+        version:
+          type: string
+    EnrichmentsBatchValidationResponse:
+      type: object
+      properties:
+        ok:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Enrichment'
         idInvalid:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorEnrichment'
+            $ref: '#/components/schemas/Enrichment'
         valueInvalid:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorEnrichment'
+            $ref: '#/components/schemas/Enrichment'
         valueNotFound:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorEnrichment'
+            $ref: '#/components/schemas/Enrichment'
         valueExisted:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/ActorEnrichment'
+            $ref: '#/components/schemas/Enrichment'
       example:
         valueNotFound:
           key: null
         valueExisted:
           key: null
         idInvalid:
+          key: null
+        ok:
           key: ""
         valueInvalid:
           key: null
-    ActorEnrichmentsBatchDeleteValidationResponse:
+    EnrichmentsBatchDeleteValidationResponse:
       type: object
       properties:
         idInvalid:
@@ -3918,6 +3800,10 @@ components:
     ActorSegmentsBatchValidationResponse:
       type: object
       properties:
+        ok:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ActorSegmentCollection'
         idInvalid:
           type: object
           additionalProperties:
@@ -3940,6 +3826,8 @@ components:
         valueExisted:
           key: null
         idInvalid:
+          key: null
+        ok:
           key:
             version: version
             providerName: providerName
@@ -3977,7 +3865,7 @@ components:
           enrichments:
             type: array
             items:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/Enrichment'
     UiucMessageDB:
       description: "a post of social media, news, etc."
       allOf:
@@ -3989,20 +3877,20 @@ components:
           enrichments:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/MessageEnrichment'
+              $ref: '#/components/schemas/Enrichment'
     UiucActor:
       allOf:
       - $ref: '#/components/schemas/Actor'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucActorId:
             type: string
           uiucMediaType:
             type: string
           enrichments:
             type: array
             items:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/Enrichment'
           segmentCollections:
             type: array
             items:
@@ -4012,14 +3900,14 @@ components:
       - $ref: '#/components/schemas/Actor'
       - type: object
         properties:
-          uiucAuthorId:
+          uiucActorId:
             type: string
           uiucMediaType:
             type: string
           enrichments:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/ActorEnrichment'
+              $ref: '#/components/schemas/Enrichment'
           segmentCollections:
             type: object
             additionalProperties:
@@ -4049,32 +3937,12 @@ components:
         collectionName: collectionName
         segments:
           key: 0.8008282
-    UiucSegmentCollectionMeta:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the segment.
-        collectionName:
-          type: string
-          description: Name of the segment.
-        providerName:
-          type: string
-          description: "The team (e.g., UIUC-DMG) who provides the segment."
-        version:
-          type: string
-          description: "The version within the same (provider, name)."
-        segmentDescriptions:
-          type: object
-          additionalProperties:
-            type: string
-      description: Stores the meta data related to segments.
     UiucSegmentCollection:
       type: object
       properties:
         description:
           type: string
-          description: Description of the segment.
+          description: Description of the segment collection.
         collectionName:
           type: string
           description: Name of the segment.
@@ -4084,34 +3952,65 @@ components:
         version:
           type: string
           description: "The version within the same (provider, name)."
-        segmentDescriptions:
-          type: object
-          additionalProperties:
-            type: string
         segments:
           type: object
           additionalProperties:
-            type: object
-            additionalProperties:
-              type: number
-              format: float
-          description: Different segment sets with user probability.
-        extraAttributes:
-          $ref: '#/components/schemas/ExtraAttributes'
+            $ref: '#/components/schemas/UiucSegment'
       description: A segment to group actors.
       example:
-        segmentDescriptions:
-          key: segmentDescriptions
         description: description
         version: version
         providerName: providerName
-        extraAttributes:
-          key: extraAttributes
         collectionName: collectionName
         segments:
           key:
-            key: 0.8008282
-    BaseMessageEnrichmentMeta:
+            configurations:
+              key: configurations
+            responseRate:
+              key: 6.0274563
+            members:
+              key: 0.8008282
+            description: description
+            enrichments:
+              key: ""
+    UiucSegment:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the segment.
+        configurations:
+          type: object
+          additionalProperties:
+            type: string
+          description: Configuration dictionary of this segment.
+        members:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+          description: Membership value of actors.
+        enrichments:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Enrichment'
+        responseRate:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+      description: A segment of actors with properties and response rate.
+      example:
+        configurations:
+          key: configurations
+        responseRate:
+          key: 6.0274563
+        members:
+          key: 0.8008282
+        description: description
+        enrichments:
+          key: ""
+    BaseEnrichmentMeta:
       required:
       - enrichmentType
       type: object
@@ -4137,35 +4036,9 @@ components:
           - array
           - text
       description: Stores the meta data related to enrichment algorithm.
-    BaseActorEnrichmentMeta:
-      required:
-      - enrichmentType
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the enrichment algorithm.
-        providerName:
-          type: string
-          description: "The team (e.g., UIUC-DMG) who provides the enrichment."
-        enrichmentName:
-          type: string
-          description: "The enrichment (e.g., Concern-Stance) name for the enrichment."
-        version:
-          type: string
-          description: "The version within the same (provider, name)."
-        enrichmentType:
-          type: string
-          description: For discriminator
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      description: Stores the meta data related to enrichment algorithm.
-    CategoryMessageEnrichmentMeta:
+    CategoryEnrichmentMeta:
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
       - type: object
         properties:
           categories:
@@ -4173,13 +4046,13 @@ components:
             items:
               type: string
         description: Defines all available categories in category message enrichment.
-    NumericalMessageEnrichmentMeta:
+    NumericalEnrichmentMeta:
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
       - type: object
-    ArrayMessageEnrichmentMeta:
+    ArrayEnrichmentMeta:
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
       - type: object
         properties:
           labelMap:
@@ -4187,71 +4060,27 @@ components:
             additionalProperties:
               type: integer
         description: "Defines the hash map (class, posID) for multi-label regression/classification."
-    TextMessageEnrichmentMeta:
+    TextEnrichmentMeta:
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichmentMeta'
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
       - type: object
-    CategoryActorEnrichmentMeta:
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
-      - type: object
-        properties:
-          categories:
-            type: array
-            items:
-              type: string
-        description: Defines all available categories in category actor enrichment.
-    NumericalActorEnrichmentMeta:
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
-      - type: object
-    ArrayActorEnrichmentMeta:
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
-      - type: object
-        properties:
-          labelMap:
-            type: object
-            additionalProperties:
-              type: integer
-        description: "Defines the hash map of (class, posID) for multi-class regression/classification."
-    TextActorEnrichmentMeta:
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichmentMeta'
-      - type: object
-    MessageEnrichmentMeta:
+    EnrichmentMeta:
       type: object
       description: This is the unified interface for message enrichment algorithm
         meta information.
       discriminator:
         propertyName: enrichment_type
         mapping:
-          category: CategoryMessageEnrichmentMeta
-          numerical: NumericalMessageEnrichmentMeta
-          array: ArrayMessageEnrichmentMeta
-          text: TextMessageEnrichmentMeta
+          category: CategoryEnrichmentMeta
+          numerical: NumericalEnrichmentMeta
+          array: ArrayEnrichmentMeta
+          text: TextEnrichmentMeta
       oneOf:
-      - $ref: '#/components/schemas/CategoryMessageEnrichmentMeta'
-      - $ref: '#/components/schemas/NumericalMessageEnrichmentMeta'
-      - $ref: '#/components/schemas/ArrayMessageEnrichmentMeta'
-      - $ref: '#/components/schemas/TextMessageEnrichmentMeta'
-    ActorEnrichmentMeta:
-      type: object
-      description: This is the unified interface for actor enrichment algorithm meta
-        information.
-      discriminator:
-        propertyName: enrichment_type
-        mapping:
-          category: CategoryActorEnrichmentMeta
-          numerical: NumericalActorEnrichmentMeta
-          array: ArrayActorEnrichmentMeta
-          text: TextActorEnrichmentMeta
-      oneOf:
-      - $ref: '#/components/schemas/CategoryActorEnrichmentMeta'
-      - $ref: '#/components/schemas/NumericalActorEnrichmentMeta'
-      - $ref: '#/components/schemas/ArrayActorEnrichmentMeta'
-      - $ref: '#/components/schemas/TextActorEnrichmentMeta'
-    BaseMessageEnrichment:
+      - $ref: '#/components/schemas/CategoryEnrichmentMeta'
+      - $ref: '#/components/schemas/NumericalEnrichmentMeta'
+      - $ref: '#/components/schemas/ArrayEnrichmentMeta'
+      - $ref: '#/components/schemas/TextEnrichmentMeta'
+    BaseEnrichment:
       required:
       - enrichmentType
       type: object
@@ -4274,10 +4103,10 @@ components:
           - array
           - text
       description: Stores data fields common to all types of message enrichment.
-    CategoryMessageEnrichment:
+    CategoryEnrichment:
       description: This defines a enumeration/category enrichment.
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichment'
+      - $ref: '#/components/schemas/BaseEnrichment'
       - type: object
         properties:
           attributeValue:
@@ -4289,10 +4118,10 @@ components:
             description: "The confidence that this enrichment is correct, expressed\
               \ as a percentage between 0.0 and 1.0"
             format: double
-    NumericalMessageEnrichment:
+    NumericalEnrichment:
       description: Defines a numeric enrichment.
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichment'
+      - $ref: '#/components/schemas/BaseEnrichment'
       - type: object
         properties:
           attributeValue:
@@ -4305,10 +4134,10 @@ components:
             description: "The confidence that this enrichment is correct, expressed\
               \ as a percentage between 0.0 and 1.0"
             format: double
-    ArrayMessageEnrichment:
+    ArrayEnrichment:
       description: Defines a vector/matrix/tensor or multi-label enrichment.
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichment'
+      - $ref: '#/components/schemas/BaseEnrichment'
       - type: object
         properties:
           attributeValue:
@@ -4325,10 +4154,10 @@ components:
               minimum: 0.0
               type: number
               format: double
-    TextMessageEnrichment:
+    TextEnrichment:
       description: This defines a text enrichment.
       allOf:
-      - $ref: '#/components/schemas/BaseMessageEnrichment'
+      - $ref: '#/components/schemas/BaseEnrichment'
       - type: object
         properties:
           attributeValue:
@@ -4340,124 +4169,21 @@ components:
             description: "The confidence that this enrichment is correct, expressed\
               \ as a percentage between 0.0 and 1.0"
             format: double
-    MessageEnrichment:
+    Enrichment:
       type: object
       description: This is the unified interface for message enrichment output.
       discriminator:
         propertyName: enrichment_type
         mapping:
-          category: CategoryMessageEnrichment
-          numerical: NumericalMessageEnrichment
-          array: ArrayMessageEnrichment
-          text: TextMessageEnrichment
+          category: CategoryEnrichment
+          numerical: NumericalEnrichment
+          array: ArrayEnrichment
+          text: TextEnrichment
       oneOf:
-      - $ref: '#/components/schemas/CategoryMessageEnrichment'
-      - $ref: '#/components/schemas/NumericalMessageEnrichment'
-      - $ref: '#/components/schemas/ArrayMessageEnrichment'
-      - $ref: '#/components/schemas/TextMessageEnrichment'
-    BaseActorEnrichment:
-      required:
-      - enrichmentType
-      type: object
-      properties:
-        providerName:
-          type: string
-          description: "The team (e.g., USC) who provides the enrichment."
-        enrichmentName:
-          type: string
-          description: "The enrichment (e.g., age, gender) name for the enrichment."
-        version:
-          type: string
-          description: "The version within the same (provider, enrichmentName)."
-        enrichmentType:
-          type: string
-          description: For discriminator
-          enum:
-          - category
-          - numerical
-          - array
-          - text
-      description: Stores data fields common to all types of actor enrichment.
-    CategoryActorEnrichment:
-      description: Defines a enumeration/category enrichment for actor.
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichment'
-      - type: object
-        properties:
-          attributeValue:
-            type: string
-          confidence:
-            maximum: 1.0
-            minimum: 0.0
-            type: number
-            description: "The confidence that this enrichment is correct, expressed\
-              \ as a percentage between 0.0 and 1.0"
-            format: double
-    NumericalActorEnrichment:
-      description: Defines a numerical enrichment for actor.
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichment'
-      - type: object
-        properties:
-          attributeValue:
-            type: number
-          confidence:
-            maximum: 1.0
-            minimum: 0.0
-            type: number
-            description: "The confidence that this enrichment is correct, expressed\
-              \ as a percentage between 0.0 and 1.0"
-            format: double
-    ArrayActorEnrichment:
-      description: Defines a vector/matrix/tensor or multi-label enrichment for actor.
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichment'
-      - type: object
-        properties:
-          attributeValue:
-            type: array
-            items:
-              type: number
-              format: float
-          confidence:
-            type: array
-            description: "The confidence that this enrichment is correct, expressed\
-              \ as a percentage between 0.0 and 1.0"
-            items:
-              maximum: 1.0
-              minimum: 0.0
-              type: number
-              format: double
-    TextActorEnrichment:
-      description: This defines a text enrichment for actor.
-      allOf:
-      - $ref: '#/components/schemas/BaseActorEnrichment'
-      - type: object
-        properties:
-          attributeValue:
-            type: string
-          confidence:
-            maximum: 1.0
-            minimum: 0.0
-            type: number
-            description: "The confidence that this enrichment is correct, expressed\
-              \ as a percentage between 0.0 and 1.0"
-            format: double
-    ActorEnrichment:
-      type: object
-      description: This is the unified interface for actor enrichment output.
-      discriminator:
-        propertyName: enrichment_type
-        mapping:
-          category: CategoryActorEnrichment
-          numerical: NumericalActorEnrichment
-          array: ArrayActorEnrichment
-          text: TextActorEnrichment
-      oneOf:
-      - $ref: '#/components/schemas/CategoryActorEnrichment'
-      - $ref: '#/components/schemas/NumericalActorEnrichment'
-      - $ref: '#/components/schemas/ArrayActorEnrichment'
-      - $ref: '#/components/schemas/TextActorEnrichment'
+      - $ref: '#/components/schemas/CategoryEnrichment'
+      - $ref: '#/components/schemas/NumericalEnrichment'
+      - $ref: '#/components/schemas/ArrayEnrichment'
+      - $ref: '#/components/schemas/TextEnrichment'
     GraphEdge:
       required:
       - edgeType
@@ -4825,12 +4551,6 @@ components:
         longitude:
           type: number
           format: double
-    ExtraAttributes:
-      type: object
-      additionalProperties:
-        type: string
-      description: "This is a hash map (or dictionary) with strings as keys and strings\
-        \ as values, that is used to put custom user data on an object"
   responses:
     UnauthorizedError:
       description: API key is missing or invalid

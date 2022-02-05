@@ -60,6 +60,24 @@ def segment_collection_id_get(id_, user=None, token_info=None):  # noqa: E501
 
 
 @util.generic_db_lock_decor
+def segment_collection_id_partial_put(body, id_, user=None, token_info=None):  # noqa: E501
+    """segment_collection_id_partial_put
+
+    Update segment collection by id_, only update values that are modified in the request body. # noqa: E501
+
+    :param body: The segment collection meta
+    :type body: dict | bytes
+    :param id: Segment collection ID
+    :type id: str
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        body = UiucSegmentCollection.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'
+
+
+@util.generic_db_lock_decor
 def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E501
     """segment_collection_id_put
 

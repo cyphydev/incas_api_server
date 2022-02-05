@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
+from uiuc_incas_server.models.enrichment import Enrichment  # noqa: E501
+from uiuc_incas_server.models.enrichment_meta import EnrichmentMeta  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_delete_body import EnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_delete_validation_response import EnrichmentsBatchDeleteValidationResponse  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_get_body import EnrichmentsBatchGetBody  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_validation_response import EnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.message_batch_get_body import MessageBatchGetBody  # noqa: E501
-from uiuc_incas_server.models.message_enrichment import MessageEnrichment  # noqa: E501
-from uiuc_incas_server.models.message_enrichment_meta import MessageEnrichmentMeta  # noqa: E501
-from uiuc_incas_server.models.message_enrichments_batch_delete_body import MessageEnrichmentsBatchDeleteBody  # noqa: E501
-from uiuc_incas_server.models.message_enrichments_batch_delete_validation_response import MessageEnrichmentsBatchDeleteValidationResponse  # noqa: E501
-from uiuc_incas_server.models.message_enrichments_batch_get_body import MessageEnrichmentsBatchGetBody  # noqa: E501
-from uiuc_incas_server.models.message_enrichments_batch_validation_response import MessageEnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.message_id_response import MessageIdResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_message import UiucMessage  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
@@ -52,7 +52,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichmentsBatchDeleteBody()
+        body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/message/enrichments/batchDelete',
             method='POST',
@@ -66,7 +66,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichmentsBatchDeleteBody()
+        body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/message/enrichments/batchDelete/validate',
             method='POST',
@@ -80,7 +80,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichmentsBatchGetBody()
+        body = EnrichmentsBatchGetBody()
         response = self.client.open(
             '/api/v1/message/enrichments/batchGet',
             method='POST',
@@ -180,7 +180,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichmentMeta()
+        body = EnrichmentMeta()
         response = self.client.open(
             '/api/v1/message/enrichments/meta',
             method='POST',
@@ -194,7 +194,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichmentMeta()
+        body = EnrichmentMeta()
         response = self.client.open(
             '/api/v1/message/enrichments/meta',
             method='PUT',
@@ -239,7 +239,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichment()
+        body = Enrichment()
         response = self.client.open(
             '/api/v1/message/{id}/enrichments'.format(id='id_example'),
             method='POST',
@@ -253,7 +253,7 @@ class TestMessageController(BaseTestCase):
 
         
         """
-        body = MessageEnrichment()
+        body = Enrichment()
         response = self.client.open(
             '/api/v1/message/{id}/enrichments'.format(id='id_example'),
             method='PUT',

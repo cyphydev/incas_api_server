@@ -6,18 +6,18 @@ from flask import json
 from six import BytesIO
 
 from uiuc_incas_server.models.actor_batch_get_body import ActorBatchGetBody  # noqa: E501
-from uiuc_incas_server.models.actor_enrichment import ActorEnrichment  # noqa: E501
-from uiuc_incas_server.models.actor_enrichment_meta import ActorEnrichmentMeta  # noqa: E501
-from uiuc_incas_server.models.actor_enrichments_batch_delete_body import ActorEnrichmentsBatchDeleteBody  # noqa: E501
-from uiuc_incas_server.models.actor_enrichments_batch_delete_validation_response import ActorEnrichmentsBatchDeleteValidationResponse  # noqa: E501
-from uiuc_incas_server.models.actor_enrichments_batch_get_body import ActorEnrichmentsBatchGetBody  # noqa: E501
-from uiuc_incas_server.models.actor_enrichments_batch_validation_response import ActorEnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_id_response import ActorIdResponse  # noqa: E501
 from uiuc_incas_server.models.actor_segment_collection import ActorSegmentCollection  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_delete_body import ActorSegmentsBatchDeleteBody  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_delete_validation_response import ActorSegmentsBatchDeleteValidationResponse  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_get_body import ActorSegmentsBatchGetBody  # noqa: E501
 from uiuc_incas_server.models.actor_segments_batch_validation_response import ActorSegmentsBatchValidationResponse  # noqa: E501
+from uiuc_incas_server.models.enrichment import Enrichment  # noqa: E501
+from uiuc_incas_server.models.enrichment_meta import EnrichmentMeta  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_delete_body import EnrichmentsBatchDeleteBody  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_delete_validation_response import EnrichmentsBatchDeleteValidationResponse  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_get_body import EnrichmentsBatchGetBody  # noqa: E501
+from uiuc_incas_server.models.enrichments_batch_validation_response import EnrichmentsBatchValidationResponse  # noqa: E501
 from uiuc_incas_server.models.uiuc_actor import UiucActor  # noqa: E501
 from uiuc_incas_server.test import BaseTestCase
 
@@ -58,7 +58,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichmentsBatchDeleteBody()
+        body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/actor/enrichments/batchDelete',
             method='POST',
@@ -72,7 +72,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichmentsBatchDeleteBody()
+        body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
             '/api/v1/actor/enrichments/batchDelete/validate',
             method='POST',
@@ -86,7 +86,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichmentsBatchGetBody()
+        body = EnrichmentsBatchGetBody()
         response = self.client.open(
             '/api/v1/actor/enrichments/batchGet',
             method='POST',
@@ -186,7 +186,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichmentMeta()
+        body = EnrichmentMeta()
         response = self.client.open(
             '/api/v1/actor/enrichments/meta',
             method='POST',
@@ -200,7 +200,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichmentMeta()
+        body = EnrichmentMeta()
         response = self.client.open(
             '/api/v1/actor/enrichments/meta',
             method='PUT',
@@ -245,7 +245,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichment()
+        body = Enrichment()
         response = self.client.open(
             '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
             method='POST',
@@ -259,7 +259,7 @@ class TestActorController(BaseTestCase):
 
         
         """
-        body = ActorEnrichment()
+        body = Enrichment()
         response = self.client.open(
             '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
             method='PUT',
@@ -317,20 +317,6 @@ class TestActorController(BaseTestCase):
             '/api/v1/actor/{id}/segments'.format(id='id_example'),
             method='GET',
             query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
-    def test_actor_id_segments_post(self):
-        """Test case for actor_id_segments_post
-
-        
-        """
-        body = ActorSegmentCollection()
-        response = self.client.open(
-            '/api/v1/actor/{id}/segments'.format(id='id_example'),
-            method='POST',
-            data=json.dumps(body),
-            content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -400,20 +386,6 @@ class TestActorController(BaseTestCase):
         body = ActorSegmentsBatchGetBody()
         response = self.client.open(
             '/api/v1/actor/segments/batchGet',
-            method='POST',
-            data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
-    def test_actor_segments_batch_post(self):
-        """Test case for actor_segments_batch_post
-
-        
-        """
-        body = None
-        response = self.client.open(
-            '/api/v1/actor/segments/batch',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

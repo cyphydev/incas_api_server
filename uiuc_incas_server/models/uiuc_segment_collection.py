@@ -32,9 +32,7 @@ class UiucSegmentCollection(object):
         'collection_name': 'str',
         'provider_name': 'str',
         'version': 'str',
-        'segment_descriptions': 'dict(str, str)',
-        'segments': 'dict(str, dict(str, float))',
-        'extra_attributes': 'ExtraAttributes'
+        'segments': 'dict(str, UiucSegment)'
     }
 
     attribute_map = {
@@ -42,20 +40,16 @@ class UiucSegmentCollection(object):
         'collection_name': 'collectionName',
         'provider_name': 'providerName',
         'version': 'version',
-        'segment_descriptions': 'segmentDescriptions',
-        'segments': 'segments',
-        'extra_attributes': 'extraAttributes'
+        'segments': 'segments'
     }
 
-    def __init__(self, description=None, collection_name=None, provider_name=None, version=None, segment_descriptions=None, segments=None, extra_attributes=None):  # noqa: E501
+    def __init__(self, description=None, collection_name=None, provider_name=None, version=None, segments=None):  # noqa: E501
         """UiucSegmentCollection - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._collection_name = None
         self._provider_name = None
         self._version = None
-        self._segment_descriptions = None
         self._segments = None
-        self._extra_attributes = None
         self.discriminator = None
         if description is not None:
             self.description = description
@@ -65,18 +59,14 @@ class UiucSegmentCollection(object):
             self.provider_name = provider_name
         if version is not None:
             self.version = version
-        if segment_descriptions is not None:
-            self.segment_descriptions = segment_descriptions
         if segments is not None:
             self.segments = segments
-        if extra_attributes is not None:
-            self.extra_attributes = extra_attributes
 
     @property
     def description(self):
         """Gets the description of this UiucSegmentCollection.  # noqa: E501
 
-        Description of the segment.  # noqa: E501
+        Description of the segment collection.  # noqa: E501
 
         :return: The description of this UiucSegmentCollection.  # noqa: E501
         :rtype: str
@@ -87,7 +77,7 @@ class UiucSegmentCollection(object):
     def description(self, description):
         """Sets the description of this UiucSegmentCollection.
 
-        Description of the segment.  # noqa: E501
+        Description of the segment collection.  # noqa: E501
 
         :param description: The description of this UiucSegmentCollection.  # noqa: E501
         :type: str
@@ -165,34 +155,12 @@ class UiucSegmentCollection(object):
         self._version = version
 
     @property
-    def segment_descriptions(self):
-        """Gets the segment_descriptions of this UiucSegmentCollection.  # noqa: E501
-
-
-        :return: The segment_descriptions of this UiucSegmentCollection.  # noqa: E501
-        :rtype: dict(str, str)
-        """
-        return self._segment_descriptions
-
-    @segment_descriptions.setter
-    def segment_descriptions(self, segment_descriptions):
-        """Sets the segment_descriptions of this UiucSegmentCollection.
-
-
-        :param segment_descriptions: The segment_descriptions of this UiucSegmentCollection.  # noqa: E501
-        :type: dict(str, str)
-        """
-
-        self._segment_descriptions = segment_descriptions
-
-    @property
     def segments(self):
         """Gets the segments of this UiucSegmentCollection.  # noqa: E501
 
-        Different segment sets with user probability.  # noqa: E501
 
         :return: The segments of this UiucSegmentCollection.  # noqa: E501
-        :rtype: dict(str, dict(str, float))
+        :rtype: dict(str, UiucSegment)
         """
         return self._segments
 
@@ -200,34 +168,12 @@ class UiucSegmentCollection(object):
     def segments(self, segments):
         """Sets the segments of this UiucSegmentCollection.
 
-        Different segment sets with user probability.  # noqa: E501
 
         :param segments: The segments of this UiucSegmentCollection.  # noqa: E501
-        :type: dict(str, dict(str, float))
+        :type: dict(str, UiucSegment)
         """
 
         self._segments = segments
-
-    @property
-    def extra_attributes(self):
-        """Gets the extra_attributes of this UiucSegmentCollection.  # noqa: E501
-
-
-        :return: The extra_attributes of this UiucSegmentCollection.  # noqa: E501
-        :rtype: ExtraAttributes
-        """
-        return self._extra_attributes
-
-    @extra_attributes.setter
-    def extra_attributes(self, extra_attributes):
-        """Sets the extra_attributes of this UiucSegmentCollection.
-
-
-        :param extra_attributes: The extra_attributes of this UiucSegmentCollection.  # noqa: E501
-        :type: ExtraAttributes
-        """
-
-        self._extra_attributes = extra_attributes
 
     def to_dict(self):
         """Returns the model properties as a dict"""

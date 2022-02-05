@@ -34,6 +34,20 @@ class TestSegmentController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_segment_collection_id_partial_put(self):
+        """Test case for segment_collection_id_partial_put
+
+        
+        """
+        body = UiucSegmentCollection()
+        response = self.client.open(
+            '/api/v1/segmentCollection/{id}/partial'.format(id='id_example'),
+            method='PUT',
+            data=json.dumps(body),
+            content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_segment_collection_id_put(self):
         """Test case for segment_collection_id_put
 

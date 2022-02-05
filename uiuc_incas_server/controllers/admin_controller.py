@@ -44,10 +44,10 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
             db_meta.json().set('status', Path.rootPath(), {})
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
-            # for actor in bodies:
-            #     data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
-            #     if db_data.exists(data_pattern):
-            #         return f'Actor {data_pattern} already exists', 409
+        for actor in bodies:
+            data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
+            if db_data.exists(data_pattern):
+                return f'Actor {data_pattern} already exists', 409
             
         #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
         #        with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
@@ -103,10 +103,10 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             db_meta.json().set('status', Path.rootPath(), {})
 
         # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
-            # for message in bodies:
-            #     data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
-            #     if db_data.exists(data_pattern):
-            #         return f'Message {data_pattern} already exists', 409
+        for message in bodies:
+            data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
+            if db_data.exists(data_pattern):
+                return f'Message {data_pattern} already exists', 409
             
             # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
                 # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
