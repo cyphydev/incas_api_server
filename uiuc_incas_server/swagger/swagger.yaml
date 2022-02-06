@@ -232,7 +232,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     put:
       tags:
       - message
@@ -276,7 +276,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - message
@@ -320,7 +320,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     delete:
       tags:
       - message
@@ -367,7 +367,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/enrichments/batchGet:
     post:
       tags:
@@ -408,7 +408,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/enrichments/batchDelete/validate:
     post:
       tags:
@@ -445,7 +445,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/enrichments/batchDelete:
     post:
       tags:
@@ -477,7 +477,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/enrichments/batch/validate:
     put:
       tags:
@@ -516,7 +516,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - message
@@ -554,7 +554,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/enrichments/batch:
     put:
       tags:
@@ -600,7 +600,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - message
@@ -645,7 +645,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/{id}:
     get:
       tags:
@@ -803,7 +803,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     put:
       tags:
       - message
@@ -856,7 +856,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - message
@@ -908,7 +908,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     delete:
       tags:
       - message
@@ -963,7 +963,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.message_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /message/batchGet:
     post:
       tags:
@@ -1488,7 +1488,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     put:
       tags:
       - actor
@@ -1532,7 +1532,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - actor
@@ -1576,7 +1576,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     delete:
       tags:
       - actor
@@ -1623,7 +1623,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/segments/batchGet:
     post:
       tags:
@@ -1899,7 +1899,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/enrichments/batchDelete/validate:
     post:
       tags:
@@ -1936,7 +1936,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/enrichments/batchDelete:
     post:
       tags:
@@ -1968,7 +1968,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/enrichments/batch/validate:
     put:
       tags:
@@ -2007,7 +2007,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - actor
@@ -2045,7 +2045,7 @@ paths:
               explode: false
               schema:
                 type: string
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/enrichments/batch:
     put:
       tags:
@@ -2091,7 +2091,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - actor
@@ -2136,7 +2136,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/{id}:
     get:
       tags:
@@ -2506,7 +2506,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     put:
       tags:
       - actor
@@ -2559,7 +2559,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     post:
       tags:
       - actor
@@ -2611,7 +2611,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
     delete:
       tags:
       - actor
@@ -2666,7 +2666,7 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: uiuc_incas_server.controllers.actor_controller
+      x-openapi-router-controller: uiuc_incas_server.controllers.enrichment_controller
   /actor/batchGet:
     post:
       tags:

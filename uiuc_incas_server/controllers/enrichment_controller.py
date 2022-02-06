@@ -246,7 +246,7 @@ def generic_enrichments_meta_put(prefix, body, return_code=200):
     return "Updated", return_code
 
 
-def message_id_enrichments_delete(prefix, id_, enrichment_name, provider_name, version, return_code=204):
+def generic_id_enrichments_delete(prefix, id_, enrichment_name, provider_name, version, return_code=204):
     pattern = util.get_enrichment_pattern(prefix, enrichment_name, provider_name, version)
     if pattern.find('*') != -1:
         return 'Bad request', 400
@@ -266,7 +266,7 @@ def message_id_enrichments_delete(prefix, id_, enrichment_name, provider_name, v
     return 'Deleted', return_code
 
 
-def message_id_enrichments_get(prefix, id_, enrichment_name=None, provider_name=None, version=None, dev=None, return_code=200):
+def generic_id_enrichments_get(prefix, id_, enrichment_name=None, provider_name=None, version=None, dev=None, return_code=200):
     pattern = util.get_enrichment_pattern(prefix, enrichment_name, provider_name, version)
 
     db_meta = util.get_db(db_name='meta')
@@ -285,7 +285,7 @@ def message_id_enrichments_get(prefix, id_, enrichment_name=None, provider_name=
     return ret, return_code
 
 
-def message_id_enrichments_post(prefix, body, id_, return_code=201):
+def generic_id_enrichments_post(prefix, body, id_, return_code=201):
     pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
     if pattern.find('*') != -1:
         return 'Bad request', 400
@@ -300,7 +300,7 @@ def message_id_enrichments_post(prefix, body, id_, return_code=201):
     return 'Created', return_code
 
 
-def message_id_enrichments_put(prefix, body, id_, return_code=200):
+def generic_id_enrichments_put(prefix, body, id_, return_code=200):
     pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
     if pattern.find('*') != -1:
         return 'Bad request', 400
@@ -314,6 +314,10 @@ def message_id_enrichments_put(prefix, body, id_, return_code=200):
     db_data.json().set(id_, Path(f'enrichments["{pattern}"]'), util.serialize(body))
     return 'Updated', return_code
 
+
+#####################################################################################################
+# End of generic functions                                                                          #
+#####################################################################################################
 
 @util.generic_db_lock_decor
 def actor_enrichments_batch_delete(body, user=None, token_info=None):  # noqa: E501
@@ -580,4 +584,273 @@ def actor_id_enrichments_put(body, id_, user=None, token_info=None):  # noqa: E5
     if connexion.request.is_json:
         body = util.deserialize(connexion.request.get_json(), Enrichment)  # noqa: E501
         return generic_id_enrichments_put('actor', body, id_)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_delete(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_delete
+
+    Deletes a batch of enrichments given a list of IDs and specifications. # noqa: E501
+
+    :param body: List of IDs and specifications
+    :type body: dict | bytes
+
+    :rtype: None
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), EnrichmentsBatchDeleteBody)  # noqa: E501
+        return generic_enrichments_batch_delete('message', body)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_delete_validate(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_delete_validate
+
+    Validation endpoint for batch enrichment deletion, successful attempt will return a token. # noqa: E501
+
+    :param body: List of IDs and specifications
+    :type body: dict | bytes
+
+    :rtype: EnrichmentsBatchDeleteValidationResponse
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), EnrichmentsBatchDeleteBody)  # noqa: E501
+        return generic_enrichments_batch_delete_validate('message', body)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_get(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_get
+
+    Returns a batch of enrichments given a list of IDs and specifications. # noqa: E501
+
+    :param body: List of IDs and specifications
+    :type body: dict | bytes
+
+    :rtype: Dict[str, List[Enrichment]]
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), EnrichmentsBatchGetBody)  # noqa: E501
+        return generic_enrichments_batch_get('message', body)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_post(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_post
+
+    Submits a enrichment for each message ID. # noqa: E501
+
+    :param body: Map of IDs and enrichments
+    :type body: dict | bytes
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        bodies = {k: util.deserialize(v, Enrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
+        return generic_enrichments_batch_post('message', bodies)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_post_validate(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_post_validate
+
+    Validation endpoint for batch enrichment creation, successful attempt will return a token. # noqa: E501
+
+    :param body: List of IDs and specifications
+    :type body: dict | bytes
+
+    :rtype: EnrichmentsBatchValidationResponse
+    """
+    if connexion.request.is_json:
+        bodies = {k: util.deserialize(v, Enrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
+        return generic_enrichments_batch_post_validate('message', bodies)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_put(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_put
+
+    Updates a enrichment for each message ID. # noqa: E501
+
+    :param body: Map of IDs and enrichments
+    :type body: dict | bytes
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        bodies = {k: util.deserialize(v, Enrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
+        return generic_enrichments_batch_put('message', bodies)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_batch_put_validate(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_batch_put_validate
+
+    Validation endpoint for batch enrichment update, successful attempt will return a token. # noqa: E501
+
+    :param body: List of IDs and specifications
+    :type body: dict | bytes
+
+    :rtype: EnrichmentsBatchValidationResponse
+    """
+    if connexion.request.is_json:
+        bodies = {k: util.deserialize(v, Enrichment) for k, v in connexion.request.get_json().items()}  # noqa: E501
+        return generic_enrichments_batch_put_validate('message', bodies)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_meta_delete(enrichment_name, provider_name, version, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_meta_delete
+
+    Delete specific message enrichment meta by providerName, enrichmentName and version. # noqa: E501
+
+    :param enrichment_name: 
+    :type enrichment_name: str
+    :param provider_name: 
+    :type provider_name: str
+    :param version: 
+    :type version: str
+
+    :rtype: None
+    """
+    return generic_enrichments_meta_delete('message', enrichment_name, provider_name, version)
+
+
+@util.generic_db_lock_decor
+def message_enrichments_meta_get(enrichment_name=None, provider_name=None, version=None, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_meta_get
+
+    Returns current message enrichment metas by providerName, enrichmentName and version. # noqa: E501
+
+    :param enrichment_name: 
+    :type enrichment_name: str
+    :param provider_name: 
+    :type provider_name: str
+    :param version: 
+    :type version: str
+
+    :rtype: List[EnrichmentMeta]
+    """
+    return generic_enrichments_meta_get('message', enrichment_name, provider_name, version)
+
+
+@util.generic_db_lock_decor
+def message_enrichments_meta_post(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_meta_post
+
+    Submits a message enrichment meta (post after all messages have been added). # noqa: E501
+
+    :param body: The new enrichment meta to add
+    :type body: dict | bytes
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), EnrichmentMeta)  # noqa: E501
+        return generic_enrichments_meta_post('message', body)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_enrichments_meta_put(body, user=None, token_info=None):  # noqa: E501
+    """message_enrichments_meta_put
+
+    Updates message enrichment meta (after all messages have been added) by providerName, enrichmentName and version. # noqa: E501
+
+    :param body: The new enrichment meta to update
+    :type body: dict | bytes
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), EnrichmentMeta)  # noqa: E501
+        return generic_enrichments_meta_put('message', body)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_id_enrichments_delete(id_, enrichment_name, provider_name, version, user=None, token_info=None):  # noqa: E501
+    """message_id_enrichments_delete
+
+    Delete a enrichment for specific message by type, providerName and version. # noqa: E501
+
+    :param id: Message ID
+    :type id: str
+    :param enrichment_name: 
+    :type enrichment_name: str
+    :param provider_name: 
+    :type provider_name: str
+    :param version: 
+    :type version: str
+
+    :rtype: None
+    """
+    return generic_id_enrichments_delete('message', id_, enrichment_name, provider_name, version)
+
+
+@util.generic_db_lock_decor
+def message_id_enrichments_get(id_, enrichment_name=None, provider_name=None, version=None, dev=None, user=None, token_info=None):  # noqa: E501
+    """message_id_enrichments_get
+
+    Returns all visible matched enrichment for the specific message by type, providerName and version. # noqa: E501
+
+    :param id: Message ID
+    :type id: str
+    :param enrichment_name: 
+    :type enrichment_name: str
+    :param provider_name: 
+    :type provider_name: str
+    :param version: 
+    :type version: str
+    :param dev: 
+    :type dev: bool
+
+    :rtype: List[Enrichment]
+    """
+    return generic_id_enrichments_get('message', id_, enrichment_name, provider_name, version, dev)
+
+
+@util.generic_db_lock_decor
+def message_id_enrichments_post(body, id_, user=None, token_info=None):  # noqa: E501
+    """message_id_enrichments_post
+
+    Submits a new enrichment for specific message. # noqa: E501
+
+    :param body: The new enrichment to add
+    :type body: dict | bytes
+    :param id: Message ID
+    :type id: str
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), Enrichment)  # noqa: E501
+        return generic_id_enrichments_post('message', body, id_)
+    return 'Bad request', 400
+
+
+@util.generic_db_lock_decor
+def message_id_enrichments_put(body, id_, user=None, token_info=None):  # noqa: E501
+    """message_id_enrichments_put
+
+    Update a enrichment for specific message by type, providerName and version. # noqa: E501
+
+    :param body: The new enrichments to update
+    :type body: dict | bytes
+    :param id: Message ID
+    :type id: str
+
+    :rtype: str
+    """
+    if connexion.request.is_json:
+        body = util.deserialize(connexion.request.get_json(), Enrichment)  # noqa: E501
+        return generic_id_enrichments_put('message', body, id_)
     return 'Bad request', 400
