@@ -83,7 +83,7 @@ def segment_collection_id_partial_put(body, id_, user=None, token_info=None):  #
 
         current_record = db_seg.json().get(id_, Path.rootPath())
         
-        if 'segments' in body:
+        if 'segments' in body and body['segments']:
             for k, v in body['segments'].items():
                 if k not in current_record['segments']:
                     return f'Segments with key {k} does not exist', 404
