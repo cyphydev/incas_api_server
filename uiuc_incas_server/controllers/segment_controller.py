@@ -30,8 +30,8 @@ def segment_collection_id_delete(id_, user=None, token_info=None):  # noqa: E501
         return 'Key does not exist', 404
     record = db_seg.json().get(id_, Path.rootPath())
     # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock2:
-    for actors in record['segments'].values():
-        for actor in actors.keys():
+    for seg_content in record['segments'].values():
+        for actor in seg_content['members'].keys():
             if db_data.json().type(actor, Path(f'segmentCollections["{id_}"]')) is not None:
                 db_data.json().delete(actor, Path(
                     f'segmentCollections["{id_}"]'))
@@ -73,8 +73,32 @@ def segment_collection_id_partial_put(body, id_, user=None, token_info=None):  #
     :rtype: str
     """
     if connexion.request.is_json:
-        body = UiucSegmentCollection.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        body = connexion.request.get_json()
+
+        db_seg = util.get_db(db_name='segment')
+        if not db_seg.exists(id_):
+            return 'Segment does not exist', 404
+        if 'providerName' in body or 'collectionName' in body or 'version' in body:
+            return 'Change not support', 400
+
+        current_record = db_seg.json().get(id_, Path.rootPath())
+        
+        if 'segments' in body:
+            for k, v in body['segments'].items():
+                if k not in current_record['segments']:
+                    return f'Segments with key {k} does not exist', 404
+                if 'members' in v:
+                    return 'Change not support', 400
+                
+        for k, v in body.items():
+            if k != 'segments':
+                db_seg.json().set(id_, Path(k), util.serialize(v))
+            else:
+                for seg_k, seg_v in body[k].items():
+                    for kk, vv in seg_v.items():
+                        db_seg.json().set(id_, Path(f'segments["{seg_k}"]["{kk}"]'), util.serialize(vv))
+        return 'Updated', 200
+    return 'Bad request', 400
 
 
 @util.generic_db_lock_decor
@@ -104,7 +128,7 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
 
         all_new_actors = set()
         for seg in body.segments.values():
-            for actor_id in seg.keys():
+            for actor_id in seg.members.keys():
                 all_new_actors.add(actor_id)
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
@@ -127,8 +151,8 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
                 
         db_seg.json().set(id_, Path.rootPath(), util.serialize(body))
         actors_segs = {}
-        for seg_name, actors in body.segments.items():
-            for actor_id, membership in actors.items():
+        for seg_name, seg_content in body.segments.items():
+            for actor_id, membership in seg_content.members.items():
                 if actor_id not in actors_segs:
                     actors_segs[actor_id] = {}
                 actors_segs[actor_id][seg_name] = membership
@@ -195,7 +219,7 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
         
         all_new_actors = set()
         for seg in body.segments.values():
-            for actor_id in seg.keys():
+            for actor_id in seg.members.keys():
                 all_new_actors.add(actor_id)
                 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
@@ -206,8 +230,8 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
         # with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
         db_seg.json().set(pattern, Path.rootPath(), util.serialize(body))
         actors_segs = {}
-        for seg_name, actors in body.segments.items():
-            for actor_id, membership in actors.items():
+        for seg_name, seg_content in body.segments.items():
+            for actor_id, membership in seg_content.members.items():
                 if actor_id not in actors_segs:
                     actors_segs[actor_id] = {}
                 actors_segs[actor_id][seg_name] = membership
@@ -251,7 +275,7 @@ def segment_collection_validate_post(body, user=None, token_info=None):  # noqa:
         
         all_actors = set()
         for seg in body.segments.values():
-            for actor_id in seg.keys():
+            for actor_id in seg.members.keys():
                 all_actors.add(actor_id)
         
         actor_list = []
