@@ -29,16 +29,16 @@ class UiucActorDB(Actor):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'uiuc_author_id': 'str',
+        'uiuc_actor_id': 'str',
         'uiuc_media_type': 'str',
-        'enrichments': 'dict(str, ActorEnrichment)',
+        'enrichments': 'dict(str, Enrichment)',
         'segment_collections': 'dict(str, ActorSegmentCollection)'
     }
     if hasattr(Actor, "swagger_types"):
         swagger_types.update(Actor.swagger_types)
 
     attribute_map = {
-        'uiuc_author_id': 'uiucAuthorId',
+        'uiuc_actor_id': 'uiucActorId',
         'uiuc_media_type': 'uiucMediaType',
         'enrichments': 'enrichments',
         'segment_collections': 'segmentCollections'
@@ -46,15 +46,15 @@ class UiucActorDB(Actor):
     if hasattr(Actor, "attribute_map"):
         attribute_map.update(Actor.attribute_map)
 
-    def __init__(self, uiuc_author_id=None, uiuc_media_type=None, enrichments=None, segment_collections=None, *args, **kwargs):  # noqa: E501
+    def __init__(self, uiuc_actor_id=None, uiuc_media_type=None, enrichments=None, segment_collections=None, *args, **kwargs):  # noqa: E501
         """UiucActorDB - a model defined in Swagger"""  # noqa: E501
-        self._uiuc_author_id = None
+        self._uiuc_actor_id = None
         self._uiuc_media_type = None
         self._enrichments = None
         self._segment_collections = None
         self.discriminator = None
-        if uiuc_author_id is not None:
-            self.uiuc_author_id = uiuc_author_id
+        if uiuc_actor_id is not None:
+            self.uiuc_actor_id = uiuc_actor_id
         if uiuc_media_type is not None:
             self.uiuc_media_type = uiuc_media_type
         if enrichments is not None:
@@ -64,25 +64,25 @@ class UiucActorDB(Actor):
         Actor.__init__(self, *args, **kwargs)
 
     @property
-    def uiuc_author_id(self):
-        """Gets the uiuc_author_id of this UiucActorDB.  # noqa: E501
+    def uiuc_actor_id(self):
+        """Gets the uiuc_actor_id of this UiucActorDB.  # noqa: E501
 
 
-        :return: The uiuc_author_id of this UiucActorDB.  # noqa: E501
+        :return: The uiuc_actor_id of this UiucActorDB.  # noqa: E501
         :rtype: str
         """
-        return self._uiuc_author_id
+        return self._uiuc_actor_id
 
-    @uiuc_author_id.setter
-    def uiuc_author_id(self, uiuc_author_id):
-        """Sets the uiuc_author_id of this UiucActorDB.
+    @uiuc_actor_id.setter
+    def uiuc_actor_id(self, uiuc_actor_id):
+        """Sets the uiuc_actor_id of this UiucActorDB.
 
 
-        :param uiuc_author_id: The uiuc_author_id of this UiucActorDB.  # noqa: E501
+        :param uiuc_actor_id: The uiuc_actor_id of this UiucActorDB.  # noqa: E501
         :type: str
         """
 
-        self._uiuc_author_id = uiuc_author_id
+        self._uiuc_actor_id = uiuc_actor_id
 
     @property
     def uiuc_media_type(self):
@@ -111,7 +111,7 @@ class UiucActorDB(Actor):
 
 
         :return: The enrichments of this UiucActorDB.  # noqa: E501
-        :rtype: dict(str, ActorEnrichment)
+        :rtype: dict(str, Enrichment)
         """
         return self._enrichments
 
@@ -121,7 +121,7 @@ class UiucActorDB(Actor):
 
 
         :param enrichments: The enrichments of this UiucActorDB.  # noqa: E501
-        :type: dict(str, ActorEnrichment)
+        :type: dict(str, Enrichment)
         """
 
         self._enrichments = enrichments

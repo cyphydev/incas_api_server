@@ -30,7 +30,7 @@ class UiucMessageDB(Message):
     """
     swagger_types = {
         'uiuc_message_id': 'str',
-        'enrichments': 'dict(str, MessageEnrichment)'
+        'enrichments': 'dict(str, Enrichment)'
     }
     if hasattr(Message, "swagger_types"):
         swagger_types.update(Message.swagger_types)
@@ -80,7 +80,7 @@ class UiucMessageDB(Message):
 
 
         :return: The enrichments of this UiucMessageDB.  # noqa: E501
-        :rtype: dict(str, MessageEnrichment)
+        :rtype: dict(str, Enrichment)
         """
         return self._enrichments
 
@@ -90,7 +90,7 @@ class UiucMessageDB(Message):
 
 
         :param enrichments: The enrichments of this UiucMessageDB.  # noqa: E501
-        :type: dict(str, MessageEnrichment)
+        :type: dict(str, Enrichment)
         """
 
         self._enrichments = enrichments

@@ -28,6 +28,7 @@ class ActorSegmentsBatchValidationResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'ok': 'dict(str, ActorSegmentCollection)',
         'id_invalid': 'dict(str, ActorSegmentCollection)',
         'value_invalid': 'dict(str, ActorSegmentCollection)',
         'value_not_found': 'dict(str, ActorSegmentCollection)',
@@ -35,19 +36,23 @@ class ActorSegmentsBatchValidationResponse(object):
     }
 
     attribute_map = {
+        'ok': 'ok',
         'id_invalid': 'idInvalid',
         'value_invalid': 'valueInvalid',
         'value_not_found': 'valueNotFound',
         'value_existed': 'valueExisted'
     }
 
-    def __init__(self, id_invalid=None, value_invalid=None, value_not_found=None, value_existed=None):  # noqa: E501
+    def __init__(self, ok=None, id_invalid=None, value_invalid=None, value_not_found=None, value_existed=None):  # noqa: E501
         """ActorSegmentsBatchValidationResponse - a model defined in Swagger"""  # noqa: E501
+        self._ok = None
         self._id_invalid = None
         self._value_invalid = None
         self._value_not_found = None
         self._value_existed = None
         self.discriminator = None
+        if ok is not None:
+            self.ok = ok
         if id_invalid is not None:
             self.id_invalid = id_invalid
         if value_invalid is not None:
@@ -56,6 +61,27 @@ class ActorSegmentsBatchValidationResponse(object):
             self.value_not_found = value_not_found
         if value_existed is not None:
             self.value_existed = value_existed
+
+    @property
+    def ok(self):
+        """Gets the ok of this ActorSegmentsBatchValidationResponse.  # noqa: E501
+
+
+        :return: The ok of this ActorSegmentsBatchValidationResponse.  # noqa: E501
+        :rtype: dict(str, ActorSegmentCollection)
+        """
+        return self._ok
+
+    @ok.setter
+    def ok(self, ok):
+        """Sets the ok of this ActorSegmentsBatchValidationResponse.
+
+
+        :param ok: The ok of this ActorSegmentsBatchValidationResponse.  # noqa: E501
+        :type: dict(str, ActorSegmentCollection)
+        """
+
+        self._ok = ok
 
     @property
     def id_invalid(self):

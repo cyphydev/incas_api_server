@@ -30,7 +30,7 @@ class UiucMessage(Message):
     """
     swagger_types = {
         'uiuc_message_id': 'str',
-        'enrichments': 'list[MessageEnrichment]'
+        'enrichments': 'list[Enrichment]'
     }
     if hasattr(Message, "swagger_types"):
         swagger_types.update(Message.swagger_types)
@@ -80,7 +80,7 @@ class UiucMessage(Message):
 
 
         :return: The enrichments of this UiucMessage.  # noqa: E501
-        :rtype: list[MessageEnrichment]
+        :rtype: list[Enrichment]
         """
         return self._enrichments
 
@@ -90,7 +90,7 @@ class UiucMessage(Message):
 
 
         :param enrichments: The enrichments of this UiucMessage.  # noqa: E501
-        :type: list[MessageEnrichment]
+        :type: list[Enrichment]
         """
 
         self._enrichments = enrichments
