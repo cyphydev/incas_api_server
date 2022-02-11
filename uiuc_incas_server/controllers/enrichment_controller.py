@@ -68,6 +68,7 @@ def generic_enrichments_batch_get(prefix, body, return_code=200):
     db_data = util.get_db(db_name=f'{prefix}_data')
     # with db_data.lock(f'db_{prefix}_data_lock', blocking_timeout=5) as lock:
     all_enrichments = db_data.json().mget(body.ids, Path('enrichments'))
+    ret = {}
 
     for i in range(len(all_enrichments)):
         if all_enrichments[i] is None:
@@ -75,8 +76,8 @@ def generic_enrichments_batch_get(prefix, body, return_code=200):
         enrichments = all_enrichments[i]
         if not body.dev:
             enrichments = {k: v for k, v in enrichments.items() if k in available_metas}
-        all_enrichments[i] = [util.deserialize(v, Enrichment) for v in dpath.util.values(enrichments, pattern)]
-    return all_enrichments, return_code
+        ret[body.ids[i]] = [util.deserialize(v, Enrichment) for v in dpath.util.values(enrichments, pattern)]
+    return ret, return_code
 
 
 def generic_enrichments_batch_post(prefix, bodies, return_code=201):
