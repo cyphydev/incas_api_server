@@ -137,7 +137,7 @@ def generic_enrichments_batch_post_validate(prefix, body, return_code=200):
     return ret, return_code
 
 
-def generic_enrichments_batch_put(prefix, body, return_code=200):
+def generic_enrichments_batch_put(prefix, bodies, return_code=200):
     db_data = util.get_db(db_name=f'{prefix}_data')
     db_meta = util.get_db(db_name='meta')
     
@@ -165,7 +165,7 @@ def generic_enrichments_batch_put(prefix, body, return_code=200):
     return 'Updated', return_code
 
 
-def generic_enrichments_batch_put_validate(prefix, body, return_code=200):
+def generic_enrichments_batch_put_validate(prefix, bodies, return_code=200):
     ret = EnrichmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found={}, value_existed=None)
     db_data = util.get_db(db_name=f'{prefix}_data')
     db_meta = util.get_db(db_name='meta')
