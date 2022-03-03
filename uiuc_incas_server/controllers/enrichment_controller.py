@@ -108,7 +108,7 @@ def generic_enrichments_batch_post(prefix, bodies, return_code=201):
     return 'Created', return_code
 
 
-def generic_enrichments_batch_post_validate(prefix, body, return_code=200):
+def generic_enrichments_batch_post_validate(prefix, bodies, return_code=200):
     seen_set = set()
     ret = EnrichmentsBatchValidationResponse(id_invalid={}, value_invalid={}, value_not_found=None, value_existed={})
     db_data = util.get_db(db_name=f'{prefix}_data')
