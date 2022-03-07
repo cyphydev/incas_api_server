@@ -37,6 +37,15 @@ tox
 ```
 
 ## Running with Docker
+Generate self-signed certificates and store in directory `certs` (default location)
+
+Edit:
+- `server_host` argument in `util.py:get_db()` to point to the host where the Redis DB is hosted.
+- the environment variables pointing at the certificates and REDIS username and password to match your configuration:
+    - `INCAS_SRV_CERT_PATH`
+    - `INCAS_SRV_KEY_PATH`
+    - `REDIS_PASSWD`
+    - `REDIS_USERNAME`
 
 To run the server on a Docker container, please execute the following from the root directory:
 
