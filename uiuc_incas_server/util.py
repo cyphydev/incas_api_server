@@ -51,7 +51,7 @@ DB_MAP = {
     'segment': None
 }
 
-def get_db(db_name, server_host='localhost', server_port=6379):
+def get_db(db_name, server_host='db', server_port=6379):
     global DB_MAP
     if DB_MAP[db_name] is None:
         if 'REDIS_PASSWD' not in os.environ or 'REDIS_USERNAME' not in os.environ or os.environ['REDIS_PASSWD'] == '' or os.environ['REDIS_USERNAME'] == '':
