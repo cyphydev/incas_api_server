@@ -54,7 +54,10 @@ DB_MAP = {
 def get_db(db_name, server_host='localhost', server_port=6379):
     global DB_MAP
     if DB_MAP[db_name] is None:
-        DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name], password=os.environ['REDIS_PASSWD'], username=os.environ['REDIS_USERNAME'])
+        if 'REDIS_PASSWD' not in os.environ or 'REDIS_USERNAME' not in os.environ or os.environ['REDIS_PASSWD'] == '' or os.environ['REDIS_USERNAME'] == '':
+            DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name])
+        else:
+            DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name], password=os.environ['REDIS_PASSWD'], username=os.environ['REDIS_USERNAME'])
     return DB_MAP[db_name]
 
 def count_keys(db, pattern):
