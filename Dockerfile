@@ -16,7 +16,7 @@ RUN pip3 install connexion[swagger-ui]
 
 COPY . /usr/src/app
 
-EXPOSE 8080
+EXPOSE 8072
 
 ENTRYPOINT ["python3"]
 
