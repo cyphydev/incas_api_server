@@ -51,7 +51,7 @@ DB_MAP = {
     'segment': None
 }
 
-def get_db(db_name, server_host='db', server_port=8072):
+def get_db(db_name, server_host='db', server_port=8071):
     global DB_MAP
     if DB_MAP[db_name] is None:
         DB_MAP[db_name] = redis.Redis(server_host, server_port, DB_IDX[db_name], password=os.environ['REDIS_PASSWD'], username=os.environ['REDIS_USERNAME'])
