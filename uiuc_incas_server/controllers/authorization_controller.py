@@ -15,6 +15,8 @@ https://connexion.readthedocs.io/en/latest/security.html
 def check_ApiKeyAuth(api_key, required_scopes):
     db_auth = util.get_db(db_name='auth')
     # with db_auth.lock('db_auth_lock', blocking_timeout=5) as lock:
+    if not db_auth.exists('api_key'):
+        return {}
     if not db_auth.json().type('apikeys', Path(f'{api_key}')):
         raise OAuthProblem('Invalid token')
     return db_auth.json().get('apikeys', Path(f'{api_key}'))
