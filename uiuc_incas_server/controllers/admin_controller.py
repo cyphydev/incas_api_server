@@ -45,7 +45,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
         for actor in bodies:
-            data_pattern = f'actor:{actor["mediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
+            data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
             if db_data.exists(data_pattern):
                 return f'Actor {data_pattern} already exists', 409
             
