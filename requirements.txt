@@ -4,4 +4,4 @@ setuptools >= 21.0.0
 redis >= 4.0.2
 dpath >= 2.0.1
 jsonpath_ng >= 1.5.3
-
+connexion[swagger-ui]
