@@ -37,6 +37,17 @@ tox
 ```
 
 ## Running with Docker
+Generate self-signed certificates and store in directory `certs` (default location)
+
+Edit:
+- the environment variables that need configurations are:
+    - `INCAS_SRV_PORT`
+    - `INCAS_SRV_CERT_PATH`
+    - `INCAS_SRV_KEY_PATH`
+    - `REDIS_HOST`
+    - `REDIS_PORT`
+    - `REDIS_PASSWD`
+    - `REDIS_USERNAME`
 
 To run the server on a Docker container, please execute the following from the root directory:
 
