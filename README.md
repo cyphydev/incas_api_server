@@ -40,10 +40,12 @@ tox
 Generate self-signed certificates and store in directory `certs` (default location)
 
 Edit:
-- `server_host` argument in `util.py:get_db()` to point to the host where the Redis DB is hosted.
-- the environment variables pointing at the certificates and REDIS username and password to match your configuration:
+- the environment variables that need configurations are:
+    - `INCAS_SRV_PORT`
     - `INCAS_SRV_CERT_PATH`
     - `INCAS_SRV_KEY_PATH`
+    - `REDIS_HOST`
+    - `REDIS_PORT`
     - `REDIS_PASSWD`
     - `REDIS_USERNAME`
 
