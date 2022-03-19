@@ -121,7 +121,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             if e_a and e_b and e_c:
                 logging.warning(f'Message {data_pattern} already exists')
             elif not e_a and not e_b and not e_c:
-                filtered_bodies.append(actor)
+                filtered_bodies.append(message)
             else:
                 return f'Message DB is inconsistent.', 500
             
