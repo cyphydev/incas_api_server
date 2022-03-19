@@ -1,6 +1,7 @@
 import connexion
 from connexion.exceptions import OAuthProblem
 import six
+import logging
 
 import redis
 from redis.exceptions import LockError
@@ -44,14 +45,22 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
             db_meta.json().set('status', Path.rootPath(), {})
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
+        filtered_bodies = []
         for actor in bodies:
             data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
-            if db_data.exists(data_pattern):
-                return f'Actor {data_pattern} already exists', 409
+            idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
+            rev_idx_pattern = f'reverse:{data_pattern}'
+            e_a, e_b, e_c = db_data.exists(data_pattern), db_idx.exists(idx_pattern), db_idx.exists(rev_idx_pattern)
+            if e_a and e_b and e_c:
+                logging.warning(f'Actor {data_pattern} already exists')
+            elif not e_a and not e_b and not e_c:
+                filtered_bodies.append(actor)
+            else:
+                return f'Actor DB is inconsistent.', 500
             
         #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
         #        with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
-        for actor in bodies:
+        for actor in filtered_bodies:
             actor['enrichments'] = {}
             actor['segmentCollections'] = {}
             idx_pattern = f'forward:actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}'
@@ -103,14 +112,22 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             db_meta.json().set('status', Path.rootPath(), {})
 
         # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
+        filtered_bodies = []
         for message in bodies:
             data_pattern = f'message:{message["mediaType"].lower()}:{message["id"]}'
-            if db_data.exists(data_pattern):
-                return f'Message {data_pattern} already exists', 409
+            idx_pattern = f'forward:message:{message["mediaType"].lower()}'
+            rev_idx_pattern = f'reverse:{data_pattern}'
+            e_a, e_b, e_c = db_data.exists(data_pattern), db_idx.exists(idx_pattern), db_idx.exists(rev_idx_pattern)
+            if e_a and e_b and e_c:
+                logging.warning(f'Message {data_pattern} already exists')
+            elif not e_a and not e_b and not e_c:
+                filtered_bodies.append(actor)
+            else:
+                return f'Message DB is inconsistent.', 500
             
             # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
                 # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
-        for message in bodies:
+        for message in filtered_bodies:
             message['enrichments'] = {}
             idx_pattern = f'forward:message:{message["mediaType"].lower()}'
             idx_pattern_status = idx_pattern.replace(':', '_')
