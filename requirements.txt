@@ -1,7 +1,8 @@
 connexion == 2.6.0
 python_dateutil == 2.6.0
 setuptools >= 21.0.0
-redis >= 4.0.2
+redis <= 4.1.0
 dpath >= 2.0.1
 jsonpath_ng >= 1.5.3
+jsonschema == 3.2.0
 connexion[swagger-ui]
