@@ -46,6 +46,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
         filtered_bodies = []
+        exist_bodies = []
         for actor in bodies:
             data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
             rev_idx_pattern = f'reverse:{data_pattern}'
@@ -53,12 +54,21 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
             if e_b:
                 e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.rootPath()))
             if e_a and e_b and e_c:
-                logging.warning(f'Actor {data_pattern} already exists')
+                # logging.warning(f'Actor {data_pattern} already exists')
+                exist_bodies.append(actor)
             elif not e_a and not e_b and not e_c:
                 filtered_bodies.append(actor)
             else:
                 return f'Actor DB is inconsistent.', 500
-            
+        
+        # Update actors that exist
+        for actor in exist_bodies:
+            data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
+            old_actor = db_data.json().get(data_pattern, Path.rootPath())
+            actor['enrichments'] = old_actor['enrichments'] if 'enrichments' in old_actor else {}
+            actor['segmentCollections'] = old_actor['segmentCollections'] if 'segmentCollections' in old_actor else {}
+            db_data.json().set(data_pattern, Path.rootPath(), actor)
+
         #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
         #        with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
         for actor in filtered_bodies:
@@ -114,6 +124,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
 
         # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
         filtered_bodies = []
+        exist_bodies = []
         for message in bodies:
             if message["mediaType"].lower() == 'twitter':
                 data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
@@ -124,22 +135,27 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             if e_b:
                 e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.rootPath()))
             if e_a and e_b and e_c:
-                logging.warning(f'Message {data_pattern} already exists')
+                # logging.warning(f'Message {data_pattern} already exists')
+                exist_bodies.append(message)
             elif not e_a and not e_b and not e_c:
                 filtered_bodies.append(message)
             else:
                 return f'Message DB is inconsistent.', 500
-            
+        
+        # Update messages that exist
+        for message in exist_bodies:
+            data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
+            old_message = db_data.json().get(data_pattern, Path.rootPath())
+            message['enrichments'] = old_message['enrichments'] if 'enrichments' in old_message else {}
+            db_data.json().set(data_pattern, Path.rootPath(), message)
+
             # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
                 # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
         for message in filtered_bodies:
             message['enrichments'] = {}
             idx_pattern = f'forward:message:{message["mediaType"].lower()}'
             idx_pattern_status = idx_pattern.replace(':', '_')
-            if message["mediaType"].lower() == 'twitter':
-                data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
-            else:
-                return 'Unsupported media type', 400
+            data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
             rev_idx_pattern = f'reverse:{data_pattern}'
             message['uiucMessageId'] = data_pattern
 
