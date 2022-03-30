@@ -142,22 +142,19 @@ def generic_enrichments_batch_put(prefix, bodies, return_code=200):
     db_meta = util.get_db(db_name='meta')
     
     all_patterns = set()
-    exist_status = dict()
     for body in bodies.values():
         pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
         if pattern.find('*') != -1:
             return 'Bad request', 400
         all_patterns.add(pattern)
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-    for pattern in all_patterns:
-        exist_status[pattern] = True if db_meta.exists(pattern) else False
             
     # with db_data.lock(f'db_{prefix}_data_lock', blocking_timeout=5) as lock:
     for id_, body in bodies.items():
         pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
         if not db_data.exists(id_):
             return f'ID {id_} does not exist, nothing is done', 404
-        if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+        if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
             return f'Enrichment {pattern} not found in {id_}, nothing is done', 404
     for id_, body in bodies.items():
         pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
@@ -171,13 +168,10 @@ def generic_enrichments_batch_put_validate(prefix, bodies, return_code=200):
     db_meta = util.get_db(db_name='meta')
     
     all_patterns = set()
-    exist_status = dict()
     for body in bodies.values():
         pattern = util.get_enrichment_pattern(prefix, body.enrichment_name, body.provider_name, body.version)
         all_patterns.add(pattern)
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
-    for pattern in all_patterns:
-        exist_status[pattern] = True if db_meta.exists(pattern) else False
             
     # with db_data.lock(f'db_{prefix}_data_lock', blocking_timeout=5) as lock:
     for id_, body in bodies.items():
@@ -186,7 +180,7 @@ def generic_enrichments_batch_put_validate(prefix, bodies, return_code=200):
             ret.value_invalid[id_] = body
         if not db_data.exists(id_):
             ret.id_invalid[id_] = body
-        if exist_status[pattern] and db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
+        if db_data.json().type(id_, Path(f'enrichments["{pattern}"]')) is None:
             ret.value_not_found[id_] = body
     return ret, return_code
 
