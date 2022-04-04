@@ -2,17 +2,26 @@
 
 import os
 import connexion
+import logging
+from retry import retry
+
+import redis
 
 from uiuc_incas_server import encoder, util
 
+logger = logging.getLogger('uiuc_incas_server')
 
-def main():
+@retry(redis.exceptions.BusyLoadingError, delay=1, backoff=2, max_delay=4)
+def check_api_key():
     db_auth = util.get_db('auth')
     if not db_auth.exists('apikeys'):
-        print('Creating apikeys key')
+        logger.info('Creating apikeys key')
         db_auth.json().set('apikeys', '$', {os.environ['UIUC_INCAS_API_KEY']: {'user':' admin', 'scope': {'admin': True}}})
     else:
-        print('apikeys exists in DB')
+        logger.info('apikeys exists in DB')
+
+def main():
+    check_api_key()
 
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
@@ -24,4 +33,5 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     main()

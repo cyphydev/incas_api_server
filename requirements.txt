@@ -6,3 +6,4 @@ dpath >= 2.0.1
 jsonpath_ng >= 1.5.3
 jsonschema == 3.2.0
 connexion[swagger-ui]
+retry
