@@ -42,7 +42,7 @@ def generic_graph_id_get(id_, klass, return_code=200):
     # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
     if not db_graph.exists(id_): #
         return 'Key does not exist', 404 #
-    record = db_graph.json().get(id_, Path.rootPath()) #
+    record = db_graph.json().get(id_, Path.root_path()) #
 
     record['edges'] = list(record['edges'].values())
     ret = util.deserialize(record, klass)
@@ -66,8 +66,8 @@ def generic_graph_post(body, pattern, klass, return_code=201):
 
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock1:
     #     with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock2:
-    db_meta.json().set(pattern, Path.rootPath(), graph_id) #
-    db_graph.json().set(graph_id, Path.rootPath(), util.serialize(content)) # 
+    db_meta.json().set(pattern, Path.root_path(), graph_id) #
+    db_graph.json().set(graph_id, Path.root_path(), util.serialize(content)) # 
     return 'Created', return_code
 
 def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
@@ -85,7 +85,7 @@ def generic_graph_id_put(prefix, id_, body, klass, return_code=200):
     content = util.deserialize(content, klass)
 
     # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
-    db_graph.json().set(id_, Path.rootPath(), util.serialize(content)) #
+    db_graph.json().set(id_, Path.root_path(), util.serialize(content)) #
 
     return 'Updated', return_code
 
@@ -96,12 +96,12 @@ def generic_graph_id_delete(id_, return_code=204):
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
     if not db_meta.exists(id_): 
         return 'Key does not exist in the meta database', 404
-    db_meta.delete(id_, Path.rootPath())
+    db_meta.delete(id_, Path.root_path())
 
     # with db_graph.lock('db_graph_lock', blocking_timeout=5) as lock:
     if not db_graph.exists(id_): 
         return 'Key does not exist in the graph database', 404
-    db_graph.delete(id_, Path.rootPath())
+    db_graph.delete(id_, Path.root_path())
 
     return 'Deleted', return_code
 

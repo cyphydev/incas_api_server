@@ -50,7 +50,7 @@ def actor_batch_get(body, user=None, token_info=None):  # noqa: E501
 
         db_data = util.get_db(db_name='actor_data')
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
-        records = db_data.json().mget(body.ids, Path.rootPath()) #
+        records = db_data.json().mget(body.ids, Path.root_path()) #
         
         for i in range(len(records)):
             if records[i] is None:
@@ -139,7 +139,7 @@ def actor_id_get(id_, with_enrichment=None, with_segment=None, enrichment_name=N
     # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock:
     if not db_data.exists(id_):
         return 'Key does not exist', 404
-    record = db_data.json().get(id_, Path.rootPath())
+    record = db_data.json().get(id_, Path.root_path())
     
     if with_enrichment:
         if dev:
@@ -305,7 +305,7 @@ def actor_list_get(begin, end, media_type, entity_type=None, user=None, token_in
         keys = ['forward:actor:{}:{}:{}'.format(media_type.lower(), entity_type.lower(), i) for i in range(begin, end)]
     else:
         keys = chain(*[list(util.get_all_keys(db_idx, f'forward:actor:{media_type.lower()}:{entity_type.lower()}:{i}')) for i in range(begin, end)])
-    ret = db_idx.json().mget(keys, Path.rootPath())
+    ret = db_idx.json().mget(keys, Path.root_path())
     ret = [util.deserialize(x, ActorIdResponse) for x in ret]
     return ret, 200
 

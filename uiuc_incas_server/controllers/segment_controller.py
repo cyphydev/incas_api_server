@@ -28,14 +28,14 @@ def segment_collection_id_delete(id_, user=None, token_info=None):  # noqa: E501
     # with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock1:
     if not db_seg.exists(id_):
         return 'Key does not exist', 404
-    record = db_seg.json().get(id_, Path.rootPath())
+    record = db_seg.json().get(id_, Path.root_path())
     # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock2:
     for seg_content in record['segments'].values():
         for actor in seg_content['members'].keys():
             if db_data.json().type(actor, Path(f'segmentCollections["{id_}"]')) is not None:
                 db_data.json().delete(actor, Path(
                     f'segmentCollections["{id_}"]'))
-    db_seg.delete(id_, Path.rootPath())
+    db_seg.delete(id_, Path.root_path())
     return 'Deleted', 204
 
 
@@ -54,7 +54,7 @@ def segment_collection_id_get(id_, user=None, token_info=None):  # noqa: E501
     # with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
     if not db_seg.exists(id_):
         return 'Key does not exist', 404
-    record = db_seg.json().get(id_, Path.rootPath())
+    record = db_seg.json().get(id_, Path.root_path())
     ret = util.deserialize(record, UiucSegmentCollection)
     return ret, 200
 
@@ -81,7 +81,7 @@ def segment_collection_id_partial_put(body, id_, user=None, token_info=None):  #
         if 'providerName' in body or 'collectionName' in body or 'version' in body:
             return 'Change not support', 400
 
-        current_record = db_seg.json().get(id_, Path.rootPath())
+        current_record = db_seg.json().get(id_, Path.root_path())
         
         if 'segments' in body and body['segments']:
             for k, v in body['segments'].items():
@@ -138,7 +138,7 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
                         
         all_old_actors = set()
         # with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock:
-        record = db_seg.json().get(id_, Path.rootPath())
+        record = db_seg.json().get(id_, Path.root_path())
         for actors in record['segments'].values():
             for actor in actors:
                 all_old_actors.add(actor)
@@ -149,7 +149,7 @@ def segment_collection_id_put(body, id_, user=None, token_info=None):  # noqa: E
             if db_data.json().type(actor, Path(f'segmentCollections["{id_}"]')) is not None:
                 db_data.json().delete(actor, Path(f'segmentCollections["{id_}"]'))
                 
-        db_seg.json().set(id_, Path.rootPath(), util.serialize(body))
+        db_seg.json().set(id_, Path.root_path(), util.serialize(body))
         actors_segs = {}
         for seg_name, seg_content in body.segments.items():
             for actor_id, membership in seg_content.members.items():
@@ -228,7 +228,7 @@ def segment_collection_post(body, user=None, token_info=None):  # noqa: E501
                 return f'Actor {actor_id} does not exist', 404
                     
         # with db_seg.lock('db_segment_lock', blocking_timeout=5) as lock2:
-        db_seg.json().set(pattern, Path.rootPath(), util.serialize(body))
+        db_seg.json().set(pattern, Path.root_path(), util.serialize(body))
         actors_segs = {}
         for seg_name, seg_content in body.segments.items():
             for actor_id, membership in seg_content.members.items():

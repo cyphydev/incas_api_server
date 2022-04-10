@@ -42,7 +42,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
         db_data = util.get_db(db_name='actor_data')
         # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
         if not db_meta.exists('status'):
-            db_meta.json().set('status', Path.rootPath(), {})
+            db_meta.json().set('status', Path.root_path(), {})
 
         # with db_data.lock('db_actor_data_lock', blocking_timeout=5) as lock1:
         filtered_bodies = []
@@ -52,7 +52,7 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
             rev_idx_pattern = f'reverse:{data_pattern}'
             e_a, e_b, e_c = db_data.exists(data_pattern), db_idx.exists(rev_idx_pattern), False
             if e_b:
-                e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.rootPath()))
+                e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.root_path()))
             if e_a and e_b and e_c:
                 # logging.warning(f'Actor {data_pattern} already exists')
                 exist_bodies.append(actor)
@@ -64,10 +64,10 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
         # Update actors that exist
         for actor in exist_bodies:
             data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
-            old_actor = db_data.json().get(data_pattern, Path.rootPath())
+            old_actor = db_data.json().get(data_pattern, Path.root_path())
             actor['enrichments'] = old_actor['enrichments'] if 'enrichments' in old_actor else {}
             actor['segmentCollections'] = old_actor['segmentCollections'] if 'segmentCollections' in old_actor else {}
-            db_data.json().set(data_pattern, Path.rootPath(), actor)
+            db_data.json().set(data_pattern, Path.root_path(), actor)
 
         #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
         #        with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
@@ -84,13 +84,13 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
                 db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
             counter = db_meta.json().get('status', Path(idx_pattern_status))
 
-            db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(ActorIdResponse(
+            db_idx.json().set(idx_pattern + f':{counter}', Path.root_path(), util.serialize(ActorIdResponse(
                 global_id=actor['id'],
                 actor_id=data_pattern
             )))
-            db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+            db_idx.json().set(rev_idx_pattern, Path.root_path(), idx_pattern + f':{counter}')
 
-            db_data.json().set(data_pattern, Path.rootPath(), actor)
+            db_data.json().set(data_pattern, Path.root_path(), actor)
             db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400
@@ -120,7 +120,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
         db_data = util.get_db(db_name='message_data')
         # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
         if not db_meta.exists('status'):
-            db_meta.json().set('status', Path.rootPath(), {})
+            db_meta.json().set('status', Path.root_path(), {})
 
         # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock1:
         filtered_bodies = []
@@ -133,7 +133,7 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             rev_idx_pattern = f'reverse:{data_pattern}'
             e_a, e_b, e_c = db_data.exists(data_pattern), db_idx.exists(rev_idx_pattern), False
             if e_b:
-                e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.rootPath()))
+                e_c = db_idx.exists(db_idx.json().get(rev_idx_pattern, Path.root_path()))
             if e_a and e_b and e_c:
                 # logging.warning(f'Message {data_pattern} already exists')
                 exist_bodies.append(message)
@@ -145,9 +145,9 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
         # Update messages that exist
         for message in exist_bodies:
             data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
-            old_message = db_data.json().get(data_pattern, Path.rootPath())
+            old_message = db_data.json().get(data_pattern, Path.root_path())
             message['enrichments'] = old_message['enrichments'] if 'enrichments' in old_message else {}
-            db_data.json().set(data_pattern, Path.rootPath(), message)
+            db_data.json().set(data_pattern, Path.root_path(), message)
 
             # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
                 # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock3:
@@ -163,13 +163,13 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
                 db_meta.json().set('status', Path(idx_pattern_status), util.count_keys(db_idx, idx_pattern + ':*'))
             counter = db_meta.json().get('status', Path(idx_pattern_status))
 
-            db_idx.json().set(idx_pattern + f':{counter}', Path.rootPath(), util.serialize(MessageIdResponse(
+            db_idx.json().set(idx_pattern + f':{counter}', Path.root_path(), util.serialize(MessageIdResponse(
                 global_id=message['id'],
                 media_id=data_pattern
             )))
-            db_idx.json().set(rev_idx_pattern, Path.rootPath(), idx_pattern + f':{counter}')
+            db_idx.json().set(rev_idx_pattern, Path.root_path(), idx_pattern + f':{counter}')
 
-            db_data.json().set(data_pattern, Path.rootPath(), message)
+            db_data.json().set(data_pattern, Path.root_path(), message)
             db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400

@@ -40,7 +40,7 @@ def message_batch_get(body, user=None, token_info=None):  # noqa: E501
 
         db_data = util.get_db(db_name='message_data')
         # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
-        records = db_data.json().mget(body.ids, Path.rootPath())
+        records = db_data.json().mget(body.ids, Path.root_path())
 
         for i in range(len(records)):
             if records[i] is None:
@@ -107,7 +107,7 @@ def message_id_get(id_, with_enrichment=None, enrichment_name=None, provider_nam
     # with db_data.lock('db_message_data_lock', blocking_timeout=5) as lock:
     if not db_data.exists(id_):
         return 'Key does not exist', 404
-    record = db_data.json().get(id_, Path.rootPath())
+    record = db_data.json().get(id_, Path.root_path())
     
     if with_enrichment:
         if dev:
@@ -140,6 +140,6 @@ def message_list_get(begin, end, media_type, user=None, token_info=None):  # noq
     db_idx = util.get_db(db_name='index')
     # with db_idx.lock('db_index_lock', blocking_timeout=5) as lock:
     keys = ['forward:message:{}:{}'.format(media_type.lower(), i) for i in range(begin, end)]
-    records = db_idx.json().mget(keys, Path.rootPath())
+    records = db_idx.json().mget(keys, Path.root_path())
     ret = [util.deserialize(x, MessageIdResponse) for x in records]
     return ret, 200

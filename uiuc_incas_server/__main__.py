@@ -17,7 +17,7 @@ def check_api_key():
     db_auth = util.get_db('auth')
     if not db_auth.exists('apikeys'):
         logger.info('Creating apikeys key')
-        db_auth.json().set('apikeys', Path.rootPath(), {os.environ['UIUC_INCAS_API_KEY']: {'user':' admin', 'scope': {'admin': True}}})
+        db_auth.json().set('apikeys', Path.root_path(), {os.environ['UIUC_INCAS_API_KEY']: {'user':' admin', 'scope': {'admin': True}}})
     else:
         logger.info('apikeys exists in DB')
 

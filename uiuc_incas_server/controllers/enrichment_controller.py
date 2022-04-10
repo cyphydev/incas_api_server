@@ -194,7 +194,7 @@ def generic_enrichments_meta_delete(prefix, enrichment_name, provider_name, vers
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
     if not db_meta.exists(pattern):
         return 'Key not found', 404
-    db_meta.json().delete(pattern, Path.rootPath())
+    db_meta.json().delete(pattern, Path.root_path())
     return 'Deleted', return_code
 
 
@@ -207,7 +207,7 @@ def generic_enrichments_meta_get(prefix, enrichment_name=None, provider_name=Non
     if len(ks) == 0:
         return 'No keys found', 404
         
-    records = db_meta.json().mget(ks, Path.rootPath())
+    records = db_meta.json().mget(ks, Path.root_path())
     for i in range(len(records)):
         if records[i] is None:
             continue
@@ -224,7 +224,7 @@ def generic_enrichments_meta_post(prefix, body, return_code=201):
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
     if db_meta.exists(pattern):
         return 'Key already exists', 409
-    db_meta.json().set(pattern, Path.rootPath(), util.serialize(body))
+    db_meta.json().set(pattern, Path.root_path(), util.serialize(body))
     return "Created", return_code
 
 
@@ -237,7 +237,7 @@ def generic_enrichments_meta_put(prefix, body, return_code=200):
     # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock:
     if not db_meta.exists(pattern):
         return 'Key not found', 404
-    db_meta.json().set(pattern, Path.rootPath(), util.serialize(body))
+    db_meta.json().set(pattern, Path.root_path(), util.serialize(body))
     return "Updated", return_code
 
 
