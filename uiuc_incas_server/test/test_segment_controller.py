@@ -18,7 +18,7 @@ class TestSegmentController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/segmentCollection/{id}'.format(id='id_example'),
+            '/segmentCollection/{id}'.format(id='id_example'),
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -29,7 +29,7 @@ class TestSegmentController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/segmentCollection/{id}'.format(id='id_example'),
+            '/segmentCollection/{id}'.format(id='id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -41,7 +41,7 @@ class TestSegmentController(BaseTestCase):
         """
         body = UiucSegmentCollection()
         response = self.client.open(
-            '/api/v1/segmentCollection/{id}/partial'.format(id='id_example'),
+            '/segmentCollection/{id}/partial'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -55,7 +55,7 @@ class TestSegmentController(BaseTestCase):
         """
         body = UiucSegmentCollection()
         response = self.client.open(
-            '/api/v1/segmentCollection/{id}'.format(id='id_example'),
+            '/segmentCollection/{id}'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -71,7 +71,7 @@ class TestSegmentController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/segmentCollection/list',
+            '/segmentCollection/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -84,7 +84,7 @@ class TestSegmentController(BaseTestCase):
         """
         body = UiucSegmentCollection()
         response = self.client.open(
-            '/api/v1/segmentCollection',
+            '/segmentCollection',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -98,7 +98,7 @@ class TestSegmentController(BaseTestCase):
         """
         body = UiucSegmentCollection()
         response = self.client.open(
-            '/api/v1/segmentCollection/validate',
+            '/segmentCollection/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

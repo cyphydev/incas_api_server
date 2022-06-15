@@ -32,7 +32,7 @@ class TestActorController(BaseTestCase):
         """
         body = ActorBatchGetBody()
         response = self.client.open(
-            '/api/v1/actor/batchGet',
+            '/actor/batchGet',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -47,7 +47,7 @@ class TestActorController(BaseTestCase):
         query_string = [('media_type', 'media_type_example'),
                         ('entity_type', 'entity_type_example')]
         response = self.client.open(
-            '/api/v1/actor/count',
+            '/actor/count',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -60,7 +60,7 @@ class TestActorController(BaseTestCase):
         """
         body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/actor/enrichments/batchDelete',
+            '/actor/enrichments/batchDelete',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -74,7 +74,7 @@ class TestActorController(BaseTestCase):
         """
         body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/actor/enrichments/batchDelete/validate',
+            '/actor/enrichments/batchDelete/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -88,7 +88,7 @@ class TestActorController(BaseTestCase):
         """
         body = EnrichmentsBatchGetBody()
         response = self.client.open(
-            '/api/v1/actor/enrichments/batchGet',
+            '/actor/enrichments/batchGet',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -102,7 +102,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/enrichments/batch',
+            '/actor/enrichments/batch',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -116,7 +116,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/enrichments/batch/validate',
+            '/actor/enrichments/batch/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -130,7 +130,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/enrichments/batch',
+            '/actor/enrichments/batch',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -144,7 +144,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/enrichments/batch/validate',
+            '/actor/enrichments/batch/validate',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -160,7 +160,7 @@ class TestActorController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/actor/enrichments/meta',
+            '/actor/enrichments/meta',
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -175,7 +175,7 @@ class TestActorController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/actor/enrichments/meta',
+            '/actor/enrichments/meta',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -188,7 +188,7 @@ class TestActorController(BaseTestCase):
         """
         body = EnrichmentMeta()
         response = self.client.open(
-            '/api/v1/actor/enrichments/meta',
+            '/actor/enrichments/meta',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -202,7 +202,7 @@ class TestActorController(BaseTestCase):
         """
         body = EnrichmentMeta()
         response = self.client.open(
-            '/api/v1/actor/enrichments/meta',
+            '/actor/enrichments/meta',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -218,7 +218,7 @@ class TestActorController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
+            '/actor/{id}/enrichments'.format(id='id_example'),
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -234,7 +234,7 @@ class TestActorController(BaseTestCase):
                         ('version', 'version_example'),
                         ('dev', true)]
         response = self.client.open(
-            '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
+            '/actor/{id}/enrichments'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -247,7 +247,7 @@ class TestActorController(BaseTestCase):
         """
         body = Enrichment()
         response = self.client.open(
-            '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
+            '/actor/{id}/enrichments'.format(id='id_example'),
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -261,7 +261,7 @@ class TestActorController(BaseTestCase):
         """
         body = Enrichment()
         response = self.client.open(
-            '/api/v1/actor/{id}/enrichments'.format(id='id_example'),
+            '/actor/{id}/enrichments'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -283,7 +283,7 @@ class TestActorController(BaseTestCase):
                         ('collection_version', 'collection_version_example'),
                         ('dev', true)]
         response = self.client.open(
-            '/api/v1/actor/{id}'.format(id='id_example'),
+            '/actor/{id}'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -298,7 +298,7 @@ class TestActorController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/actor/{id}/segments'.format(id='id_example'),
+            '/actor/{id}/segments'.format(id='id_example'),
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -314,7 +314,7 @@ class TestActorController(BaseTestCase):
                         ('version', 'version_example'),
                         ('dev', true)]
         response = self.client.open(
-            '/api/v1/actor/{id}/segments'.format(id='id_example'),
+            '/actor/{id}/segments'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -327,7 +327,7 @@ class TestActorController(BaseTestCase):
         """
         body = ActorSegmentCollection()
         response = self.client.open(
-            '/api/v1/actor/{id}/segments'.format(id='id_example'),
+            '/actor/{id}/segments'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -344,7 +344,7 @@ class TestActorController(BaseTestCase):
                         ('media_type', 'media_type_example'),
                         ('entity_type', 'entity_type_example')]
         response = self.client.open(
-            '/api/v1/actor/list',
+            '/actor/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -357,7 +357,7 @@ class TestActorController(BaseTestCase):
         """
         body = ActorSegmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/actor/segments/batchDelete',
+            '/actor/segments/batchDelete',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -371,7 +371,7 @@ class TestActorController(BaseTestCase):
         """
         body = ActorSegmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/actor/segments/batchDelete/validate',
+            '/actor/segments/batchDelete/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -385,7 +385,7 @@ class TestActorController(BaseTestCase):
         """
         body = ActorSegmentsBatchGetBody()
         response = self.client.open(
-            '/api/v1/actor/segments/batchGet',
+            '/actor/segments/batchGet',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -399,7 +399,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/segments/batch/validate',
+            '/actor/segments/batch/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -413,7 +413,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/segments/batch',
+            '/actor/segments/batch',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -427,7 +427,7 @@ class TestActorController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/actor/segments/batch/validate',
+            '/actor/segments/batch/validate',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')

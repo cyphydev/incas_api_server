@@ -20,10 +20,21 @@ class TestAdminController(BaseTestCase):
         """
         body = [UiucActor()]
         response = self.client.open(
-            '/api/v1/actor',
+            '/actor',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_admin_flush(self):
+        """Test case for admin_flush
+
+        
+        """
+        response = self.client.open(
+            '/dbflush',
+            method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -34,7 +45,7 @@ class TestAdminController(BaseTestCase):
         """
         body = [UiucMessage()]
         response = self.client.open(
-            '/api/v1/message',
+            '/message',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

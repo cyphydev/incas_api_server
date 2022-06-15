@@ -27,7 +27,7 @@ class TestMessageController(BaseTestCase):
         """
         body = MessageBatchGetBody()
         response = self.client.open(
-            '/api/v1/message/batchGet',
+            '/message/batchGet',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -41,7 +41,7 @@ class TestMessageController(BaseTestCase):
         """
         query_string = [('media_type', 'media_type_example')]
         response = self.client.open(
-            '/api/v1/message/count',
+            '/message/count',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -54,7 +54,7 @@ class TestMessageController(BaseTestCase):
         """
         body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/message/enrichments/batchDelete',
+            '/message/enrichments/batchDelete',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -68,7 +68,7 @@ class TestMessageController(BaseTestCase):
         """
         body = EnrichmentsBatchDeleteBody()
         response = self.client.open(
-            '/api/v1/message/enrichments/batchDelete/validate',
+            '/message/enrichments/batchDelete/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -82,7 +82,7 @@ class TestMessageController(BaseTestCase):
         """
         body = EnrichmentsBatchGetBody()
         response = self.client.open(
-            '/api/v1/message/enrichments/batchGet',
+            '/message/enrichments/batchGet',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -96,7 +96,7 @@ class TestMessageController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/message/enrichments/batch',
+            '/message/enrichments/batch',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -110,7 +110,7 @@ class TestMessageController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/message/enrichments/batch/validate',
+            '/message/enrichments/batch/validate',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -124,7 +124,7 @@ class TestMessageController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/message/enrichments/batch',
+            '/message/enrichments/batch',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -138,7 +138,7 @@ class TestMessageController(BaseTestCase):
         """
         body = None
         response = self.client.open(
-            '/api/v1/message/enrichments/batch/validate',
+            '/message/enrichments/batch/validate',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -154,7 +154,7 @@ class TestMessageController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/message/enrichments/meta',
+            '/message/enrichments/meta',
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -169,7 +169,7 @@ class TestMessageController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/message/enrichments/meta',
+            '/message/enrichments/meta',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -182,7 +182,7 @@ class TestMessageController(BaseTestCase):
         """
         body = EnrichmentMeta()
         response = self.client.open(
-            '/api/v1/message/enrichments/meta',
+            '/message/enrichments/meta',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -196,7 +196,7 @@ class TestMessageController(BaseTestCase):
         """
         body = EnrichmentMeta()
         response = self.client.open(
-            '/api/v1/message/enrichments/meta',
+            '/message/enrichments/meta',
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -212,7 +212,7 @@ class TestMessageController(BaseTestCase):
                         ('provider_name', 'provider_name_example'),
                         ('version', 'version_example')]
         response = self.client.open(
-            '/api/v1/message/{id}/enrichments'.format(id='id_example'),
+            '/message/{id}/enrichments'.format(id='id_example'),
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -228,7 +228,7 @@ class TestMessageController(BaseTestCase):
                         ('version', 'version_example'),
                         ('dev', true)]
         response = self.client.open(
-            '/api/v1/message/{id}/enrichments'.format(id='id_example'),
+            '/message/{id}/enrichments'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -241,7 +241,7 @@ class TestMessageController(BaseTestCase):
         """
         body = Enrichment()
         response = self.client.open(
-            '/api/v1/message/{id}/enrichments'.format(id='id_example'),
+            '/message/{id}/enrichments'.format(id='id_example'),
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -255,7 +255,7 @@ class TestMessageController(BaseTestCase):
         """
         body = Enrichment()
         response = self.client.open(
-            '/api/v1/message/{id}/enrichments'.format(id='id_example'),
+            '/message/{id}/enrichments'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -273,7 +273,7 @@ class TestMessageController(BaseTestCase):
                         ('version', 'version_example'),
                         ('dev', true)]
         response = self.client.open(
-            '/api/v1/message/{id}'.format(id='id_example'),
+            '/message/{id}'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -288,7 +288,7 @@ class TestMessageController(BaseTestCase):
                         ('end', 56),
                         ('media_type', 'media_type_example')]
         response = self.client.open(
-            '/api/v1/message/list',
+            '/message/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,

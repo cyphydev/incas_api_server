@@ -21,7 +21,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/actorActorGraph/{id}'.format(id='id_example'),
+            '/actorActorGraph/{id}'.format(id='id_example'),
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -32,7 +32,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/actorActorGraph/{id}'.format(id='id_example'),
+            '/actorActorGraph/{id}'.format(id='id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -44,7 +44,7 @@ class TestGraphController(BaseTestCase):
         """
         query_string = [('actor_id', 'actor_id_example')]
         response = self.client.open(
-            '/api/v1/actorActorGraph/{id}/neighbor'.format(id='id_example'),
+            '/actorActorGraph/{id}/neighbor'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -57,7 +57,7 @@ class TestGraphController(BaseTestCase):
         """
         body = ActorActorGraph()
         response = self.client.open(
-            '/api/v1/actorActorGraph/{id}'.format(id='id_example'),
+            '/actorActorGraph/{id}'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -75,7 +75,7 @@ class TestGraphController(BaseTestCase):
                         ('version', 'version_example'),
                         ('time_stamp', 'time_stamp_example')]
         response = self.client.open(
-            '/api/v1/actorActorGraph/list',
+            '/actorActorGraph/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -88,7 +88,7 @@ class TestGraphController(BaseTestCase):
         """
         body = ActorActorGraph()
         response = self.client.open(
-            '/api/v1/actorActorGraph',
+            '/actorActorGraph',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -101,7 +101,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/actorMessageGraph/{id}'.format(id='id_example'),
+            '/actorMessageGraph/{id}'.format(id='id_example'),
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -112,7 +112,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/actorMessageGraph/{id}'.format(id='id_example'),
+            '/actorMessageGraph/{id}'.format(id='id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -125,7 +125,7 @@ class TestGraphController(BaseTestCase):
         query_string = [('message_id', 'message_id_example'),
                         ('actor_id', 'actor_id_example')]
         response = self.client.open(
-            '/api/v1/actorMessageGraph/{id}/neighbor'.format(id='id_example'),
+            '/actorMessageGraph/{id}/neighbor'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -138,7 +138,7 @@ class TestGraphController(BaseTestCase):
         """
         body = ActorMessageGraph()
         response = self.client.open(
-            '/api/v1/actorMessageGraph/{id}'.format(id='id_example'),
+            '/actorMessageGraph/{id}'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -156,7 +156,7 @@ class TestGraphController(BaseTestCase):
                         ('version', 'version_example'),
                         ('time_stamp', 'time_stamp_example')]
         response = self.client.open(
-            '/api/v1/actorMessageGraph/list',
+            '/actorMessageGraph/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -169,7 +169,7 @@ class TestGraphController(BaseTestCase):
         """
         body = ActorMessageGraph()
         response = self.client.open(
-            '/api/v1/actorMessageGraph',
+            '/actorMessageGraph',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -182,7 +182,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/messageMessageGraph/{id}'.format(id='id_example'),
+            '/messageMessageGraph/{id}'.format(id='id_example'),
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -193,7 +193,7 @@ class TestGraphController(BaseTestCase):
         
         """
         response = self.client.open(
-            '/api/v1/messageMessageGraph/{id}'.format(id='id_example'),
+            '/messageMessageGraph/{id}'.format(id='id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -205,7 +205,7 @@ class TestGraphController(BaseTestCase):
         """
         query_string = [('message_id', 'message_id_example')]
         response = self.client.open(
-            '/api/v1/messageMessageGraph/{id}/neighbor'.format(id='id_example'),
+            '/messageMessageGraph/{id}/neighbor'.format(id='id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -218,7 +218,7 @@ class TestGraphController(BaseTestCase):
         """
         body = MessageMessageGraph()
         response = self.client.open(
-            '/api/v1/messageMessageGraph/{id}'.format(id='id_example'),
+            '/messageMessageGraph/{id}'.format(id='id_example'),
             method='PUT',
             data=json.dumps(body),
             content_type='application/json')
@@ -236,7 +236,7 @@ class TestGraphController(BaseTestCase):
                         ('version', 'version_example'),
                         ('time_stamp', 'time_stamp_example')]
         response = self.client.open(
-            '/api/v1/messageMessageGraph/list',
+            '/messageMessageGraph/list',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -249,7 +249,7 @@ class TestGraphController(BaseTestCase):
         """
         body = MessageMessageGraph()
         response = self.client.open(
-            '/api/v1/messageMessageGraph',
+            '/messageMessageGraph',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

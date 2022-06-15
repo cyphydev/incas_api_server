@@ -2,16 +2,49 @@ openapi: 3.0.0
 info:
   title: INCAS TA2-UIUC Datatypes
   description: This API document is defined based on INCAS Common Datatypes version
-    0.0.6.
+    0.0.7.
   contact:
     name: Shengzhong Liu (sl29@illinois.edu)
-  version: 1.1.0
+  version: 1.2.0
 servers:
 - url: /api/v1
   description: UIUC INCAS API Server
 security:
 - ApiKeyAuth: []
 paths:
+  /dbflush:
+    delete:
+      tags:
+      - admin
+      description: Clear the database
+      operationId: admin_flush
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: API key is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-openapi-router-controller: uiuc_incas_server.controllers.admin_controller
+  /ping:
+    get:
+      tags:
+      - management
+      description: Ping the server
+      operationId: ping_get
+      responses:
+        "200":
+          description: Pong
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: uiuc_incas_server.controllers.management_controller
   /message:
     post:
       tags:
@@ -4035,6 +4068,8 @@ components:
           - numerical
           - array
           - text
+          - list
+          - obj
       description: Stores the meta data related to enrichment algorithm.
     CategoryEnrichmentMeta:
       allOf:
@@ -4064,6 +4099,14 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseEnrichmentMeta'
       - type: object
+    ListEnrichmentMeta:
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
+      - type: object
+    ObjectEnrichmentMeta:
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrichmentMeta'
+      - type: object
     EnrichmentMeta:
       type: object
       description: This is the unified interface for message enrichment algorithm
@@ -4075,11 +4118,15 @@ components:
           numerical: NumericalEnrichmentMeta
           array: ArrayEnrichmentMeta
           text: TextEnrichmentMeta
+          list: ListEnrichmentMeta
+          obj: ObjectEnrichmentMeta
       oneOf:
       - $ref: '#/components/schemas/CategoryEnrichmentMeta'
       - $ref: '#/components/schemas/NumericalEnrichmentMeta'
       - $ref: '#/components/schemas/ArrayEnrichmentMeta'
       - $ref: '#/components/schemas/TextEnrichmentMeta'
+      - $ref: '#/components/schemas/ListEnrichmentMeta'
+      - $ref: '#/components/schemas/ObjectEnrichmentMeta'
     BaseEnrichment:
       required:
       - enrichmentType
@@ -4102,6 +4149,8 @@ components:
           - numerical
           - array
           - text
+          - list
+          - obj
       description: Stores data fields common to all types of message enrichment.
     CategoryEnrichment:
       description: This defines a enumeration/category enrichment.
@@ -4169,6 +4218,35 @@ components:
             description: "The confidence that this enrichment is correct, expressed\
               \ as a percentage between 0.0 and 1.0"
             format: double
+    ListEnrichment:
+      description: Defines a list enrichment of mixed numbers and strings.
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrichment'
+      - type: object
+        properties:
+          attributeValue:
+            type: array
+            items:
+              anyOf:
+              - type: string
+              - type: number
+          confidence:
+            type: array
+            description: "The confidence that this enrichment is correct, expressed\
+              \ as a percentage between 0.0 and 1.0"
+            items:
+              maximum: 1.0
+              minimum: 0.0
+              type: number
+              format: double
+    ObjectEnrichment:
+      description: This defines a object enrichment.
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrichment'
+      - type: object
+        properties:
+          serializedValue:
+            type: string
     Enrichment:
       type: object
       description: This is the unified interface for message enrichment output.
@@ -4179,11 +4257,15 @@ components:
           numerical: NumericalEnrichment
           array: ArrayEnrichment
           text: TextEnrichment
+          list: ListEnrichment
+          obj: ObjectEnrichment
       oneOf:
       - $ref: '#/components/schemas/CategoryEnrichment'
       - $ref: '#/components/schemas/NumericalEnrichment'
       - $ref: '#/components/schemas/ArrayEnrichment'
       - $ref: '#/components/schemas/TextEnrichment'
+      - $ref: '#/components/schemas/ListEnrichment'
+      - $ref: '#/components/schemas/ObjectEnrichment'
     GraphEdge:
       required:
       - edgeType

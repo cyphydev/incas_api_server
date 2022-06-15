@@ -37,7 +37,8 @@ DB_IDX = {
     'actor_data': 3,
     'meta': 4,
     'graph': 5,
-    'segment': 6
+    'segment': 6,
+    'log': 7
 }
 
 DB_MAP = {
@@ -48,7 +49,8 @@ DB_MAP = {
     'meta': None, # [message|actor]:name:provider:version -> EnrichmentMeta
                   # graph:provider:timestamp:version -> graph ID
     'graph': None,
-    'segment': None
+    'segment': None,
+    'log': None
 }
 
 redis_server_host=os.environ.get('REDIS_HOST', default='localhost')

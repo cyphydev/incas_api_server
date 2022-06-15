@@ -173,3 +173,22 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
             db_meta.json().set('status', Path(idx_pattern_status), counter + 1)
         return 'OK', 201
     return 'Bad Request', 400
+
+def admin_flush(user=None, token_info=None):  # noqa: E501
+    """admin_flush
+
+    Clear the database # noqa: E501
+
+
+    :rtype: None
+    """
+    if 'scope' not in token_info or 'admin' not in token_info['scope']:
+        raise OAuthProblem('Not authorized')
+    util.get_db(db_name='index').flushdb()
+    util.get_db(db_name='message_data').flushdb()
+    util.get_db(db_name='actor_data').flushdb()
+    util.get_db(db_name='meta').flushdb()
+    util.get_db(db_name='graph').flushdb()
+    util.get_db(db_name='segment').flushdb()
+    util.get_db(db_name='log').flushdb()
+    return 'Flushed', 204
