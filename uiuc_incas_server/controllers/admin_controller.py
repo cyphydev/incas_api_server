@@ -65,8 +65,23 @@ def admin_actor_post(body, user=None, token_info=None):  # noqa: E501
         for actor in exist_bodies:
             data_pattern = f'actor:{actor["uiucMediaType"].lower()}:{actor["entityType"].lower()}:{actor["id"]}'
             old_actor = db_data.json().get(data_pattern, Path.root_path())
-            actor['enrichments'] = old_actor['enrichments'] if 'enrichments' in old_actor else {}
-            actor['segmentCollections'] = old_actor['segmentCollections'] if 'segmentCollections' in old_actor else {}
+
+            if 'enrichments' not in old_actor and 'enrichments' not in actor:
+                actor['enrichments'] = {}
+            elif 'enrichments' in old_actor and 'enrichments' not in actor:
+                actor['enrichments'] = old_actor['enrichments']
+            elif 'enrichments' in old_actor and 'enrichments' in actor:
+                actor['enrichments'].update(old_actor['enrichments'])
+
+            if 'segmentCollections' not in old_actor and 'segmentCollections' not in actor:
+                actor['segmentCollections'] = {}
+            elif 'segmentCollections' in old_actor and 'segmentCollections' not in actor:
+                actor['segmentCollections'] = old_actor['segmentCollections']
+            elif 'segmentCollections' in old_actor and 'segmentCollections' in actor:
+                actor['segmentCollections'].update(old_actor['segmentCollections'])
+
+            actor['uiucActorId'] = data_pattern
+
             db_data.json().set(data_pattern, Path.root_path(), actor)
 
         #    with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
@@ -146,7 +161,16 @@ def admin_message_post(body, user=None, token_info=None):  # noqa: E501
         for message in exist_bodies:
             data_pattern = f'message:{message["mediaType"].lower()}:{message["mediaTypeAttributes"]["twitterData"]["tweetId"]}'
             old_message = db_data.json().get(data_pattern, Path.root_path())
-            message['enrichments'] = old_message['enrichments'] if 'enrichments' in old_message else {}
+
+            if 'enrichments' not in old_message and 'enrichments' not in message:
+                message['enrichments'] = {}
+            elif 'enrichments' in old_message and 'enrichments' not in message:
+                message['enrichments'] = old_message['enrichments']
+            elif 'enrichments' in old_message and 'enrichments' in message:
+                message['enrichments'].update(old_message['enrichments'])
+            
+            message['uiucMessageId'] = data_pattern
+
             db_data.json().set(data_pattern, Path.root_path(), message)
 
             # with db_meta.lock('db_meta_lock', blocking_timeout=5) as lock2:
